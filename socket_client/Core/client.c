@@ -28,6 +28,7 @@ void start_client(struct Client *c) {
     pthread_create(&receive_thread, NULL, receive_func, c);
     pthread_t send_thread;
     pthread_create(&send_thread, NULL, send_func, c);
+    while (1);
 }
 
 void *receive_func(void *obj) {
