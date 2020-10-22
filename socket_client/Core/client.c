@@ -53,6 +53,8 @@ void *send_func(void *obj) {
         counter = 0;
         while ((*(c->buffer + counter++) = (char) getchar()) != '\n');
 
-        send(c->socket, c->buffer, c->buffer_size, 0);
+        if (strlen(c->buffer) != 0) {
+            send(c->socket, c->buffer, c->buffer_size, 0);
+        }
     }
 }
