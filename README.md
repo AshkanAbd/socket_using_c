@@ -23,3 +23,4 @@ socket programming using C
 5) make
 6) run socket_client binary file
 ##### You can test it now :) 
+##### Also check Build dir for executables.
