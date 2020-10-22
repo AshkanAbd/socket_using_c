@@ -1,7 +1,6 @@
 #ifndef SOCKET_SERVER_SOCKET_H
 #define SOCKET_SERVER_SOCKET_H
 
-#include <string.h>
 #include <errno.h>
 #include <winsock2.h>
 #include <io.h>
