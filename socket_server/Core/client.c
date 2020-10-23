@@ -1,21 +1,24 @@
 #include <io.h>
 #include "client.h"
 
-void init_client(struct Client *c, int buffer_size, int socket) {
+void init_client(struct Client *c, int buffer_size, int *socket) {
     c->buffer = malloc(buffer_size);
     memset(c->buffer, 0, buffer_size);
 
     c->client_name = malloc(buffer_size);
     memset(c->client_name, 0, buffer_size);
 
-    memcpy(&c->socket, &socket, sizeof(int));
+    c->socket = malloc(sizeof(int));
+    memset(c->socket, 0, sizeof(int));
+    memcpy(c->socket, socket, sizeof(int));
+
     c->buffer_size = buffer_size;
 }
 
 int set_name(struct Client *c) {
     char *empty_name_error = "Name is cannot be empty\n";
     char *unknown_error = "An error occurred, please try again\n";
-    int socket = c->socket;
+    int socket = *c->socket;
 
     recv(socket, c->client_name, c->buffer_size, 0);
     if (strlen(c->client_name) == 0) {
@@ -48,7 +51,7 @@ void *receive_func(void *obj) {
         return 0;
     }
 
-    int socket = c->socket;
+    int socket = *c->socket;
     int disconnectThreshold = 0;
     while (1) {
         memset(c->buffer, 0, c->buffer_size);

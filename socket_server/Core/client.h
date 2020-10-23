@@ -8,14 +8,15 @@
 #include <pthread.h>
 
 struct Client {
-    int socket, buffer_size;
+    int *socket;
+    int buffer_size;
     char *client_name;
     char *buffer;
 
     void (*message_func)(struct Client *, char *);
 };
 
-void init_client(struct Client *c, int buffer_size, int socket);
+void init_client(struct Client *c, int buffer_size, int *socket);
 
 int set_name(struct Client *c);
 
