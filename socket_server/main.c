@@ -40,12 +40,14 @@ int main() {
     }
 
     while (1) {
-        if ((error = accept_connection(&server_socket) != 0)) {
+        int connection = accept_connection(&server_socket);
+        printf("connection %d\n", connection);
+        if (connection < 0) {
             printf("Failed to accept connection\n");
             printf("Error= %d:%s\n", error, strerror(error));
         } else {
             struct Client client;
-            init_client(&client, MAX, server_socket.connection_fd);
+            init_client(&client, MAX, connection);
             set_message_func(&client, on_message_received);
             *(clients + clientIndex++) = client;
             start_client(&client);
