@@ -29,7 +29,7 @@ int set_name(struct Client *c) {
     return 0;
 }
 
-void set_message_func(struct Client *c, void (*message_func)(void *)) {
+void set_message_func(struct Client *c, void (*message_func)(struct Client *, void *)) {
     c->message_func = message_func;
 }
 
