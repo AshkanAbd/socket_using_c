@@ -61,7 +61,13 @@ void on_message_received(struct Client *c, char *msg) {
         client = (clients + i);
 
         if (client->socket != c->socket) {
-            send(client->socket, msg, c->buffer_size, 0);
+            char *msg_with_name = malloc(strlen(client->client_name) + strlen(msg) + 2);
+            memset(msg_with_name, 0, strlen(client->client_name) + strlen(msg) + 2);
+            memcpy(msg_with_name, client->client_name, strlen(client->client_name));
+            *(msg_with_name + strlen(client->client_name)) = ':';
+            memcpy(msg_with_name + strlen(client->client_name) + 1, msg, strlen(msg));
+
+            send(client->socket, msg_with_name, (int) strlen(msg_with_name), 0);
         }
     }
 }
