@@ -41,7 +41,7 @@ int main() {
 
     while (1) {
         int connection = accept_connection(&server_socket);
-        printf("connection %d\n", connection);
+        printf("connected %d\n", connection);
         if (connection < 0) {
             printf("Failed to accept connection\n");
             printf("Error= %d:%s\n", error, strerror(error));
