@@ -6,6 +6,10 @@
 
 void on_message_received(struct Client *c, char *msg);
 
+void on_client_connect(struct Client *c);
+
+void on_client_disconnect(struct Client *c);
+
 struct Client *clients;
 int clientIndex = 0;
 
@@ -49,6 +53,8 @@ int main() {
             struct Client *client = (clients + clientIndex++);
             init_client(client, MAX, &connection);
             set_message_func(client, on_message_received);
+            set_connect_func(client, on_client_connect);
+            set_disconnect_func(client, on_client_disconnect);
             start_client(client);
         }
     }
@@ -65,6 +71,40 @@ void on_message_received(struct Client *c, char *msg) {
             memcpy(msg_with_name, c->client_name, strlen(c->client_name));
             *(msg_with_name + strlen(c->client_name)) = ':';
             memcpy(msg_with_name + strlen(c->client_name) + 1, msg, strlen(msg));
+
+            send(*client->socket, msg_with_name, (int) strlen(msg_with_name), 0);
+        }
+    }
+}
+
+void on_client_connect(struct Client *c) {
+    struct Client *client;
+    char *msg = " connected\n";
+    for (int i = 0; i < clientIndex; ++i) {
+        client = (clients + i);
+
+        if (client->socket != c->socket) {
+            char *msg_with_name = malloc(strlen(c->client_name) + strlen(msg) + 1);
+            memset(msg_with_name, 0, strlen(c->client_name) + strlen(msg) + 1);
+            memcpy(msg_with_name, c->client_name, strlen(c->client_name));
+            memcpy(msg_with_name + strlen(c->client_name), msg, strlen(msg));
+
+            send(*client->socket, msg_with_name, (int) strlen(msg_with_name), 0);
+        }
+    }
+}
+
+void on_client_disconnect(struct Client *c) {
+    struct Client *client;
+    char *msg = " disconnected\n";
+    for (int i = 0; i < clientIndex; ++i) {
+        client = (clients + i);
+
+        if (client->socket != c->socket) {
+            char *msg_with_name = malloc(strlen(c->client_name) + strlen(msg) + 1);
+            memset(msg_with_name, 0, strlen(c->client_name) + strlen(msg) + 1);
+            memcpy(msg_with_name, c->client_name, strlen(c->client_name));
+            memcpy(msg_with_name + strlen(c->client_name), msg, strlen(msg));
 
             send(*client->socket, msg_with_name, (int) strlen(msg_with_name), 0);
         }

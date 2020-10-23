@@ -56,22 +56,19 @@ void *receive_func(void *obj) {
     if (set_name(c) != 0) {
         return 0;
     }
+    (*c->connect_func)(c);
 
-    int disconnectThreshold = 0;
     while (1) {
         memset(c->buffer, 0, c->buffer_size);
         recv(*c->socket, c->buffer, c->buffer_size, 0);
 
         if (!(strlen(c->buffer) == 1 && *c->buffer == '\n') && strlen(c->buffer) != 0) {
-            disconnectThreshold = 0;
             (*c->message_func)(c, c->buffer);
         } else if (strlen(c->buffer) == 0) {
-            disconnectThreshold++;
-            if (disconnectThreshold >= 5) {
-                printf("%d disconnected\n", *c->socket);
-                close(*c->socket);
-                return 0;
-            }
+            printf("%d disconnected\n", *c->socket);
+            (*c->disconnect_func)(c);
+            close(*c->socket);
+            return 0;
         }
     }
 }
