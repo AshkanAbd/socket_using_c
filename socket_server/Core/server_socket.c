@@ -30,12 +30,11 @@ int listen_socket(struct ServerSocket *s) {
     if ((listen(s->socket_fd, 5)) != 0) {
         return errno;
     }
-    s->len = sizeof(s->server_cli);
     return 0;
 }
 
 int accept_connection(struct ServerSocket *s) {
-    s->connection_fd = accept(s->socket_fd, (SA *) &s->server_cli, &s->len);
+    s->connection_fd = accept(s->socket_fd, NULL, NULL);
     if (s->connection_fd < 0) {
         return errno;
     }
