@@ -1,8 +1,6 @@
 #include "client.h"
 
-void init_client(struct Client *c, int buffer_size, int
-
-&socket) {
+void init_client(struct Client *c, int buffer_size, int socket) {
     c->buffer = malloc(buffer_size);
     memset(c->buffer, 0, buffer_size);
 
