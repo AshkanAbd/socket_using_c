@@ -19,7 +19,7 @@ void assign_port(struct ServerSocket *s, int port) {
 }
 
 int bind_socket(struct ServerSocket *s) {
-    if ((bind(s->socket_fd, (SA *) &(s->server_address), sizeof(s->server_address))) != 0) {
+    if ((bind(s->socket_fd, (struct sockaddr *) &(s->server_address), sizeof(s->server_address))) != 0) {
         return errno;
     } else {
         return 0;
@@ -34,11 +34,12 @@ int listen_socket(struct ServerSocket *s) {
 }
 
 int accept_connection(struct ServerSocket *s) {
-    s->connection_fd = accept(s->socket_fd, NULL, NULL);
-    if (s->connection_fd < 0) {
+    int server_len = sizeof(s->server_address);
+    int connection = accept(s->socket_fd, (struct sockaddr *) &s->server_address, &server_len);
+    if (connection < 0) {
         return errno;
     }
-    return 0;
+    return connection;
 }
 
 void close_socket(struct ServerSocket *s) {
