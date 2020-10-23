@@ -36,6 +36,15 @@ void set_message_func(struct Client *c, void (*message_func)(struct Client *, ch
     c->message_func = message_func;
 }
 
+void set_connect_func(struct Client *c, void (*connect_func)(struct Client *)) {
+    c->connect_func = connect_func;
+}
+
+void set_disconnect_func(struct Client *c, void (*disconnect_func)(struct Client *)) {
+    c->disconnect_func = disconnect_func;
+}
+
+
 void start_client(struct Client *c) {
     pthread_t receive_thread;
     pthread_create(&receive_thread, NULL, receive_func, c);
