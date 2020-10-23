@@ -8,7 +8,7 @@ void init_client(struct Client *c, int buffer_size, int socket) {
     c->client_name = malloc(buffer_size);
     memset(c->client_name, 0, buffer_size);
 
-    c->socket = socket;
+    memcpy(&c->socket, &socket, sizeof(int));
     c->buffer_size = buffer_size;
 }
 
@@ -43,9 +43,6 @@ void *receive_func(void *obj) {
 
     printf("%s connected\n", c->client_name);
 
-    pthread_t send_thread;
-    pthread_create(&send_thread, NULL, send_func, obj);
-
     while (1) {
         memset(c->buffer, 0, c->buffer_size);
         recv(c->socket, c->buffer, c->buffer_size, 0);
@@ -57,18 +54,5 @@ void *receive_func(void *obj) {
             close(c->socket);
             return 0;
         }
-    }
-}
-
-void *send_func(void *obj) {
-    struct Client *c = (struct Client *) obj;
-    int counter = 0;
-
-    while (1) {
-        memset(c->buffer, 0, c->buffer_size);
-        counter = 0;
-        while ((*(c->buffer + counter++) = (char) getchar()) != '\n');
-
-        send(c->socket, c->buffer, c->buffer_size, 0);
     }
 }

@@ -19,8 +19,6 @@ int set_name(struct Client *c);
 
 void start_client(struct Client *c);
 
-void *send_func(void *obj);
-
 void *receive_func(void *obj);
 
 #endif //SOCKET_SERVER_CLIENT_H

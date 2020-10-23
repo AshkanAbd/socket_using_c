@@ -7,6 +7,9 @@
 int main() {
     struct ServerSocket server_socket;
     int error;
+    struct Client *clients = malloc(MAX * sizeof(struct Client));
+    memset(clients, 0, MAX * sizeof(struct Client));
+    int clientIndex = 0;
 
     if ((error = create_socket(&server_socket)) != 0) {
         printf("Failed to create socket\n");
@@ -39,6 +42,7 @@ int main() {
         } else {
             struct Client client;
             init_client(&client, MAX, server_socket.connection_fd);
+            *(clients + clientIndex++) = client;
             start_client(&client);
         }
     }
