@@ -66,11 +66,12 @@ void on_message_received(struct Client *c, char *msg) {
         client = (clients + i);
 
         if (client->socket != c->socket) {
-            char *msg_with_name = malloc(strlen(c->client_name) + strlen(msg) + 2);
-            memset(msg_with_name, 0, strlen(c->client_name) + strlen(msg) + 2);
+            char *msg_with_name = malloc(strlen(c->client_name) + strlen(msg) + 3);
+            memset(msg_with_name, 0, strlen(c->client_name) + strlen(msg) + 3);
             memcpy(msg_with_name, c->client_name, strlen(c->client_name));
             *(msg_with_name + strlen(c->client_name)) = ':';
-            memcpy(msg_with_name + strlen(c->client_name) + 1, msg, strlen(msg));
+            *(msg_with_name + strlen(c->client_name) + 1) = ' ';
+            memcpy(msg_with_name + strlen(c->client_name) + 2, msg, strlen(msg));
 
             send(*client->socket, msg_with_name, (int) strlen(msg_with_name), 0);
         }
