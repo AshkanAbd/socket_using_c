@@ -1,6 +1,8 @@
 #include "client.h"
 
-void init_client(struct Client *c, int buffer_size, int socket) {
+void init_client(struct Client *c, int buffer_size, int
+
+&socket) {
     c->buffer = malloc(buffer_size);
     memset(c->buffer, 0, buffer_size);
 
@@ -39,7 +41,7 @@ void *receive_func(void *obj) {
         recv(c->socket, c->buffer, c->buffer_size, 0);
 
         if (!(strlen(c->buffer) == 1 && *c->buffer == '\n') && strlen(c->buffer) != 0) {
-            printf("Server says: %s", c->buffer);
+            printf("%s", c->buffer);
         }
     }
 }

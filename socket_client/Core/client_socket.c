@@ -19,7 +19,7 @@ void assign_port(struct ClientSocket *s, char *ip, int port) {
 }
 
 int connect_socket(struct ClientSocket *s) {
-    if (connect(s->socket_fd, (SA *) &s->server_address, sizeof(s->server_address)) != 0) {
+    if (connect(s->socket_fd, (struct sockaddr *) &s->server_address, sizeof(s->server_address)) != 0) {
         return errno;
     }
     return 0;
