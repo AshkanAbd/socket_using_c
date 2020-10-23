@@ -12,14 +12,14 @@ struct Client {
     char *client_name;
     char *buffer;
 
-    void (*message_func)(struct Client *, void *);
+    void (*message_func)(struct Client *, char *);
 };
 
 void init_client(struct Client *c, int buffer_size, int socket);
 
 int set_name(struct Client *c);
 
-void set_message_func(struct Client *c, void (*message_func)(struct Client *, void *));
+void set_message_func(struct Client *c, void (*message_func)(struct Client *, char *));
 
 void start_client(struct Client *c);
 

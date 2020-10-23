@@ -29,7 +29,7 @@ int set_name(struct Client *c) {
     return 0;
 }
 
-void set_message_func(struct Client *c, void (*message_func)(struct Client *, void *)) {
+void set_message_func(struct Client *c, void (*message_func)(struct Client *, char *)) {
     c->message_func = message_func;
 }
 
@@ -52,7 +52,8 @@ void *receive_func(void *obj) {
         recv(c->socket, c->buffer, c->buffer_size, 0);
 
         if (!(strlen(c->buffer) == 1 && *c->buffer == '\n') && strlen(c->buffer) != 0) {
-            printf("%s says: %s", c->client_name, c->buffer);
+//            printf("%s says: %s", c->client_name, c->buffer);
+            (*c->message_func)(c, c->buffer);
         } else if (strlen(c->buffer) == 0) {
             printf("%s disconnected\n", c->client_name);
             close(c->socket);

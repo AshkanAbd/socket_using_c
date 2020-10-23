@@ -4,12 +4,16 @@
 #define MAX 1024
 #define PORT 8080
 
+void on_message_received(struct Client *c, char *msg);
+
+struct Client *clients;
+int clientIndex = 0;
+
 int main() {
     struct ServerSocket server_socket;
     int error;
-    struct Client *clients = malloc(MAX * sizeof(struct Client));
+    clients = malloc(MAX * sizeof(struct Client));
     memset(clients, 0, MAX * sizeof(struct Client));
-    int clientIndex = 0;
 
     if ((error = create_socket(&server_socket)) != 0) {
         printf("Failed to create socket\n");
@@ -42,8 +46,20 @@ int main() {
         } else {
             struct Client client;
             init_client(&client, MAX, server_socket.connection_fd);
+            set_message_func(&client, on_message_received);
             *(clients + clientIndex++) = client;
             start_client(&client);
+        }
+    }
+}
+
+void on_message_received(struct Client *c, char *msg) {
+    struct Client *client;
+    for (int i = 0; i < clientIndex; ++i) {
+        client = (clients + i);
+
+        if (client->socket != c->socket) {
+            send(client->socket, msg, c->buffer_size, 0);
         }
     }
 }
