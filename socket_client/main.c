@@ -3,8 +3,6 @@
 
 #define MAX 1024
 #define PORT 8080
-#define SA struct sockaddr
-
 
 int main() {
     struct ClientSocket client_socket;

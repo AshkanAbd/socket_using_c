@@ -5,8 +5,6 @@
 #include <winsock2.h>
 #include <io.h>
 
-#define SA struct sockaddr
-
 struct ServerSocket {
     int socket_fd, connection_fd, len;
     struct sockaddr_in server_address, server_cli;
