@@ -1,6 +1,9 @@
 # socket_using_c
 socket programming using C
 
+##### Single client version.
+##### Please also check multi client version in multi-client branch
+
 ### Requirements:
 1) Windows OS
 2) C version >= 99
