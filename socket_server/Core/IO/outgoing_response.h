@@ -9,7 +9,7 @@
 #define RESPONSE_BAD_REQUEST 3
 #define RESPONSE_INVALID_ACTION 4
 #define RESPONSE_SERVER_ERROR 5
-#define RESPONSE_INVALID_SYNTAX 5
+#define RESPONSE_INVALID_SYNTAX 6
 
 struct OutgoingResponse {
     int status;
