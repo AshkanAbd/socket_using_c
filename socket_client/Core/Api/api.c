@@ -3,22 +3,22 @@
 void prepare_request(struct OutgoingRequest *request, char *buffer) {
     memcpy(buffer, (char *) &request->action, 1);
 
-    memcpy(buffer + 1, request->route, strlen(request->route));
+    memcpy(buffer + 2, request->route, strlen(request->route));
 
     if (request->param_size != 0 && request->body_size != 0) {
 
-        memcpy(buffer + 1 + strlen(request->route) + 1, request->param, request->param_size);
+        memcpy(buffer + 2 + strlen(request->route) + 1, request->param, request->param_size);
 
-        memcpy(buffer + 1 + strlen(request->route) + 1 + request->param_size + 1,
+        memcpy(buffer + 2 + strlen(request->route) + 1 + request->param_size + 1,
                request->body, request->body_size);
 
     } else if (request->param_size != 0 && request->body_size == 0) {
 
-        memcpy(buffer + 1 + strlen(request->route) + 1, request->param, request->param_size);
+        memcpy(buffer + 2 + strlen(request->route) + 1, request->param, request->param_size);
 
     } else if (request->param_size == 0 && request->body_size != 0) {
 
-        memcpy(buffer + 1 + strlen(request->route) + 1 + 1, request->body, request->body_size);
+        memcpy(buffer + 2 + strlen(request->route) + 1 + 1, request->body, request->body_size);
 
     }
 }
@@ -28,16 +28,18 @@ struct IncomingResponse *read_api(struct Client *client, char *route, void *para
     init_read(&request, route, param, param_size);
 
     int request_buffer_size = 1 + 1 + (int) strlen(request.route) + 1 + request.param_size + 1 + request.body_size + 1;
-    char *request_buffer = malloc(request_buffer_size);
+    char *request_buffer = malloc(request_buffer_size + 1);
     memset(request_buffer, 0x1D, request_buffer_size);
+    *(request_buffer + request_buffer_size) = 0;
 
     prepare_request(&request, request_buffer);
 
     send(client->socket, request_buffer, request_buffer_size, 0);
 
     int response_buffer_size = client->buffer_size;
-    char *response_buffer = malloc(response_buffer_size);
+    char *response_buffer = malloc(response_buffer_size + 1);
     memset(response_buffer, 0x1D, response_buffer_size);
+    *(response_buffer + response_buffer_size) = 0;
 
     recv(client->socket, response_buffer, response_buffer_size, 0);
 

@@ -2,17 +2,28 @@
 
 void init_request(struct OutgoingRequest *request, char *route, void *param, int param_size,
                   void *body, int body_size) {
-    request->route = malloc(strlen(route));
+    request->route = malloc(strlen(route) + 1);
+    memset(request->route, 0, strlen(route) + 1);
     memcpy(request->route, route, strlen(route));
 
     if (param_size != 0) {
         request->param = malloc(param_size);
         memcpy(request->param, param, param_size);
+
+        request->param_size = param_size;
+    } else {
+        request->param = NULL;
+        request->param_size = 0;
     }
 
     if (body_size != 0) {
         request->body = malloc(body_size);
         memcpy(request->body, body, body_size);
+
+        request->body_size = body_size;
+    } else {
+        request->body = NULL;
+        request->body_size = 0;
     }
 }
 

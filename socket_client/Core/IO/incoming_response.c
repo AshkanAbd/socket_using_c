@@ -1,10 +1,10 @@
 #include "incoming_response.h"
 
 void init(struct IncomingResponse *response, void *data, int data_size) {
-    response->data_size = data_size;
+    response->data_size = data_size - 2;
 
-    response->data = malloc(data_size);
-    memcpy(response->data, data, data_size);
+    response->data = malloc(data_size - 2);
+    memcpy(response->data, data + 2, data_size - 2);
 }
 
 void init_ok(struct IncomingResponse *response, void *data, int data_size) {

@@ -26,21 +26,30 @@ int fill(struct IncomingRequest *request, int state, const char *buff, int buff_
         if (buff_size == 0) {
             return 0;
         }
+
+        request->route = malloc(buff_size + 1);
         memset(request->route, 0, buff_size);
         memcpy(request->route, buff, buff_size);
+
     } else if (state == 3) {
         if (buff_size == 0) {
             return 1;
         }
+
+        request->param = malloc(buff_size + 1);
         memset(request->param, 0, buff_size);
         memcpy(request->param, buff, buff_size);
+
         request->param_size = buff_size;
     } else if (state == 4) {
         if (buff_size == 0) {
             return 1;
         }
+
+        request->body = malloc(buff_size + 1);
         memset(request->body, 0, buff_size);
         memcpy(request->body, buff, buff_size);
+
         request->body_size = buff_size;
     } else {
         return 0;
@@ -55,10 +64,13 @@ int parse_request(struct IncomingRequest *request, const char *buffer, int buffe
     int state = 1;
 
     for (int i = 0; i < buffer_size; ++i) {
-        char c = *(buffer + buffer_size);
+        char c = *(buffer + i);
         if (c != 0x1D) {
             *(buff + buff_index++) = c;
         } else {
+            if (*(buffer + i) == *(buffer + i - 1) && *(buffer + i) == *(buffer + i + 1)) {
+                break;
+            }
             if (!fill(request, state, buff, buff_index)) {
                 return 0;
             }
@@ -68,5 +80,8 @@ int parse_request(struct IncomingRequest *request, const char *buffer, int buffe
         }
     }
 
+    if (state == 1) {
+        return 0;
+    }
     return 1;
 }

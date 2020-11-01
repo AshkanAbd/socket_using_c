@@ -85,6 +85,7 @@ void *handle_client(void *obj) {
 
     char *buffer = malloc(MAX);
     memset(buffer, 0x1D, MAX);
+    *(buffer + MAX) = 0;
     recv(*client->socket, buffer, MAX, 0);
 
     struct IncomingRequest request;
@@ -101,7 +102,6 @@ void *handle_client(void *obj) {
         }
         memmove(response, execute_controller(&request, routeTemplate), sizeof(struct OutgoingResponse));
     }
-
     buffer = malloc(response->data_size + 2);
     memset(buffer, 0x1D, response->data_size + 2);
 
