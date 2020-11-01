@@ -8,6 +8,8 @@ add_executable(socket_client
         main.c
         Core/Socket/client_socket.h Core/Socket/client_socket.c
         Core/Socket/client.h Core/Socket/client.c
+        Core/IO/outgoing_request.h Core/IO/outgoing_request.c
+        Core/IO/incoming_response.h Core/IO/incoming_response.c
         )
 
 if (WIN32)
