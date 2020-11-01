@@ -21,14 +21,6 @@ struct Client {
 
 void init_client(struct Client *c, int buffer_size, int *socket);
 
-void set_message_func(struct Client *c, void (*message_func)(struct Client *, char *));
-
-void set_connect_func(struct Client *c, void (*connect_func)(struct Client *));
-
-void set_disconnect_func(struct Client *c, void (*disconnect_func)(struct Client *));
-
-void start_client(struct Client *c);
-
-void *receive_func(void *obj);
+void close_client(struct Client *c);
 
 #endif //SOCKET_SERVER_CLIENT_H

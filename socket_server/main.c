@@ -5,12 +5,6 @@
 #define MAX 1024
 #define PORT 8080
 
-void on_client_connect(struct Client *c);
-
-void on_message_received(struct Client *c, char *msg);
-
-void on_client_disconnect(struct Client *c);
-
 void *handle_client(void *obj);
 
 void init_server(struct ServerSocket *server_socket);
@@ -43,11 +37,6 @@ int main() {
             init_client(client, MAX, &connection);
             pthread_t receive_thread;
             pthread_create(&receive_thread, NULL, handle_client, client);
-
-//            set_connect_func(client, on_client_connect);
-//            set_message_func(client, on_message_received);
-//            set_disconnect_func(client, on_client_disconnect);
-//            start_client(client);
         }
     }
 }
@@ -99,8 +88,9 @@ void *handle_client(void *obj) {
             init_not_found(response, NULL, 0);
         } else if (routeTemplate->action != request.action) {
             init_invalid_action(response, NULL, 0);
+        } else {
+            memmove(response, execute_controller(&request, routeTemplate), sizeof(struct OutgoingResponse));
         }
-        memmove(response, execute_controller(&request, routeTemplate), sizeof(struct OutgoingResponse));
     }
     buffer = malloc(response->data_size + 2);
     memset(buffer, 0x1D, response->data_size + 2);
@@ -109,16 +99,5 @@ void *handle_client(void *obj) {
     memcpy(buffer + 2, response->data, response->data_size);
 
     send(*client->socket, buffer, response->data_size + 2, 0);
-}
-
-void on_client_connect(struct Client *c) {
-
-}
-
-void on_message_received(struct Client *c, char *msg) {
-
-}
-
-void on_client_disconnect(struct Client *c) {
-
+    close_client(client);
 }
