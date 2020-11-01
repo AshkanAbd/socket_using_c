@@ -1,4 +1,5 @@
 #include "pipeline.h"
+#include "../Router/router.h"
 
 void init_pipeline(struct Pipeline *pipeline) {
     pipeline->route_count = 0;
@@ -6,7 +7,7 @@ void init_pipeline(struct Pipeline *pipeline) {
     pipeline->templates = malloc(1024 * sizeof(struct RouteTemplate));
     memset(pipeline->templates, 0, 1024 * sizeof(struct RouteTemplate));
 
-    registerRoutes(pipeline->templates);
+    registerRoutes(pipeline);
 }
 
 struct RouteTemplate *match_request(struct Pipeline *pipeline, struct IncomingRequest *request) {

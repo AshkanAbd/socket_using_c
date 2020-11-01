@@ -1,21 +1,21 @@
 #include "router.h"
 
-void readAction(struct RouteTemplate *templates, char *route,
+void readAction(struct Pipeline *pipeline, char *route,
                 struct OutgoingResponse *(*func)(void *)) {
-    initRouteTemplate(templates, REQUEST_READ, route, func);
+    initRouteTemplate((pipeline->templates + pipeline->route_count++), REQUEST_READ, route, func);
 }
 
-void createAction(struct RouteTemplate *templates, char *route,
+void createAction(struct Pipeline *pipeline, char *route,
                   struct OutgoingResponse *(*func)(void *)) {
-    initRouteTemplate(templates, REQUEST_CREATE, route, func);
+    initRouteTemplate((pipeline->templates + pipeline->route_count++), REQUEST_CREATE, route, func);
 }
 
-void updateAction(struct RouteTemplate *templates, char *route,
+void updateAction(struct Pipeline *pipeline, char *route,
                   struct OutgoingResponse *(*func)(void *)) {
-    initRouteTemplate(templates, REQUEST_UPDATE, route, func);
+    initRouteTemplate((pipeline->templates + pipeline->route_count++), REQUEST_UPDATE, route, func);
 }
 
-void deleteAction(struct RouteTemplate *templates, char *route,
+void deleteAction(struct Pipeline *pipeline, char *route,
                   struct OutgoingResponse *(*func)(void *)) {
-    initRouteTemplate(templates, REQUEST_DELETE, route, func);
+    initRouteTemplate((pipeline->templates + pipeline->route_count++), REQUEST_DELETE, route, func);
 }
