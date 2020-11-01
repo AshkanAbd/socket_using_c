@@ -4,26 +4,11 @@ void init_client(struct Client *c, int buffer_size, int socket) {
     c->buffer = malloc(buffer_size);
     memset(c->buffer, 0, buffer_size);
 
-    c->client_name = malloc(buffer_size);
-    memset(c->client_name, 0, buffer_size);
-
     c->socket = socket;
     c->buffer_size = buffer_size;
 }
 
-int set_name(struct Client *c) {
-    int counter = 0;
-    do {
-        printf("Enter your name:");
-        while ((*(c->client_name + counter++) = (char) getchar()) != '\n');
-    } while (strcmp(c->client_name, "\n") == 0);
-
-    send(c->socket, c->client_name, c->buffer_size, 0);
-}
-
 void start_client(struct Client *c) {
-    set_name(c);
-
     pthread_t receive_thread;
     pthread_create(&receive_thread, NULL, receive_func, c);
     pthread_t send_thread;

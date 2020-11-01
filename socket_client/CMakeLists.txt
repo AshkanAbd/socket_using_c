@@ -6,8 +6,8 @@ set(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} "-static")
 
 add_executable(socket_client
         main.c
-        Core/client_socket.h Core/client_socket.c
-        Core/client.h Core/client.c
+        Core/Socket/client_socket.h Core/Socket/client_socket.c
+        Core/Socket/client.h Core/Socket/client.c
         )
 
 if (WIN32)

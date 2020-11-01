@@ -1,5 +1,5 @@
-#include "Core/client_socket.h"
-#include "Core/client.h"
+#include "Core/Socket/client_socket.h"
+#include "Core/Socket/client.h"
 
 #define MAX 1024
 #define PORT 8080

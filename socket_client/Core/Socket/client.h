@@ -10,13 +10,10 @@
 
 struct Client {
     int socket, buffer_size;
-    char *client_name;
     char *buffer;
 };
 
 void init_client(struct Client *c, int buffer_size, int socket);
-
-int set_name(struct Client *c);
 
 void start_client(struct Client *c);
 
