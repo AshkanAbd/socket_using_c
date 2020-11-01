@@ -1,5 +1,14 @@
 #include "api.h"
 
+struct Client *request_client() {
+    struct ClientSocket client_socket;
+    struct Client client;
+
+    init_socket(&client_socket);
+
+    init_client(&client, MAX, client_socket.socket_fd);
+}
+
 void prepare_request(struct OutgoingRequest *request, char *buffer) {
     memcpy(buffer, (char *) &request->action, 1);
 
@@ -23,7 +32,8 @@ void prepare_request(struct OutgoingRequest *request, char *buffer) {
     }
 }
 
-struct IncomingResponse *read_api(struct Client *client, char *route, void *param, int param_size) {
+struct IncomingResponse *read_api(char *route, void *param, int param_size) {
+    struct Client *client = request_client();
     struct OutgoingRequest request;
     init_read(&request, route, param, param_size);
 
@@ -61,8 +71,8 @@ struct IncomingResponse *read_api(struct Client *client, char *route, void *para
     return response;
 }
 
-struct IncomingResponse *create_api(struct Client *client, char *route, void *param, int param_size,
-                                    void *body, int body_size) {
+struct IncomingResponse *create_api(char *route, void *param, int param_size, void *body, int body_size) {
+    struct Client *client = request_client();
     struct OutgoingRequest request;
     init_create(&request, route, param, param_size, body, body_size);
 
@@ -81,8 +91,9 @@ struct IncomingResponse *create_api(struct Client *client, char *route, void *pa
     recv(client->socket, response_buffer, response_buffer_size, 0);
 }
 
-struct IncomingResponse *update_api(struct Client *client, char *route, void *param, int param_size,
-                                    void *body, int body_size) {
+struct IncomingResponse *update_api(char *route, void *param, int param_size, void *body, int body_size) {
+    struct Client *client = request_client();
+
     struct OutgoingRequest request;
     init_update(&request, route, param, param_size, body, body_size);
 
@@ -101,7 +112,9 @@ struct IncomingResponse *update_api(struct Client *client, char *route, void *pa
     recv(client->socket, response_buffer, response_buffer_size, 0);
 }
 
-struct IncomingResponse *delete_api(struct Client *client, char *route, void *param, int param_size) {
+struct IncomingResponse *delete_api(char *route, void *param, int param_size) {
+    struct Client *client = request_client();
+
     struct OutgoingRequest request;
     init_delete(&request, route, param, param_size);
 

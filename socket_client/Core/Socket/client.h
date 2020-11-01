@@ -8,6 +8,8 @@
 #include <winsock2.h>
 #include <pthread.h>
 
+#define MAX 1024
+
 struct Client {
     int socket, buffer_size;
     char *buffer;

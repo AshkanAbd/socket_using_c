@@ -29,3 +29,25 @@ void close_socket(struct ClientSocket *s) {
     close(s->socket_fd);
     WSACleanup();
 }
+
+void init_socket(struct ClientSocket *client_socket) {
+    int error;
+
+    if ((error = create_socket(client_socket) != 0)) {
+        printf("Failed to create socket\n");
+        printf("Error= %d:%s\n", error, strerror(error));
+        exit(0);
+    } else {
+        printf("Socket created...\n");
+    }
+
+    assign_port(client_socket, "127.0.0.1", PORT);
+
+    if ((error = connect_socket(client_socket) != 0)) {
+        printf("Failed to connect\n");
+        printf("Error= %d:%s\n", error, strerror(error));
+        exit(0);
+    } else {
+        printf("Socket connected...\n");
+    }
+}
