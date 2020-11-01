@@ -4,8 +4,20 @@
 #define MAX 1024
 #define PORT 8080
 
+void init_socket(struct ClientSocket *client_socket);
+
 int main() {
     struct ClientSocket client_socket;
+    struct Client client;
+
+    init_socket(&client_socket);
+
+    init_client(&client, MAX, client_socket.socket_fd);
+    start_client(&client);
+}
+
+void init_socket(struct ClientSocket *client_socket) {
+
     int error;
 
     if ((error = create_socket(&client_socket) != 0)) {
@@ -25,8 +37,4 @@ int main() {
     } else {
         printf("Socket connected...\n");
     }
-
-    struct Client client;
-    init_client(&client, MAX, client_socket.socket_fd);
-    start_client(&client);
 }
