@@ -37,8 +37,6 @@ void init_socket(struct ClientSocket *client_socket) {
         printf("Failed to create socket\n");
         printf("Error= %d:%s\n", error, strerror(error));
         exit(0);
-    } else {
-        printf("Socket created...\n");
     }
 
     assign_port(client_socket, "127.0.0.1", PORT);
@@ -47,7 +45,5 @@ void init_socket(struct ClientSocket *client_socket) {
         printf("Failed to connect\n");
         printf("Error= %d:%s\n", error, strerror(error));
         exit(0);
-    } else {
-        printf("Socket connected...\n");
     }
 }
