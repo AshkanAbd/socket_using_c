@@ -32,14 +32,18 @@ void start_client(struct Client *c) {
 
 void *receive_func(void *obj) {
     struct Client *c = (struct Client *) obj;
-    (*c->connect_func)(c);
+    if (c->connect_func != NULL) {
+        (*c->connect_func)(c);
+    }
 
     while (1) {
         memset(c->buffer, 0, c->buffer_size);
         recv(*c->socket, c->buffer, c->buffer_size, 0);
 
         if (!(strlen(c->buffer) == 1 && *c->buffer == '\n') && strlen(c->buffer) != 0) {
-            (*c->message_func)(c, c->buffer);
+            if (c->message_func != NULL) {
+                (*c->message_func)(c, c->buffer);
+            }
         } else if (strlen(c->buffer) == 0) {
             printf("%d disconnected\n", *c->socket);
             if (c->disconnect_func != NULL) {
