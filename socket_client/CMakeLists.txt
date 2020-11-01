@@ -10,7 +10,7 @@ add_executable(socket_client
         Core/Socket/client.h Core/Socket/client.c
         Core/IO/outgoing_request.h Core/IO/outgoing_request.c
         Core/IO/incoming_response.h Core/IO/incoming_response.c
-        Core/Api/api.h Core/Api/api.c)
+        Core/Api/api.h Core/Api/api.c send_request.c)
 
 if (WIN32)
     target_link_libraries(socket_client wsock32 ws2_32)
