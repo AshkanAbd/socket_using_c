@@ -3,22 +3,22 @@
 void prepare_request(struct OutgoingRequest *request, char *buffer) {
     memcpy(buffer, (char *) &request->action, 1);
 
-    memcpy(buffer + 5, request->route, strlen(request->route));
+    memcpy(buffer + 1, request->route, strlen(request->route));
 
     if (request->param_size != 0 && request->body_size != 0) {
 
-        memcpy(buffer + 5 + strlen(request->route) + 5, request->param, request->param_size);
+        memcpy(buffer + 1 + strlen(request->route) + 1, request->param, request->param_size);
 
-        memcpy(buffer + 5 + strlen(request->route) + 5 + request->param_size + 5,
+        memcpy(buffer + 1 + strlen(request->route) + 1 + request->param_size + 1,
                request->body, request->body_size);
 
     } else if (request->param_size != 0 && request->body_size == 0) {
 
-        memcpy(buffer + 5 + strlen(request->route) + 5, request->param, request->param_size);
+        memcpy(buffer + 1 + strlen(request->route) + 1, request->param, request->param_size);
 
     } else if (request->param_size == 0 && request->body_size != 0) {
 
-        memcpy(buffer + 5 + strlen(request->route) + 5 + 5, request->body, request->body_size);
+        memcpy(buffer + 1 + strlen(request->route) + 1 + 1, request->body, request->body_size);
 
     }
 }
@@ -27,9 +27,9 @@ struct IncomingResponse *read_api(struct Client *client, char *route, void *para
     struct OutgoingRequest request;
     init_read(&request, route, param, param_size);
 
-    int request_buffer_size = 1 + 5 + (int) strlen(request.route) + 5 + request.param_size + 5 + request.body_size + 5;
+    int request_buffer_size = 1 + 1 + (int) strlen(request.route) + 1 + request.param_size + 1 + request.body_size + 1;
     char *request_buffer = malloc(request_buffer_size);
-    memset(request_buffer, 0, request_buffer_size);
+    memset(request_buffer, 0x1D, request_buffer_size);
 
     prepare_request(&request, request_buffer);
 
@@ -37,7 +37,7 @@ struct IncomingResponse *read_api(struct Client *client, char *route, void *para
 
     int response_buffer_size = client->buffer_size;
     char *response_buffer = malloc(response_buffer_size);
-    memset(response_buffer, 0, response_buffer_size);
+    memset(response_buffer, 0x1D, response_buffer_size);
 
     recv(client->socket, response_buffer, response_buffer_size, 0);
 }
@@ -47,9 +47,9 @@ struct IncomingResponse *create_api(struct Client *client, char *route, void *pa
     struct OutgoingRequest request;
     init_create(&request, route, param, param_size, body, body_size);
 
-    int request_buffer_size = 1 + 5 + (int) strlen(request.route) + 5 + request.param_size + 5 + request.body_size + 5;
+    int request_buffer_size = 1 + 1 + (int) strlen(request.route) + 1 + request.param_size + 1 + request.body_size + 1;
     char *request_buffer = malloc(request_buffer_size);
-    memset(request_buffer, 0, request_buffer_size);
+    memset(request_buffer, 0x1D, request_buffer_size);
 
     prepare_request(&request, request_buffer);
 
@@ -57,7 +57,7 @@ struct IncomingResponse *create_api(struct Client *client, char *route, void *pa
 
     int response_buffer_size = client->buffer_size;
     char *response_buffer = malloc(response_buffer_size);
-    memset(response_buffer, 0, response_buffer_size);
+    memset(response_buffer, 0x1D, response_buffer_size);
 
     recv(client->socket, response_buffer, response_buffer_size, 0);
 }
@@ -67,9 +67,9 @@ struct IncomingResponse *update_api(struct Client *client, char *route, void *pa
     struct OutgoingRequest request;
     init_update(&request, route, param, param_size, body, body_size);
 
-    int request_buffer_size = 1 + 5 + (int) strlen(request.route) + 5 + request.param_size + 5 + request.body_size + 5;
+    int request_buffer_size = 1 + 1 + (int) strlen(request.route) + 1 + request.param_size + 1 + request.body_size + 1;
     char *request_buffer = malloc(request_buffer_size);
-    memset(request_buffer, 0, request_buffer_size);
+    memset(request_buffer, 0x1D, request_buffer_size);
 
     prepare_request(&request, request_buffer);
 
@@ -77,7 +77,7 @@ struct IncomingResponse *update_api(struct Client *client, char *route, void *pa
 
     int response_buffer_size = client->buffer_size;
     char *response_buffer = malloc(response_buffer_size);
-    memset(response_buffer, 0, response_buffer_size);
+    memset(response_buffer, 0x1D, response_buffer_size);
 
     recv(client->socket, response_buffer, response_buffer_size, 0);
 }
@@ -86,9 +86,9 @@ struct IncomingResponse *delete_api(struct Client *client, char *route, void *pa
     struct OutgoingRequest request;
     init_delete(&request, route, param, param_size);
 
-    int request_buffer_size = 1 + 5 + (int) strlen(request.route) + 5 + request.param_size + 5 + request.body_size + 5;
+    int request_buffer_size = 1 + 1 + (int) strlen(request.route) + 1 + request.param_size + 1 + request.body_size + 1;
     char *request_buffer = malloc(request_buffer_size);
-    memset(request_buffer, 0, request_buffer_size);
+    memset(request_buffer, 0x1D, request_buffer_size);
 
     prepare_request(&request, request_buffer);
 
@@ -96,7 +96,7 @@ struct IncomingResponse *delete_api(struct Client *client, char *route, void *pa
 
     int response_buffer_size = client->buffer_size;
     char *response_buffer = malloc(response_buffer_size);
-    memset(response_buffer, 0, response_buffer_size);
+    memset(response_buffer, 0x1D, response_buffer_size);
 
     recv(client->socket, response_buffer, response_buffer_size, 0);
 }
