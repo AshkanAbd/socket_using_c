@@ -40,6 +40,23 @@ struct IncomingResponse *read_api(struct Client *client, char *route, void *para
     memset(response_buffer, 0x1D, response_buffer_size);
 
     recv(client->socket, response_buffer, response_buffer_size, 0);
+
+    struct IncomingResponse *response = malloc(sizeof(struct IncomingResponse));
+    memset(response, 0, sizeof(struct IncomingResponse));
+    if (*response_buffer == RESPONSE_OK) {
+        init_ok(response, response_buffer, response_buffer_size);
+    } else if (*response_buffer == RESPONSE_NOT_FOUND) {
+        init_not_found(response, response_buffer, response_buffer_size);
+    } else if (*response_buffer == RESPONSE_BAD_REQUEST) {
+        init_bad_request(response, response_buffer, response_buffer_size);
+    } else if (*response_buffer == RESPONSE_INVALID_ACTION) {
+        init_invalid_action(response, response_buffer, response_buffer_size);
+    } else if (*response_buffer == RESPONSE_SERVER_ERROR) {
+        init_server_error(response, response_buffer, response_buffer_size);
+    } else if (*response_buffer == RESPONSE_INVALID_SYNTAX) {
+        init_invalid_syntax(response, response_buffer, response_buffer_size);
+    }
+    return response;
 }
 
 struct IncomingResponse *create_api(struct Client *client, char *route, void *param, int param_size,

@@ -37,3 +37,9 @@ void init_server_error(struct IncomingResponse *response, void *data, int data_s
     init(response, data, data_size);
 }
 
+void init_invalid_syntax(struct IncomingResponse *response, void *data, int data_size) {
+    response->status = RESPONSE_INVALID_SYNTAX;
+
+    init(response, data, data_size);
+}
+
