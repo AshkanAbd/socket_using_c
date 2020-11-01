@@ -30,16 +30,16 @@ int listen_socket(struct ServerSocket *s) {
     if ((listen(s->socket_fd, 5)) != 0) {
         return errno;
     }
-    s->len = sizeof(s->server_cli);
     return 0;
 }
 
 int accept_connection(struct ServerSocket *s) {
-    s->connection_fd = accept(s->socket_fd, (struct sockaddr *) &s->server_cli, &s->len);
-    if (s->connection_fd < 0) {
+    int server_len = sizeof(s->server_address);
+    int connection = accept(s->socket_fd, (struct sockaddr *) &s->server_address, &server_len);
+    if (connection < 0) {
         return errno;
     }
-    return 0;
+    return connection;
 }
 
 void close_socket(struct ServerSocket *s) {

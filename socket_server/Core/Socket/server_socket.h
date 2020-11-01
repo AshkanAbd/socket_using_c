@@ -6,8 +6,8 @@
 #include <io.h>
 
 struct ServerSocket {
-    int socket_fd, connection_fd, len;
-    struct sockaddr_in server_address, server_cli;
+    int socket_fd;
+    struct sockaddr_in server_address;
 };
 
 int create_socket(struct ServerSocket *s);

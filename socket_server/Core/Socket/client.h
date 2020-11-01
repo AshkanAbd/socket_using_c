@@ -8,18 +8,29 @@
 #include <pthread.h>
 
 struct Client {
-    int socket, buffer_size;
+    int *socket;
+    int buffer_size;
     char *client_name;
     char *buffer;
+
+    void (*message_func)(struct Client *, char *);
+
+    void (*connect_func)(struct Client *);
+
+    void (*disconnect_func)(struct Client *);
 };
 
-void init_client(struct Client *c, int buffer_size, int socket);
+void init_client(struct Client *c, int buffer_size, int *socket);
 
 int set_name(struct Client *c);
 
-void start_client(struct Client *c);
+void set_message_func(struct Client *c, void (*message_func)(struct Client *, char *));
 
-void *send_func(void *obj);
+void set_connect_func(struct Client *c, void (*connect_func)(struct Client *));
+
+void set_disconnect_func(struct Client *c, void (*disconnect_func)(struct Client *));
+
+void start_client(struct Client *c);
 
 void *receive_func(void *obj);
 
