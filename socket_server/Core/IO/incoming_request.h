@@ -21,4 +21,6 @@ struct IncomingRequest {
 void init_request(struct IncomingRequest *request, int action, char *route, void *param, int param_size,
                   void *body, int body_size);
 
+int parse_request(struct IncomingRequest *request, const char *buffer, int buffer_size);
+
 #endif //SOCKET_SERVER_INCOMING_REQUEST_H
