@@ -39,6 +39,6 @@ int check_action(struct RouteTemplate *template, struct IncomingRequest *request
 }
 
 struct OutgoingResponse *execute_controller(struct IncomingRequest *request, struct RouteTemplate *template) {
-    return (*template->func)(request->payload);
+    return (*template->func)(request);
 }
 

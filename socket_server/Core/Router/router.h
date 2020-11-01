@@ -6,15 +6,15 @@
 void registerRoutes(struct Pipeline *pipeline);
 
 void readAction(struct Pipeline *pipeline, char *route,
-                struct OutgoingResponse *(*func)(void *));
+                struct OutgoingResponse *(*func)(struct IncomingRequest *request));
 
 void createAction(struct Pipeline *pipeline, char *route,
-                  struct OutgoingResponse *(*func)(void *));
+                  struct OutgoingResponse *(*func)(struct IncomingRequest *request));
 
 void updateAction(struct Pipeline *pipeline, char *route,
-                  struct OutgoingResponse *(*func)(void *));
+                  struct OutgoingResponse *(*func)(struct IncomingRequest *request));
 
 void deleteAction(struct Pipeline *pipeline, char *route,
-                  struct OutgoingResponse *(*func)(void *));
+                  struct OutgoingResponse *(*func)(struct IncomingRequest *request));
 
 #endif //SOCKET_SERVER_ROUTER_H
