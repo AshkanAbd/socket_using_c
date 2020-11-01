@@ -2,5 +2,5 @@
 #include "../controllers/base_controller.h"
 
 void registerRoutes(struct Pipeline *pipeline) {
-    readAction(pipeline, "/hello", sample);
+    readAction(pipeline, "/login", login);
 }

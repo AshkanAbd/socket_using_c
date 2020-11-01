@@ -4,6 +4,6 @@
 #include "../Core/IO/outgoing_response.h"
 #include "../Core/IO/incoming_request.h"
 
-struct OutgoingResponse *sample(struct IncomingRequest *request);
+struct OutgoingResponse *login(struct IncomingRequest *request);
 
 #endif //SOCKET_SERVER_BASE_CONTROLLER_H
