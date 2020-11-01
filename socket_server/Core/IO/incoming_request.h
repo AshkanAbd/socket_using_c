@@ -12,10 +12,13 @@
 struct IncomingRequest {
     int action;
     char *route;
-    void *payload;
-    int payload_size;
+    void *param;
+    int param_size;
+    void *body;
+    int body_size;
 };
 
-void init_request(struct IncomingRequest *request, int action, char *route, void *payload, int payload_size);
+void init_request(struct IncomingRequest *request, int action, char *route, void *param, int param_size,
+                  void *body, int body_size);
 
 #endif //SOCKET_SERVER_INCOMING_REQUEST_H
