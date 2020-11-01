@@ -1,0 +1,15 @@
+#ifndef SOCKET_SERVER_OUTGOING_RESPONSE_H
+#define SOCKET_SERVER_OUTGOING_RESPONSE_H
+
+#define RESPONSE_OK 1
+#define RESPONSE_NOT_FOUND 2
+#define RESPONSE_BAD_REQUEST 3
+#define RESPONSE_INVALID_ACTION 4
+#define RESPONSE_SERVER_ERROR 5
+
+struct OutgoingResponse {
+    int status;
+    void *data;
+};
+
+#endif //SOCKET_SERVER_OUTGOING_RESPONSE_H

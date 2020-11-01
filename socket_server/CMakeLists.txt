@@ -6,9 +6,9 @@ set(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} "-static")
 
 add_executable(socket_server
         main.c
-        Core/server_socket.c Core/server_socket.h
-        Core/client.h Core/client.c
-        )
+        Core/Socket/server_socket.c Core/Socket/server_socket.h
+        Core/Socket/client.h Core/Socket/client.c
+        Core/IO/incoming_request.h Core/IO/incoming_request.c Core/IO/outgoing_response.h Core/IO/outgoing_response.c)
 
 if (WIN32)
     target_link_libraries(socket_server wsock32 ws2_32)
