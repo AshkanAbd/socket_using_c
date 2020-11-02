@@ -1,40 +1,34 @@
 #include "Core/Socket/client.h"
 #include "Core/Api/api.h"
 
-void login();
+void login_ok();
 
-void logout();
+void login_invalid_action();
+
+void login_not_found();
 
 int main() {
-    login();
+    login_ok();
 
-    logout();
+    login_invalid_action();
+
+    login_not_found();
 }
 
-void login() {
+void login_ok() {
     struct IncomingResponse *response = api_read("/login", NULL, 0);
 
-    if (response->status == RESPONSE_OK) {
-        char *data_str = malloc(response->data_size);
-        memset(data_str, 0, response->data_size);
-        memcpy(data_str, response->data, response->data_size);
-
-        printf("%s\n", data_str);
-    } else if (response->status == RESPONSE_NOT_FOUND) {
-        printf("route notfound\n");
-    }
+    printf("%s\n", response_to_str(response));
 }
 
-void logout() {
-    struct IncomingResponse *response = api_read("/logout", NULL, 0);
+void login_invalid_action() {
+    struct IncomingResponse *response = api_delete("/login", NULL, 0);
 
-    if (response->status == RESPONSE_OK) {
-        char *data_str = malloc(response->data_size);
-        memset(data_str, 0, response->data_size);
-        memcpy(data_str, response->data, response->data_size);
+    printf("%s\n", response_to_str(response));
+}
 
-        printf("%s\n", data_str);
-    } else if (response->status == RESPONSE_NOT_FOUND) {
-        printf("route notfound\n");
-    }
+void login_not_found() {
+    struct IncomingResponse *response = api_delete("/login1", NULL, 0);
+
+    printf("%s\n", response_to_str(response));
 }
