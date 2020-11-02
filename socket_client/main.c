@@ -12,7 +12,7 @@ int main() {
 }
 
 void login() {
-    struct IncomingResponse *response = read_api("/login", NULL, 0);
+    struct IncomingResponse *response = api_read("/login", NULL, 0);
 
     if (response->status == RESPONSE_OK) {
         char *data_str = malloc(response->data_size);
@@ -26,7 +26,7 @@ void login() {
 }
 
 void logout() {
-    struct IncomingResponse *response = read_api("/logout", NULL, 0);
+    struct IncomingResponse *response = api_read("/logout", NULL, 0);
 
     if (response->status == RESPONSE_OK) {
         char *data_str = malloc(response->data_size);

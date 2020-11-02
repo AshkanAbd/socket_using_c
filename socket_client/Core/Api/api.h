@@ -6,12 +6,12 @@
 #include "../Socket/client.h"
 #include "../Socket/client_socket.h"
 
-struct IncomingResponse *read_api(char *route, void *param, int param_size);
+struct IncomingResponse *api_read(char *route, void *param, int param_size);
 
-struct IncomingResponse *create_api(char *route, void *param, int param_size, void *body, int body_size);
+struct IncomingResponse *api_create(char *route, void *param, int param_size, void *body, int body_size);
 
-struct IncomingResponse *update_api(char *route, void *param, int param_size, void *body, int body_size);
+struct IncomingResponse *api_update(char *route, void *param, int param_size, void *body, int body_size);
 
-struct IncomingResponse *delete_api(char *route, void *param, int param_size);
+struct IncomingResponse *api_delete(char *route, void *param, int param_size);
 
 #endif //SOCKET_CLIENT_API_H

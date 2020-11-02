@@ -35,7 +35,7 @@ void prepare_request(struct OutgoingRequest *request, char *buffer) {
     }
 }
 
-struct IncomingResponse *read_api(char *route, void *param, int param_size) {
+struct IncomingResponse *api_read(char *route, void *param, int param_size) {
     struct Client *client = request_client();
 
     struct OutgoingRequest *request = malloc(sizeof(struct OutgoingRequest));
@@ -78,7 +78,7 @@ struct IncomingResponse *read_api(char *route, void *param, int param_size) {
     return response;
 }
 
-struct IncomingResponse *create_api(char *route, void *param, int param_size, void *body, int body_size) {
+struct IncomingResponse *api_create(char *route, void *param, int param_size, void *body, int body_size) {
     struct Client *client = request_client();
 
     struct OutgoingRequest *request = malloc(sizeof(struct OutgoingRequest));
@@ -102,7 +102,7 @@ struct IncomingResponse *create_api(char *route, void *param, int param_size, vo
     recv(client->socket, response_buffer, response_buffer_size, 0);
 }
 
-struct IncomingResponse *update_api(char *route, void *param, int param_size, void *body, int body_size) {
+struct IncomingResponse *api_update(char *route, void *param, int param_size, void *body, int body_size) {
     struct Client *client = request_client();
 
     struct OutgoingRequest *request = malloc(sizeof(struct OutgoingRequest));
@@ -126,7 +126,7 @@ struct IncomingResponse *update_api(char *route, void *param, int param_size, vo
     recv(client->socket, response_buffer, response_buffer_size, 0);
 }
 
-struct IncomingResponse *delete_api(char *route, void *param, int param_size) {
+struct IncomingResponse *api_delete(char *route, void *param, int param_size) {
     struct Client *client = request_client();
 
     struct OutgoingRequest *request = malloc(sizeof(struct OutgoingRequest));
