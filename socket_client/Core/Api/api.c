@@ -88,8 +88,9 @@ struct IncomingResponse *api_create(char *route, void *param, int param_size, vo
 
     int request_buffer_size = 1 + 1 + (int) strlen(request->route) + 1 + request->param_size +
                               1 + request->body_size + 1;
-    char *request_buffer = malloc(request_buffer_size);
+    char *request_buffer = malloc(request_buffer_size + 1);
     memset(request_buffer, 0x1D, request_buffer_size);
+    *(request_buffer + request_buffer_size) = 0;
 
     prepare_request(request, request_buffer);
 
@@ -100,6 +101,23 @@ struct IncomingResponse *api_create(char *route, void *param, int param_size, vo
     memset(response_buffer, 0x1D, response_buffer_size);
 
     recv(client->socket, response_buffer, response_buffer_size, 0);
+
+    struct IncomingResponse *response = malloc(sizeof(struct IncomingResponse));
+    memset(response, 0, sizeof(struct IncomingResponse));
+    if (*response_buffer == RESPONSE_OK) {
+        init_ok(response, response_buffer, response_buffer_size);
+    } else if (*response_buffer == RESPONSE_NOT_FOUND) {
+        init_not_found(response, response_buffer, response_buffer_size);
+    } else if (*response_buffer == RESPONSE_BAD_REQUEST) {
+        init_bad_request(response, response_buffer, response_buffer_size);
+    } else if (*response_buffer == RESPONSE_INVALID_ACTION) {
+        init_invalid_action(response, response_buffer, response_buffer_size);
+    } else if (*response_buffer == RESPONSE_SERVER_ERROR) {
+        init_server_error(response, response_buffer, response_buffer_size);
+    } else if (*response_buffer == RESPONSE_INVALID_SYNTAX) {
+        init_invalid_syntax(response, response_buffer, response_buffer_size);
+    }
+    return response;
 }
 
 struct IncomingResponse *api_update(char *route, void *param, int param_size, void *body, int body_size) {
@@ -112,8 +130,9 @@ struct IncomingResponse *api_update(char *route, void *param, int param_size, vo
 
     int request_buffer_size = 1 + 1 + (int) strlen(request->route) + 1 + request->param_size +
                               1 + request->body_size + 1;
-    char *request_buffer = malloc(request_buffer_size);
+    char *request_buffer = malloc(request_buffer_size + 1);
     memset(request_buffer, 0x1D, request_buffer_size);
+    *(request_buffer + request_buffer_size) = 0;
 
     prepare_request(request, request_buffer);
 
@@ -124,6 +143,23 @@ struct IncomingResponse *api_update(char *route, void *param, int param_size, vo
     memset(response_buffer, 0x1D, response_buffer_size);
 
     recv(client->socket, response_buffer, response_buffer_size, 0);
+
+    struct IncomingResponse *response = malloc(sizeof(struct IncomingResponse));
+    memset(response, 0, sizeof(struct IncomingResponse));
+    if (*response_buffer == RESPONSE_OK) {
+        init_ok(response, response_buffer, response_buffer_size);
+    } else if (*response_buffer == RESPONSE_NOT_FOUND) {
+        init_not_found(response, response_buffer, response_buffer_size);
+    } else if (*response_buffer == RESPONSE_BAD_REQUEST) {
+        init_bad_request(response, response_buffer, response_buffer_size);
+    } else if (*response_buffer == RESPONSE_INVALID_ACTION) {
+        init_invalid_action(response, response_buffer, response_buffer_size);
+    } else if (*response_buffer == RESPONSE_SERVER_ERROR) {
+        init_server_error(response, response_buffer, response_buffer_size);
+    } else if (*response_buffer == RESPONSE_INVALID_SYNTAX) {
+        init_invalid_syntax(response, response_buffer, response_buffer_size);
+    }
+    return response;
 }
 
 struct IncomingResponse *api_delete(char *route, void *param, int param_size) {
@@ -136,8 +172,9 @@ struct IncomingResponse *api_delete(char *route, void *param, int param_size) {
 
     int request_buffer_size = 1 + 1 + (int) strlen(request->route) + 1 + request->param_size +
                               1 + request->body_size + 1;
-    char *request_buffer = malloc(request_buffer_size);
+    char *request_buffer = malloc(request_buffer_size + 1);
     memset(request_buffer, 0x1D, request_buffer_size);
+    *(request_buffer + request_buffer_size) = 0;
 
     prepare_request(request, request_buffer);
 
@@ -148,4 +185,21 @@ struct IncomingResponse *api_delete(char *route, void *param, int param_size) {
     memset(response_buffer, 0x1D, response_buffer_size);
 
     recv(client->socket, response_buffer, response_buffer_size, 0);
+
+    struct IncomingResponse *response = malloc(sizeof(struct IncomingResponse));
+    memset(response, 0, sizeof(struct IncomingResponse));
+    if (*response_buffer == RESPONSE_OK) {
+        init_ok(response, response_buffer, response_buffer_size);
+    } else if (*response_buffer == RESPONSE_NOT_FOUND) {
+        init_not_found(response, response_buffer, response_buffer_size);
+    } else if (*response_buffer == RESPONSE_BAD_REQUEST) {
+        init_bad_request(response, response_buffer, response_buffer_size);
+    } else if (*response_buffer == RESPONSE_INVALID_ACTION) {
+        init_invalid_action(response, response_buffer, response_buffer_size);
+    } else if (*response_buffer == RESPONSE_SERVER_ERROR) {
+        init_server_error(response, response_buffer, response_buffer_size);
+    } else if (*response_buffer == RESPONSE_INVALID_SYNTAX) {
+        init_invalid_syntax(response, response_buffer, response_buffer_size);
+    }
+    return response;
 }
