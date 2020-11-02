@@ -43,3 +43,40 @@ void init_invalid_syntax(struct IncomingResponse *response, void *data, int data
     init(response, data, data_size);
 }
 
+char *response_to_str(struct IncomingResponse *response) {
+    char *action_str = "";
+    switch (response->status) {
+        case RESPONSE_OK:
+            action_str = "OK: ";
+            break;
+        case RESPONSE_NOT_FOUND:
+            action_str = "NotFound: ";
+            break;
+        case RESPONSE_BAD_REQUEST:
+            action_str = "BadRequest: ";
+            break;
+        case RESPONSE_INVALID_ACTION:
+            action_str = "InvalidAction: ";
+            break;
+        case RESPONSE_SERVER_ERROR:
+            action_str = "ServerError: ";
+            break;
+        case RESPONSE_INVALID_SYNTAX:
+            action_str = "InvalidSyntax: ";
+            break;
+    }
+
+    char *data_str = malloc(response->data_size);
+    memset(data_str, 0, response->data_size);
+    memcpy(data_str, response->data, response->data_size);
+    if (strlen(data_str) == 0) {
+        data_str = "<content empty>";
+    }
+
+    char *response_str = malloc(strlen(action_str) + strlen(data_str) + 1);
+    memset(response_str, 0, strlen(action_str) + strlen(data_str) + 1);
+    memcpy(response_str, action_str, strlen(action_str));
+    memcpy(response_str + strlen(action_str), data_str, strlen(data_str));
+
+    return response_str;
+}
