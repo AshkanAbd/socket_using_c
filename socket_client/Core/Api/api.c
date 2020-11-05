@@ -7,7 +7,9 @@ struct Client *request_client() {
     struct Client *client = malloc(sizeof(struct Client));
     memset(client, 0, sizeof(struct Client));
 
-    init_socket(client_socket);
+    if (init_socket(client_socket) != 0) {
+        return NULL;
+    }
 
     init_client(client, MAX, client_socket->socket_fd);
 }
@@ -37,6 +39,9 @@ void prepare_request(struct OutgoingRequest *request, char *buffer) {
 
 struct IncomingResponse *api_read(char *route, void *param, int param_size) {
     struct Client *client = request_client();
+    if (client == NULL) {
+        return NULL;
+    }
 
     struct OutgoingRequest *request = malloc(sizeof(struct OutgoingRequest));
     memset(request, 0, sizeof(struct OutgoingRequest));
@@ -80,6 +85,9 @@ struct IncomingResponse *api_read(char *route, void *param, int param_size) {
 
 struct IncomingResponse *api_create(char *route, void *param, int param_size, void *body, int body_size) {
     struct Client *client = request_client();
+    if (client == NULL) {
+        return NULL;
+    }
 
     struct OutgoingRequest *request = malloc(sizeof(struct OutgoingRequest));
     memset(request, 0, sizeof(struct OutgoingRequest));
@@ -122,6 +130,9 @@ struct IncomingResponse *api_create(char *route, void *param, int param_size, vo
 
 struct IncomingResponse *api_update(char *route, void *param, int param_size, void *body, int body_size) {
     struct Client *client = request_client();
+    if (client == NULL) {
+        return NULL;
+    }
 
     struct OutgoingRequest *request = malloc(sizeof(struct OutgoingRequest));
     memset(request, 0, sizeof(struct OutgoingRequest));
@@ -164,6 +175,9 @@ struct IncomingResponse *api_update(char *route, void *param, int param_size, vo
 
 struct IncomingResponse *api_delete(char *route, void *param, int param_size) {
     struct Client *client = request_client();
+    if (client == NULL) {
+        return NULL;
+    }
 
     struct OutgoingRequest *request = malloc(sizeof(struct OutgoingRequest));
     memset(request, 0, sizeof(struct OutgoingRequest));
