@@ -3,9 +3,10 @@
 void init(struct OutgoingResponse *response, void *data, int data_size) {
     response->data_size = data_size + 1;
 
-    response->data = malloc(data_size + 1);
-    memset(response->data, 0, data_size + 1);
+    response->data = malloc(data_size + 2);
+    memset(response->data, 0, data_size + 2);
     memcpy(response->data, data, data_size);
+    *((char *) (response->data + 1)) = 0x1C;
 }
 
 void init_ok(struct OutgoingResponse *response, void *data, int data_size) {
