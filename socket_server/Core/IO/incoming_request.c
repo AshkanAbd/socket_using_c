@@ -30,6 +30,7 @@ int fill(struct IncomingRequest *request, int state, const char *buff, int buff_
         request->route = malloc(buff_size + 1);
         memset(request->route, 0, buff_size);
         memcpy(request->route, buff, buff_size);
+        *(request->route + buff_size) = 0;
 
     } else if (state == 3) {
         if (buff_size == 0) {
@@ -39,6 +40,7 @@ int fill(struct IncomingRequest *request, int state, const char *buff, int buff_
         request->param = malloc(buff_size + 1);
         memset(request->param, 0, buff_size);
         memcpy(request->param, buff, buff_size);
+        *((char *) (request->param + buff_size)) = 0;
 
         request->param_size = buff_size;
     } else if (state == 4) {
@@ -49,6 +51,7 @@ int fill(struct IncomingRequest *request, int state, const char *buff, int buff_
         request->body = malloc(buff_size + 1);
         memset(request->body, 0, buff_size);
         memcpy(request->body, buff, buff_size);
+        *((char *) (request->body + buff_size)) = 0;
 
         request->body_size = buff_size;
     } else {

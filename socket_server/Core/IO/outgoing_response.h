@@ -3,6 +3,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include "../Socket/client.h"
 
 #define RESPONSE_OK 1
 #define RESPONSE_NOT_FOUND 2
@@ -10,6 +11,8 @@
 #define RESPONSE_INVALID_ACTION 4
 #define RESPONSE_SERVER_ERROR 5
 #define RESPONSE_INVALID_SYNTAX 6
+
+#define MAX 1024
 
 struct OutgoingResponse {
     int status;
@@ -28,5 +31,7 @@ void init_invalid_action(struct OutgoingResponse *response, void *data, int data
 void init_server_error(struct OutgoingResponse *response, void *data, int data_size);
 
 void init_invalid_syntax(struct OutgoingResponse *response, void *data, int data_size);
+
+void send_to_client(struct OutgoingResponse *response, struct Client *client);
 
 #endif //SOCKET_SERVER_OUTGOING_RESPONSE_H

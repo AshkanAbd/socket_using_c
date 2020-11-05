@@ -4,10 +4,23 @@
 void init_pipeline(struct Pipeline *pipeline) {
     pipeline->route_count = 0;
 
+    pipeline->static_files_prefix = NULL;
+
+    pipeline->static_files = malloc(1024 * 1024);
+    memset(pipeline->static_files, 0, 1024 * 1024);
+
+    pipeline->static_files_count = 0;
+
     pipeline->templates = malloc(1024 * sizeof(struct RouteTemplate));
     memset(pipeline->templates, 0, 1024 * sizeof(struct RouteTemplate));
 
     registerRoutes(pipeline);
+}
+
+void set_root_dir(struct Pipeline *pipeline, const char *root_dir) {
+    pipeline->static_files_prefix = malloc(strlen(root_dir) + 1);
+    memset(pipeline->static_files_prefix, 0, strlen(root_dir) + 1);
+    memcpy(pipeline->static_files_prefix, root_dir, strlen(root_dir));
 }
 
 struct RouteTemplate *match_request(struct Pipeline *pipeline, struct IncomingRequest *request) {
@@ -43,3 +56,60 @@ struct OutgoingResponse *execute_controller(struct IncomingRequest *request, str
     return (*template->func)(request);
 }
 
+int request_static_files(struct Pipeline *pipeline, struct IncomingRequest *request) {
+    char *file_path = malloc(strlen(pipeline->static_files_prefix) + strlen(request->route) + 1);
+    memset(file_path, 0, strlen(pipeline->static_files_prefix) + strlen(request->route) + 1);
+    memcpy(file_path, pipeline->static_files_prefix, strlen(pipeline->static_files_prefix));
+    memcpy(file_path + strlen(pipeline->static_files_prefix), request->route, strlen(request->route));
+
+    struct stat *stat_buffer = malloc(sizeof(struct stat));
+    memset(stat_buffer, 0, sizeof(struct stat));
+
+    stat(file_path, stat_buffer);
+    if (S_ISREG(stat_buffer->st_mode)) {
+        return 1;
+    }
+    return 0;
+}
+
+void serve_static_file(struct OutgoingResponse *response, struct Pipeline *pipeline, struct IncomingRequest *request,
+                       struct Client *client) {
+    char *file_path = malloc(strlen(pipeline->static_files_prefix) + strlen(request->route) + 1);
+    memset(file_path, 0, strlen(pipeline->static_files_prefix) + strlen(request->route) + 1);
+    memcpy(file_path, pipeline->static_files_prefix, strlen(pipeline->static_files_prefix));
+    memcpy(file_path + strlen(pipeline->static_files_prefix), request->route, strlen(request->route));
+
+    FILE *static_file = fopen(file_path, "rb");
+    fseek(static_file, 0, SEEK_END);
+    int file_size = ftell(static_file);
+    fseek(static_file, 0, SEEK_SET);
+
+    int max_each_response = MAX - 3;
+    char *buffer;
+
+    int current_read = 0;
+    while (1) {
+        response->status = RESPONSE_OK;
+        response->data_size = max_each_response;
+        response->data = malloc(max_each_response);
+        memset(response->data, 0, max_each_response);
+
+        buffer = malloc(max_each_response);
+        memset(buffer, 0, max_each_response);
+
+        fread(buffer, sizeof(char), max_each_response, static_file);
+
+        memmove(response->data, buffer, max_each_response);
+        current_read += max_each_response;
+
+        if (current_read >= file_size) {
+            int deference = current_read - file_size;
+            *((char *) (response->data + max_each_response - deference)) = 0x1C;
+
+            send_to_client(response, client);
+            break;
+        }
+        send_to_client(response, client);
+    }
+    close_client(client);
+}

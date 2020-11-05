@@ -1,5 +1,4 @@
 #include "Core/Socket/server_socket.h"
-#include "Core/Socket/client.h"
 #include "Core/Pipeline/pipeline.h"
 
 #define MAX 1024
@@ -25,6 +24,7 @@ int main() {
 
     init_server(&server_socket);
     init_pipeline(pipeline);
+    set_root_dir(pipeline, "../root");
 
     while (1) {
         int connection = accept_connection(&server_socket);
@@ -84,7 +84,10 @@ void *handle_client(void *obj) {
         init_invalid_syntax(response, NULL, 0);
     } else {
         struct RouteTemplate *routeTemplate = match_request(pipeline, &request);
-        if (routeTemplate == NULL) {
+        if (request_static_files(pipeline, &request)) {
+            serve_static_file(response, pipeline, &request, client);
+            return NULL;
+        } else if (routeTemplate == NULL) {
             init_not_found(response, NULL, 0);
         } else if (routeTemplate->action != request.action) {
             init_invalid_action(response, NULL, 0);
@@ -92,12 +95,7 @@ void *handle_client(void *obj) {
             memmove(response, execute_controller(&request, routeTemplate), sizeof(struct OutgoingResponse));
         }
     }
-    buffer = malloc(response->data_size + 2);
-    memset(buffer, 0x1D, response->data_size + 2);
+    send_to_client(response, client);
 
-    *buffer = (char) response->status;
-    memcpy(buffer + 2, response->data, response->data_size);
-
-    send(*client->socket, buffer, response->data_size + 2, 0);
     close_client(client);
 }

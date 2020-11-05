@@ -1,8 +1,7 @@
 #ifndef SOCKET_SERVER_ROUTE_TEMPLATE_H
 #define SOCKET_SERVER_ROUTE_TEMPLATE_H
 
-#include <string.h>
-#include <stdlib.h>
+#include <stdio.h>
 #include "../IO/outgoing_response.h"
 #include "../IO/incoming_request.h"
 
