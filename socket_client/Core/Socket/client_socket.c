@@ -20,7 +20,7 @@ void assign_port(struct ClientSocket *s, char *ip, int port) {
 
 int connect_socket(struct ClientSocket *s) {
     if (connect(s->socket_fd, (struct sockaddr *) &s->server_address, sizeof(s->server_address)) != 0) {
-        return errno;
+        return 1;
     }
     return 0;
 }
@@ -30,21 +30,20 @@ void close_socket(struct ClientSocket *s) {
     WSACleanup();
 }
 
-int init_socket(struct ClientSocket *client_socket) {
+void init_socket(struct ClientSocket *client_socket) {
     int error;
 
     if ((error = create_socket(client_socket) != 0)) {
         printf("Failed to create socket\n");
-        printf("Error= %d:%s\n", error, strerror(error));
-        return error;
+        printf("Error= %d: %s\n", error, strerror(error));
+        exit(1);
     }
 
     assign_port(client_socket, "127.0.0.1", PORT);
 
     if ((error = connect_socket(client_socket) != 0)) {
         printf("Failed to connect\n");
-        printf("Error= %d:%s\n", error, strerror(error));
-        return error;
+        printf("Error= %d: %s\n", error, strerror(error));
+        exit(1);
     }
-    return 0;
 }

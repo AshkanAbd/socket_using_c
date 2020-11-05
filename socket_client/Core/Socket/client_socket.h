@@ -21,7 +21,7 @@ int connect_socket(struct ClientSocket *s);
 
 void close_socket(struct ClientSocket *s);
 
-int init_socket(struct ClientSocket *client_socket);
+void init_socket(struct ClientSocket *client_socket);
 
 
 #endif //SOCKET_CLIENT_CLIENT_SOCKET_H
