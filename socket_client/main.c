@@ -17,23 +17,17 @@ int main() {
 void login_ok() {
     struct IncomingResponse *response = api_read("/login", NULL, 0);
 
-    if (response != NULL) {
-        printf("%s\n", response_to_str(response));
-    }
+    printf("%s\n", response_to_str(response));
 }
 
 void login_invalid_action() {
     struct IncomingResponse *response = api_delete("/login", NULL, 0);
 
-    if (response != NULL) {
-        printf("%s\n", response_to_str(response));
-    }
+    printf("%s\n", response_to_str(response));
 }
 
 void login_not_found() {
     struct IncomingResponse *response = api_delete("/login1", NULL, 0);
 
-    if (response != NULL) {
-        printf("%s\n", response_to_str(response));
-    }
+    printf("%s\n", response_to_str(response));
 }
