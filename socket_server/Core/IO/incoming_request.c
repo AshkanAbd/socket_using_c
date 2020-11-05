@@ -63,7 +63,8 @@ int parse_request(struct IncomingRequest *request, const char *buffer, int buffe
     int buff_index = 0;
     int state = 1;
 
-    for (int i = 0; i < buffer_size; ++i) {
+    register int i;
+    for (i = 0; i < buffer_size; ++i) {
         char c = *(buffer + i);
         if (c != 0x1D) {
             *(buff + buff_index++) = c;

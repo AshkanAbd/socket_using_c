@@ -12,7 +12,8 @@ void init_pipeline(struct Pipeline *pipeline) {
 
 struct RouteTemplate *match_request(struct Pipeline *pipeline, struct IncomingRequest *request) {
     struct RouteTemplate *template = NULL;
-    for (int i = 0; i < pipeline->route_count; ++i) {
+    register int i;
+    for (i = 0; i < pipeline->route_count; ++i) {
         struct RouteTemplate *tmp = pipeline->templates + i;
         if (check_route(tmp, request)) {
             if (check_action(tmp, request)) {
