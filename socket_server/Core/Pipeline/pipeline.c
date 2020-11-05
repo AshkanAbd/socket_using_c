@@ -128,5 +128,6 @@ void serve_static_file(struct OutgoingResponse *response, struct Pipeline *pipel
         first_packet = 0;
     }
     printf("%d\n", count);
+    fclose(static_file);
     close_client(client);
 }
