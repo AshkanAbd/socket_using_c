@@ -35,14 +35,15 @@ void prepare_request(struct OutgoingRequest *request, char *buffer) {
     }
 }
 
-int has_more_packets(const char *buffer, int buffer_size) {
+int has_more_packets(char *buffer, int buffer_size) {
     register int i;
     for (i = 0; i < buffer_size; ++i) {
         if (*(buffer + i) == 0x1C) {
+            *(buffer + i) = 0;
             return 1;
         }
     }
-    return 1;
+    return 0;
 }
 
 struct IncomingResponse *send_request(struct OutgoingRequest *request, struct Client *client) {
@@ -57,11 +58,20 @@ struct IncomingResponse *send_request(struct OutgoingRequest *request, struct Cl
     send(client->socket, request_buffer, request_buffer_size, 0);
 
     int response_buffer_size = client->buffer_size;
+    int additional_packets = 0;
     char *response_buffer = malloc(response_buffer_size + 1);
     memset(response_buffer, 0x1D, response_buffer_size);
     *(response_buffer + response_buffer_size) = 0;
 
     recv(client->socket, response_buffer, response_buffer_size, 0);
+
+    while (!has_more_packets(response_buffer + (additional_packets * client->buffer_size), client->buffer_size)) {
+        response_buffer_size += client->buffer_size;
+        additional_packets++;
+        realloc(request_buffer, response_buffer_size);
+        memset(response_buffer + response_buffer_size, 0, client->buffer_size);
+        recv(client->socket, response_buffer + response_buffer_size, client->buffer_size, 0);
+    }
 
     struct IncomingResponse *response = malloc(sizeof(struct IncomingResponse));
     memset(response, 0, sizeof(struct IncomingResponse));
