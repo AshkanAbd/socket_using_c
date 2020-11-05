@@ -64,12 +64,14 @@ struct IncomingResponse *send_request(struct OutgoingRequest *request, struct Cl
 
     recv(client->socket, response_buffer, response_buffer_size, 0);
 
-    while (!has_more_packets(response_buffer + (additional_packets * client->buffer_size), client->buffer_size)) {
+    while (!has_more_packets(response_buffer + (client->buffer_size * additional_packets), client->buffer_size)) {
         response_buffer_size += client->buffer_size;
         additional_packets++;
-        realloc(request_buffer, response_buffer_size);
-        memset(response_buffer + response_buffer_size, 0, client->buffer_size);
-        recv(client->socket, response_buffer + response_buffer_size, client->buffer_size, 0);
+
+        response_buffer = realloc(response_buffer, response_buffer_size);
+        memset(response_buffer + (client->buffer_size * additional_packets), 0, client->buffer_size);
+
+        recv(client->socket, response_buffer + (client->buffer_size * additional_packets), client->buffer_size, 0);
     }
 
     struct IncomingResponse *response = malloc(sizeof(struct IncomingResponse));
