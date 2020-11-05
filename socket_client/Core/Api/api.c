@@ -60,8 +60,7 @@ struct IncomingResponse *send_request(struct OutgoingRequest *request, struct Cl
     int response_buffer_size = client->buffer_size;
     int additional_packets = 0;
     char *response_buffer = malloc(response_buffer_size + 1);
-    memset(response_buffer, 0x1D, response_buffer_size);
-    *(response_buffer + response_buffer_size) = 0;
+    memset(response_buffer, 0, response_buffer_size);
 
     recv(client->socket, response_buffer, response_buffer_size, 0);
 
