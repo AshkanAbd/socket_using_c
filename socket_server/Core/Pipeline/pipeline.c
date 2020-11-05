@@ -90,6 +90,7 @@ void serve_static_file(struct OutgoingResponse *response, struct Pipeline *pipel
     int current_read = 0;
 
     int first_packet = 1;
+    int count = 0;
 
     while (1) {
         if (!first_packet) {
@@ -106,8 +107,8 @@ void serve_static_file(struct OutgoingResponse *response, struct Pipeline *pipel
         fread(buffer, sizeof(char), max_each_response, static_file);
 
         memmove(response->data, buffer, max_each_response);
+        count++;
         current_read += max_each_response;
-
         if (current_read >= file_size) {
             int deference = current_read - file_size;
             *((char *) (response->data + max_each_response - deference)) = 0x1C;
@@ -126,5 +127,6 @@ void serve_static_file(struct OutgoingResponse *response, struct Pipeline *pipel
         }
         first_packet = 0;
     }
+    printf("%d\n", count);
     close_client(client);
 }
