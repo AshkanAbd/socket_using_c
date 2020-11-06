@@ -5,13 +5,13 @@ char base46_map[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
                      'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
                      'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '/'};
 
-char *base64_encode(char *input_buffer) {
+char *base64_encode(char *input_buffer, int input_buffer_size) {
     char counts = 0;
     char buffer[3];
-    char *cipher = malloc(strlen(input_buffer) * 4 / 3 + 4);
+    char *cipher = malloc(input_buffer_size * 4 / 3 + 4);
     register int i = 0, c = 0;
 
-    for (i = 0; *(input_buffer + i) != 0; i++) {
+    for (i = 0; i < input_buffer_size; i++) {
         *(buffer + counts++) = *(input_buffer + i);
         if (counts == 3) {
             *(cipher + c++) = base46_map[buffer[0] >> 2];
