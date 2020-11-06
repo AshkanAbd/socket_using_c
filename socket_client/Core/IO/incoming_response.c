@@ -66,8 +66,9 @@ char *response_to_str(struct IncomingResponse *response) {
             break;
     }
 
-    char *data_str = malloc(response->data_size);
-    memset(data_str, 0, response->data_size);
+    int response_length = response->data_size + 1;
+    char *data_str = malloc(response_length);
+    memset(data_str, 0, response_length);
     memcpy(data_str, response->data, response->data_size);
     if (strlen(data_str) == 0) {
         data_str = "<content empty>";

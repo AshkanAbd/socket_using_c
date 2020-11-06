@@ -106,7 +106,6 @@ struct IncomingResponse *send_request(struct OutgoingRequest *request, struct Cl
         }
     } while (1);
 
-    response_buffer_size++;
     printf("received packet count: %d\n", count);
 
     struct IncomingResponse *response = malloc(sizeof(struct IncomingResponse));
