@@ -77,9 +77,9 @@ struct IncomingResponse *send_request(struct OutgoingRequest *request, struct Cl
 
         int wrong_packet_count = 0;
         register int i;
-        for (i = 0; i < current_buffer_size; ++i) {
-            if (*(current_buffer + i) == 0) {
-                wrong_packet_count++;
+        for (i = current_buffer_size - 1; i != 0; i--, wrong_packet_count++) {
+            if (*(current_buffer + i) != 0) {
+                break;
             }
         }
 
