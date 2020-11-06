@@ -57,38 +57,44 @@ struct IncomingResponse *send_request(struct OutgoingRequest *request, struct Cl
 
     send(client->socket, request_buffer, request_buffer_size, 0);
 
-    int response_buffer_size = client->buffer_size;
-    int current_buffer_size = client->buffer_size;
-    int response_buffer_index = 0;
-    char *response_buffer = malloc(response_buffer_size + 1);
+    int response_buffer_size = 0;
+    int response_buffer_index;
+    int current_buffer_size;
+    char *response_buffer = malloc(response_buffer_size);
     memset(response_buffer, 0, response_buffer_size);
+    char *current_buffer;
 
-    recv(client->socket, response_buffer, current_buffer_size, 0);
+    int count = 0;
 
-    int count = 1;
-    while (has_more_packets(response_buffer + response_buffer_index, current_buffer_size)) {
+    do {
         count++;
 
-        char *tmp = malloc(client->buffer_size);
-        memset(tmp, 0, client->buffer_size);
-        recv(client->socket, tmp, client->buffer_size, 0);
+        current_buffer_size = client->buffer_size;
+        current_buffer = malloc(current_buffer_size);
+        memset(current_buffer, 0, current_buffer_size);
+
+        recv(client->socket, current_buffer, current_buffer_size, 0);
+
         int wrong_packet_count = 0;
         register int i;
-        for (i = 0; i < client->buffer_size; ++i) {
-            if (*(tmp + i) == 0) {
+        for (i = 0; i < current_buffer_size; ++i) {
+            if (*(current_buffer + i) == 0) {
                 wrong_packet_count++;
             }
         }
 
+        current_buffer_size -= wrong_packet_count;
         response_buffer_index = response_buffer_size;
-        current_buffer_size = client->buffer_size - wrong_packet_count;
         response_buffer_size += current_buffer_size;
 
-        response_buffer = realloc(response_buffer, response_buffer_size);
-        memset(response_buffer + response_buffer_index, 0, current_buffer_size);
-        memcpy(response_buffer + response_buffer_index, tmp, current_buffer_size);
-    }
-    printf("%d\n", count);
+        response_buffer = realloc(response_buffer, response_buffer_size + 1);
+        memset(response_buffer + response_buffer_index, 0, current_buffer_size + 1);
+        memcpy(response_buffer + response_buffer_index, current_buffer, current_buffer_size);
+
+    } while (has_more_packets(current_buffer, current_buffer_size));
+
+    response_buffer_size++;
+    printf("received packet count: %d\n", count);
 
     struct IncomingResponse *response = malloc(sizeof(struct IncomingResponse));
     memset(response, 0, sizeof(struct IncomingResponse));

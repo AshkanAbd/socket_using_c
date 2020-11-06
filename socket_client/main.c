@@ -9,13 +9,13 @@ void login_invalid_action();
 void login_not_found();
 
 int main() {
-//    login_ok();
+    login_ok();
 
-    static_file();
+//    static_file();
 
-//    login_invalid_action();
+    login_invalid_action();
 
-//    login_not_found();
+    login_not_found();
 }
 
 void login_ok() {
