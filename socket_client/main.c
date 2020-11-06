@@ -11,7 +11,7 @@ void login_not_found();
 int main() {
     login_ok();
 
-//    static_file();
+    static_file();
 
     login_invalid_action();
 
@@ -26,12 +26,11 @@ void login_ok() {
 
 void static_file() {
     struct IncomingResponse *response = api_read("/1.jpg", NULL, 0);
-
     printf("%d in static file\n", response->status);
     if (response->status == RESPONSE_NOT_FOUND)
         return;
     FILE *f = fopen("1.jpg", "wb");
-    fwrite(response->data, sizeof(char), strlen(response->data), f);
+    fwrite(response->data, sizeof(char), response->data_size, f);
     fclose(f);
 }
 
