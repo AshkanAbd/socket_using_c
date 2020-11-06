@@ -81,3 +81,9 @@ char *response_to_str(struct IncomingResponse *response) {
 
     return response_str;
 }
+
+void response_to_file(struct IncomingResponse *response, const char *filename) {
+    FILE *f = fopen("1.jpg", "wb");
+    fwrite(response->data, sizeof(char), response->data_size, f);
+    fclose(f);
+}

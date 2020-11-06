@@ -3,6 +3,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #define RESPONSE_OK 1
 #define RESPONSE_NOT_FOUND 2
@@ -32,5 +33,7 @@ void init_server_error(struct IncomingResponse *response, void *data, int data_s
 void init_invalid_syntax(struct IncomingResponse *response, void *data, int data_size);
 
 char *response_to_str(struct IncomingResponse *response);
+
+void response_to_file(struct IncomingResponse *response, const char *filename);
 
 #endif //SOCKET_SERVER_OUTGOING_RESPONSE_H
