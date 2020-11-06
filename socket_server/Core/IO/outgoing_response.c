@@ -1,12 +1,11 @@
 #include "outgoing_response.h"
 
 void init(struct OutgoingResponse *response, void *data, int data_size) {
-    response->data_size = data_size + 2;
+    response->data_size = data_size + 1;
 
-    response->data = malloc(data_size + 2);
-    memset(response->data, 0, data_size + 2);
+    response->data = malloc(data_size + 1);
+    memset(response->data, 0x1C, data_size + 1);
     memcpy(response->data, data, data_size);
-    *((char *) (response->data + data_size + 1)) = 0x1C;
 }
 
 void init_ok(struct OutgoingResponse *response, void *data, int data_size) {
@@ -47,27 +46,19 @@ void init_invalid_syntax(struct OutgoingResponse *response, void *data, int data
 
 void send_to_client(struct OutgoingResponse *response, struct Client *client) {
     char *buffer = malloc(response->data_size + 2);
-    memset(buffer, 0, response->data_size + 2);
+    memset(buffer, 0x1D, response->data_size + 2);
 
     *buffer = (char) response->status;
     memcpy(buffer + 2, response->data, response->data_size);
 
-    char *encoded_buffer = base64_encode(buffer, response->data_size + 2);
-
-    printf("packet length %llu", strlen(encoded_buffer));
-
-    send(*client->socket, encoded_buffer, strlen(encoded_buffer), 0);
+    send(*client->socket, buffer, response->data_size + 2, 0);
 }
 
 void send_body_to_client(struct OutgoingResponse *response, struct Client *client) {
     char *buffer = malloc(response->data_size);
-    memset(buffer, 0, response->data_size);
+    memset(buffer, 0x1D, response->data_size);
 
     memcpy(buffer, response->data, response->data_size);
 
-    char *encoded_buffer = base64_encode(buffer, response->data_size + 2);
-
-    printf("packet length %llu", strlen(encoded_buffer));
-
-    send(*client->socket, encoded_buffer, strlen(encoded_buffer), 0);
+    send(*client->socket, buffer, response->data_size + 2, 0);
 }

@@ -15,7 +15,7 @@ add_executable(socket_server
         Core/Pipeline/pipeline.h Core/Pipeline/pipeline.c
         routes/routers.c
         controllers/base_controller.c controllers/base_controller.h
-        Core/base64/base64.h Core/base64/base64.c)
+        )
 
 if (WIN32)
     target_link_libraries(socket_server wsock32 ws2_32)
