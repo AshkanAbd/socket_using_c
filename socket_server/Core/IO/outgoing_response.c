@@ -60,5 +60,5 @@ void send_body_to_client(struct OutgoingResponse *response, struct Client *clien
 
     memcpy(buffer, response->data, response->data_size);
 
-    send(*client->socket, buffer, response->data_size + 2, 0);
+    send(*client->socket, buffer, response->data_size, 0);
 }
