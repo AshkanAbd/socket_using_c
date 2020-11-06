@@ -84,7 +84,7 @@ void serve_static_file(struct OutgoingResponse *response, struct Pipeline *pipel
     int file_size = ftell(static_file);
     fseek(static_file, 0, SEEK_SET);
 
-    int max_each_response = MAX - 2;
+    int max_each_response = (int) ceil((MAX - 2) / 4.0) * 3;
     char *buffer;
 
     int current_read = 0;
@@ -93,9 +93,9 @@ void serve_static_file(struct OutgoingResponse *response, struct Pipeline *pipel
     int count = 0;
 
     while (1) {
-        if (!first_packet) {
-            max_each_response += 2;
-        }
+//        if (!first_packet) {
+//            max_each_response += 2;
+//        }
         response->status = RESPONSE_OK;
         response->data_size = max_each_response;
         response->data = malloc(max_each_response);
@@ -127,7 +127,7 @@ void serve_static_file(struct OutgoingResponse *response, struct Pipeline *pipel
         }
         first_packet = 0;
     }
-    printf("%d\n", count);
+    printf("%d pockets sent\n", count);
     fclose(static_file);
     close_client(client);
 }

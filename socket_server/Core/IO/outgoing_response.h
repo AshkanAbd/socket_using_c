@@ -1,8 +1,6 @@
 #ifndef SOCKET_SERVER_OUTGOING_RESPONSE_H
 #define SOCKET_SERVER_OUTGOING_RESPONSE_H
 
-#include <string.h>
-#include <stdlib.h>
 #include "../Socket/client.h"
 
 #define RESPONSE_OK 1

@@ -52,7 +52,10 @@ void send_to_client(struct OutgoingResponse *response, struct Client *client) {
     *buffer = (char) response->status;
     memcpy(buffer + 2, response->data, response->data_size);
 
-    send(*client->socket, buffer, response->data_size + 2, 0);
+//    send(*client->socket, buffer, response->data_size + 2, 0);
+    char *encoded_buffer = base64_encode(buffer);
+
+    send(*client->socket, encoded_buffer, strlen(encoded_buffer), 0);
 }
 
 void send_body_to_client(struct OutgoingResponse *response, struct Client *client) {
@@ -61,5 +64,8 @@ void send_body_to_client(struct OutgoingResponse *response, struct Client *clien
 
     memcpy(buffer, response->data, response->data_size);
 
-    send(*client->socket, buffer, response->data_size, 0);
+//    send(*client->socket, buffer, response->data_size, 0);
+    char *encoded_buffer = base64_encode(buffer);
+
+    send(*client->socket, encoded_buffer, strlen(encoded_buffer), 0);
 }

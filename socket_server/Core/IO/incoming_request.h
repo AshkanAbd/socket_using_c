@@ -1,8 +1,7 @@
 #ifndef SOCKET_SERVER_INCOMING_REQUEST_H
 #define SOCKET_SERVER_INCOMING_REQUEST_H
 
-#include <string.h>
-#include <stdlib.h>
+#include "../Socket/client.h"
 
 #define REQUEST_READ 1
 #define REQUEST_CREATE 2

@@ -1,8 +1,7 @@
 #ifndef SOCKET_SERVER_CLIENT_H
 #define SOCKET_SERVER_CLIENT_H
 
-#include <string.h>
-#include <stdlib.h>
+#include "../base64/base64.h"
 #include <stdio.h>
 #include <winsock2.h>
 #include <pthread.h>
