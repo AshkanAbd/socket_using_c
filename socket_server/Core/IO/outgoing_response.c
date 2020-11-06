@@ -1,10 +1,10 @@
 #include "outgoing_response.h"
 
 void init(struct OutgoingResponse *response, void *data, int data_size) {
-    response->data_size = data_size + 1;
+    response->data_size = data_size;
 
-    response->data = malloc(data_size + 1);
-    memset(response->data, 0x1C, data_size + 1);
+    response->data = malloc(data_size);
+    memset(response->data, 0x1C, data_size);
     memcpy(response->data, data, data_size);
 }
 
@@ -45,13 +45,14 @@ void init_invalid_syntax(struct OutgoingResponse *response, void *data, int data
 }
 
 void send_to_client(struct OutgoingResponse *response, struct Client *client) {
-    char *buffer = malloc(response->data_size + 2);
-    memset(buffer, 0x1D, response->data_size + 2);
+    char *buffer = malloc(response->data_size + 4);
+    memset(buffer, 0x1D, response->data_size + 4);
 
     *buffer = (char) response->status;
-    memcpy(buffer + 2, response->data, response->data_size);
+    *(buffer + 2) = 0x1C;
+    memcpy(buffer + 4, response->data, response->data_size);
 
-    send(*client->socket, buffer, response->data_size + 2, 0);
+    send(*client->socket, buffer, response->data_size + 4, 0);
 }
 
 void send_body_to_client(struct OutgoingResponse *response, struct Client *client) {

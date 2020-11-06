@@ -6,11 +6,6 @@ void init_pipeline(struct Pipeline *pipeline) {
 
     pipeline->static_files_prefix = NULL;
 
-    pipeline->static_files = malloc(1024 * 1024);
-    memset(pipeline->static_files, 0, 1024 * 1024);
-
-    pipeline->static_files_count = 0;
-
     pipeline->templates = malloc(1024 * sizeof(struct RouteTemplate));
     memset(pipeline->templates, 0, 1024 * sizeof(struct RouteTemplate));
 
@@ -84,7 +79,7 @@ void serve_static_file(struct OutgoingResponse *response, struct Pipeline *pipel
     int file_size = ftell(static_file);
     fseek(static_file, 0, SEEK_SET);
 
-    int max_each_response = MAX - 10;
+    int max_each_response = MAX - 20;
     char *buffer;
 
     int current_read = 0;
@@ -93,9 +88,6 @@ void serve_static_file(struct OutgoingResponse *response, struct Pipeline *pipel
     int count = 0;
 
     while (1) {
-//        if (!first_packet) {
-//            max_each_response += 2;
-//        }
         response->status = RESPONSE_OK;
         response->data_size = max_each_response;
         response->data = malloc(max_each_response);
@@ -128,6 +120,7 @@ void serve_static_file(struct OutgoingResponse *response, struct Pipeline *pipel
         first_packet = 0;
     }
     fclose(static_file);
+    printf("sent packet count: %d\n", count);
 
     close_client(client);
 }

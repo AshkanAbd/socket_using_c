@@ -9,8 +9,6 @@
 struct Pipeline {
     struct RouteTemplate *templates;
     char *static_files_prefix;
-    char *static_files;
-    int static_files_count;
 
     int route_count;
 };
