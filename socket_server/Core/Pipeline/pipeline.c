@@ -52,6 +52,9 @@ struct OutgoingResponse *execute_controller(struct IncomingRequest *request, str
 }
 
 int request_static_files(struct Pipeline *pipeline, struct IncomingRequest *request) {
+    if (request->action != RESPONSE_OK) {
+        return 0;
+    }
     char *file_path = malloc(strlen(pipeline->static_files_prefix) + strlen(request->route) + 1);
     memset(file_path, 0, strlen(pipeline->static_files_prefix) + strlen(request->route) + 1);
     memcpy(file_path, pipeline->static_files_prefix, strlen(pipeline->static_files_prefix));
