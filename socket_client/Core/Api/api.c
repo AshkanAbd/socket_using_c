@@ -87,11 +87,24 @@ struct IncomingResponse *send_request(struct OutgoingRequest *request, struct Cl
         response_buffer_index = response_buffer_size;
         response_buffer_size += current_buffer_size;
 
-        response_buffer = realloc(response_buffer, response_buffer_size + 1);
-        memset(response_buffer + response_buffer_index, 0, current_buffer_size + 1);
-        memcpy(response_buffer + response_buffer_index, current_buffer, current_buffer_size);
-
-    } while (has_more_packets(current_buffer, current_buffer_size));
+        if (count == 1) {
+            response_buffer = realloc(response_buffer, response_buffer_size + 1);
+            memset(response_buffer + response_buffer_index, 0, current_buffer_size + 1);
+            memcpy(response_buffer + response_buffer_index, current_buffer, current_buffer_size);
+            if (*(current_buffer + 1) == 0x1C) {
+                break;
+            }
+        } else {
+            current_buffer_size--;
+            response_buffer_size--;
+            response_buffer = realloc(response_buffer, response_buffer_size + 1);
+            memset(response_buffer + response_buffer_index, 0, current_buffer_size + 1);
+            memcpy(response_buffer + response_buffer_index, current_buffer + 1, current_buffer_size);
+            if (*(current_buffer) == 0x1C) {
+                break;
+            }
+        }
+    } while (1);
 
     response_buffer_size++;
     printf("received packet count: %d\n", count);
