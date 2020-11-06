@@ -102,8 +102,6 @@ void serve_static_file(struct OutgoingResponse *response, struct Pipeline *pipel
         count++;
         current_read += max_each_response;
         if (current_read >= file_size) {
-            int deference = current_read - file_size;
-            *((char *) (response->data + max_each_response - deference)) = 0x1C;
 
             if (first_packet) {
                 send_to_client(response, client, 1);
