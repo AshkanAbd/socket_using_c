@@ -95,7 +95,7 @@ void *handle_client(void *obj) {
             memmove(response, execute_controller(&request, routeTemplate), sizeof(struct OutgoingResponse));
         }
     }
-    send_to_client(response, client);
+    send_to_client(response, client, 1);
 
     close_client(client);
 }
