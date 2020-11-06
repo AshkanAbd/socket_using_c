@@ -70,13 +70,17 @@ void handle_response(struct IncomingResponse *response) {
         printf("2) file\n");
         output_type = getchar();
     } while (output_type != '1' && output_type != '2');
+    getchar();
 
     char *filepath = malloc(1024);
     int filepath_size = 0;
     memset(filepath, 0, 1024);
     char c;
-    while ((c = getchar()) != '\n') {
-        *(filepath + filepath_size++) = c;
+    if (output_type == '2') {
+        printf("Enter filepath:\n");
+        while ((c = getchar()) != '\n') {
+            *(filepath + filepath_size++) = c;
+        }
     }
 
     if (output_type == '1') {
