@@ -1,4 +1,4 @@
-#include "Core/Api/api.h"
+#include "interface/interface.h"
 
 void login_ok();
 
@@ -9,13 +9,21 @@ void login_invalid_action();
 void login_not_found();
 
 int main() {
-    login_ok();
-
-    static_file();
-
-    login_invalid_action();
-
-    login_not_found();
+    while (1) {
+        handle_response(build_request());
+        printf("More request?(Y/n) ");
+        if (getchar() != 'y') {
+            break;
+        }
+        getchar();
+    }
+//    login_ok();
+//
+//    static_file();
+//
+//    login_invalid_action();
+//
+//    login_not_found();
 }
 
 void login_ok() {
@@ -29,9 +37,7 @@ void static_file() {
     printf("%d in static file\n", response->status);
     if (response->status == RESPONSE_NOT_FOUND)
         return;
-    FILE *f = fopen("1.jpg", "wb");
-    fwrite(response->data, sizeof(char), response->data_size, f);
-    fclose(f);
+    response_to_file(response, "1.jpg");
 }
 
 void login_invalid_action() {

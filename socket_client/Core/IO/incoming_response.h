@@ -34,6 +34,6 @@ void init_invalid_syntax(struct IncomingResponse *response, void *data, int data
 
 char *response_to_str(struct IncomingResponse *response);
 
-void response_to_file(struct IncomingResponse *response, const char *filename);
+char *response_to_file(struct IncomingResponse *response, const char *filename);
 
 #endif //SOCKET_SERVER_OUTGOING_RESPONSE_H

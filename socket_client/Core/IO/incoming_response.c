@@ -82,8 +82,30 @@ char *response_to_str(struct IncomingResponse *response) {
     return response_str;
 }
 
-void response_to_file(struct IncomingResponse *response, const char *filename) {
-    FILE *f = fopen("1.jpg", "wb");
+char *response_to_file(struct IncomingResponse *response, const char *filename) {
+    char *action_str = "";
+    switch (response->status) {
+        case RESPONSE_OK:
+            action_str = "OK: ";
+            break;
+        case RESPONSE_NOT_FOUND:
+            action_str = "NotFound: ";
+            break;
+        case RESPONSE_BAD_REQUEST:
+            action_str = "BadRequest: ";
+            break;
+        case RESPONSE_INVALID_ACTION:
+            action_str = "InvalidAction: ";
+            break;
+        case RESPONSE_SERVER_ERROR:
+            action_str = "ServerError: ";
+            break;
+        case RESPONSE_INVALID_SYNTAX:
+            action_str = "InvalidSyntax: ";
+            break;
+    }
+    FILE *f = fopen(filename, "wb");
     fwrite(response->data, sizeof(char), response->data_size, f);
     fclose(f);
+    return action_str;
 }
