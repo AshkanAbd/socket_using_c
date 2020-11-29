@@ -35,15 +35,8 @@ void prepare_request(struct OutgoingRequest *request, char *buffer) {
     }
 }
 
-int has_more_packets(char *buffer, int buffer_size) {
-    register int i;
-    for (i = 0; i < buffer_size; ++i) {
-        if (*(buffer + i) == 0x1C) {
-            *(buffer + i) = 0;
-            return 0;
-        }
-    }
-    return 1;
+void request_next_packet(struct Client *client) {
+    send(client->socket, "0", 1, 0);
 }
 
 struct IncomingResponse *send_request(struct OutgoingRequest *request, struct Client *client) {
@@ -105,6 +98,7 @@ struct IncomingResponse *send_request(struct OutgoingRequest *request, struct Cl
                 break;
             }
         }
+        request_next_packet(client);
     } while (1);
 
     printf("received packet count: %d\n", count);

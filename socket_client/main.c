@@ -9,13 +9,13 @@ void login_invalid_action();
 void login_not_found();
 
 int main() {
-//    login_ok();
+    login_ok();
 
     static_file();
-//
-//    login_invalid_action();
-//
-//    login_not_found();
+
+    login_invalid_action();
+
+    login_not_found();
 }
 
 void login_ok() {
@@ -25,11 +25,11 @@ void login_ok() {
 }
 
 void static_file() {
-    struct IncomingResponse *response = api_read("/log1.log", NULL, 0);
+    struct IncomingResponse *response = api_read("/csgo.png", NULL, 0);
     printf("%d in static file\n", response->status);
     if (response->status == RESPONSE_NOT_FOUND)
         return;
-    response_to_file(response, "output/log1.log");
+    response_to_file(response, "output/csgo.png");
 }
 
 void login_invalid_action() {

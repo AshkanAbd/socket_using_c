@@ -32,6 +32,4 @@ void init_invalid_syntax(struct OutgoingResponse *response, void *data, int data
 
 void send_to_client(struct OutgoingResponse *response, struct Client *client, int final_packet);
 
-void send_body_to_client(struct OutgoingResponse *response, struct Client *client, int final_packet);
-
 #endif //SOCKET_SERVER_OUTGOING_RESPONSE_H

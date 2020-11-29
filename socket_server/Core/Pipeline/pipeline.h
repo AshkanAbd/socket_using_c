@@ -30,4 +30,6 @@ int request_static_files(struct Pipeline *pipeline, struct IncomingRequest *requ
 void serve_static_file(struct OutgoingResponse *response, struct Pipeline *pipeline, struct IncomingRequest *request,
                        struct Client *client);
 
+void wait_for_client(struct Client *client);
+
 #endif //SOCKET_SERVER_PIPELINE_H

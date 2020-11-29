@@ -58,16 +58,3 @@ void send_to_client(struct OutgoingResponse *response, struct Client *client, in
 
     send(*client->socket, buffer, response->data_size + 3, 0);
 }
-
-void send_body_to_client(struct OutgoingResponse *response, struct Client *client, int final_packet) {
-    char *buffer = malloc(response->data_size + 2);
-    memset(buffer, 0x1D, response->data_size + 2);
-
-    if (final_packet) {
-        *buffer = 0x1C;
-    }
-    memcpy(buffer + 1, response->data, response->data_size + 2);
-    *(buffer + response->data_size + 1) = 0x1C;
-
-    send(*client->socket, buffer, response->data_size + 2, 0);
-}

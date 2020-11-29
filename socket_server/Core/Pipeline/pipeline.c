@@ -86,8 +86,6 @@ void serve_static_file(struct OutgoingResponse *response, struct Pipeline *pipel
     char *buffer;
 
     int current_read = 0;
-
-    int first_packet = 1;
     int count = 0;
 
     while (1) {
@@ -106,22 +104,19 @@ void serve_static_file(struct OutgoingResponse *response, struct Pipeline *pipel
         current_read += max_each_response;
         if (current_read >= file_size) {
             response->data_size = file_size - (current_read - max_each_response);
-//            if (first_packet) {
             send_to_client(response, client, 1);
-//            } else {
-//                send_body_to_client(response, client, 1);
-//            }
             break;
         }
-//        if (first_packet) {
         send_to_client(response, client, 0);
-//        } else {
-//            send_body_to_client(response, client, 0);
-//        }
-        first_packet = 0;
+        wait_for_client(client);
     }
     fclose(static_file);
     printf("sent packet count: %d\n", count);
 
     close_client(client);
+}
+
+void wait_for_client(struct Client *client){
+    char *tmp = malloc(1);
+    recv(*client->socket, tmp, 1, 0);
 }
