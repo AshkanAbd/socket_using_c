@@ -118,5 +118,8 @@ void serve_static_file(struct OutgoingResponse *response, struct Pipeline *pipel
 
 void wait_for_client(struct Client *client){
     char *tmp = malloc(1);
-    recv(*client->socket, tmp, 1, 0);
+    memset(tmp, 0, 1);
+    while (*tmp != 48) {
+        recv(*client->socket, tmp, 1, 0);
+    }
 }
