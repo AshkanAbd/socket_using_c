@@ -1,6 +1,6 @@
 #include "interface.h"
 
-struct IncomingResponse *build_request() {
+struct IncomingResponse *request_builder() {
     int action;
     do {
         printf("Select action:\n");
@@ -62,7 +62,7 @@ struct IncomingResponse *build_request() {
     return NULL;
 }
 
-void handle_response(struct IncomingResponse *response) {
+void response_handler(struct IncomingResponse *response) {
     int output_type;
     do {
         printf("Print content to console or file?\n");

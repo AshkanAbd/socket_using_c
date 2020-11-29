@@ -3,8 +3,8 @@
 
 #include "../Core/Api/api.h"
 
-struct IncomingResponse *build_request();
+struct IncomingResponse *request_builder();
 
-void handle_response(struct IncomingResponse *response);
+void response_handler(struct IncomingResponse *response);
 
 #endif //SOCKET_CLIENT_INTERFACE_H
