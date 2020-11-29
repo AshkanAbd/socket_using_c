@@ -3,9 +3,10 @@
 void init(struct OutgoingResponse *response, void *data, int data_size) {
     response->data_size = data_size;
 
-    response->data = malloc(data_size);
-    memset(response->data, 0x1C, data_size);
-    memcpy(response->data, data, data_size);
+    response->data = malloc(response->data_size);
+    memset(response->data, 0x1C, response->data_size);
+
+    memcpy(response->data, data, response->data_size);
 }
 
 void init_ok(struct OutgoingResponse *response, void *data, int data_size) {
@@ -45,26 +46,28 @@ void init_invalid_syntax(struct OutgoingResponse *response, void *data, int data
 }
 
 void send_to_client(struct OutgoingResponse *response, struct Client *client, int final_packet) {
-    char *buffer = malloc(response->data_size + 2);
-    memset(buffer, 0x1D, response->data_size + 2);
+    char *buffer = malloc(response->data_size + 3);
+    memset(buffer, 0x1D, response->data_size + 3);
 
     *buffer = (char) response->status;
     if (final_packet) {
         *(buffer + 1) = 0x1C;
     }
     memcpy(buffer + 2, response->data, response->data_size);
+    *(buffer + response->data_size + 2) = 0x1C;
 
-    send(*client->socket, buffer, response->data_size + 2, 0);
+    send(*client->socket, buffer, response->data_size + 3, 0);
 }
 
 void send_body_to_client(struct OutgoingResponse *response, struct Client *client, int final_packet) {
-    char *buffer = malloc(response->data_size + 1);
-    memset(buffer, 0x1D, response->data_size + 1);
+    char *buffer = malloc(response->data_size + 2);
+    memset(buffer, 0x1D, response->data_size + 2);
 
     if (final_packet) {
         *buffer = 0x1C;
     }
-    memcpy(buffer + 1, response->data, response->data_size + 1);
+    memcpy(buffer + 1, response->data, response->data_size + 2);
+    *(buffer + response->data_size + 1) = 0x1C;
 
-    send(*client->socket, buffer, response->data_size + 1, 0);
+    send(*client->socket, buffer, response->data_size + 2, 0);
 }

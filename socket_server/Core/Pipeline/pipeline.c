@@ -82,7 +82,7 @@ void serve_static_file(struct OutgoingResponse *response, struct Pipeline *pipel
     int file_size = ftell(static_file);
     fseek(static_file, 0, SEEK_SET);
 
-    int max_each_response = MAX - 20;
+    int max_each_response = MAX - 4;
     char *buffer;
 
     int current_read = 0;
@@ -105,19 +105,19 @@ void serve_static_file(struct OutgoingResponse *response, struct Pipeline *pipel
         count++;
         current_read += max_each_response;
         if (current_read >= file_size) {
-
-            if (first_packet) {
-                send_to_client(response, client, 1);
-            } else {
-                send_body_to_client(response, client, 1);
-            }
+            response->data_size = file_size - (current_read - max_each_response);
+//            if (first_packet) {
+            send_to_client(response, client, 1);
+//            } else {
+//                send_body_to_client(response, client, 1);
+//            }
             break;
         }
-        if (first_packet) {
-            send_to_client(response, client, 0);
-        } else {
-            send_body_to_client(response, client, 0);
-        }
+//        if (first_packet) {
+        send_to_client(response, client, 0);
+//        } else {
+//            send_body_to_client(response, client, 0);
+//        }
         first_packet = 0;
     }
     fclose(static_file);

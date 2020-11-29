@@ -9,17 +9,9 @@ void login_invalid_action();
 void login_not_found();
 
 int main() {
-    while (1) {
-        handle_response(build_request());
-        printf("More request?(Y/n) ");
-        if (getchar() != 'y') {
-            break;
-        }
-        getchar();
-    }
 //    login_ok();
-//
-//    static_file();
+
+    static_file();
 //
 //    login_invalid_action();
 //
@@ -33,11 +25,11 @@ void login_ok() {
 }
 
 void static_file() {
-    struct IncomingResponse *response = api_read("/1.jpg", NULL, 0);
+    struct IncomingResponse *response = api_read("/log1.log", NULL, 0);
     printf("%d in static file\n", response->status);
     if (response->status == RESPONSE_NOT_FOUND)
         return;
-    response_to_file(response, "1.jpg");
+    response_to_file(response, "output/log1.log");
 }
 
 void login_invalid_action() {

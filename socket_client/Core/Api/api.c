@@ -78,7 +78,8 @@ struct IncomingResponse *send_request(struct OutgoingRequest *request, struct Cl
         int wrong_packet_count = 0;
         register int i;
         for (i = current_buffer_size - 1; i != 0; i--, wrong_packet_count++) {
-            if (*(current_buffer + i) != 0) {
+            if (*(current_buffer + i) == 0x1C) {
+                wrong_packet_count++;
                 break;
             }
         }
@@ -95,12 +96,12 @@ struct IncomingResponse *send_request(struct OutgoingRequest *request, struct Cl
                 break;
             }
         } else {
-            current_buffer_size--;
-            response_buffer_size--;
+            current_buffer_size -= 2;
+            response_buffer_size -= 2;
             response_buffer = realloc(response_buffer, response_buffer_size + 1);
             memset(response_buffer + response_buffer_index, 0, current_buffer_size + 1);
-            memcpy(response_buffer + response_buffer_index, current_buffer + 1, current_buffer_size);
-            if (*(current_buffer) == 0x1C) {
+            memcpy(response_buffer + response_buffer_index, current_buffer + 2, current_buffer_size);
+            if (*(current_buffer + 1) == 0x1C) {
                 break;
             }
         }
