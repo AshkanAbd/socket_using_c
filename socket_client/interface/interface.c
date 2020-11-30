@@ -75,11 +75,21 @@ void response_handler(struct IncomingResponse *response) {
     char *filepath = malloc(1024);
     int filepath_size = 0;
     memset(filepath, 0, 1024);
+
+    char *filename = malloc(1024);
+    int filename_size = 0;
+    memset(filename, 0, 1024);
+
     char c;
     if (output_type == '2') {
         printf("Enter filepath:\n");
         while ((c = getchar()) != '\n') {
             *(filepath + filepath_size++) = c;
+        }
+        printf("Enter filename:\n");
+        c = 0;
+        while ((c = getchar()) != '\n') {
+            *(filename + filename_size++) = c;
         }
     }
 
@@ -87,6 +97,6 @@ void response_handler(struct IncomingResponse *response) {
         printf("%s\n", response_to_str(response));
     }
     if (output_type == '2') {
-        printf("%s\n", response_to_file(response, filepath));
+        printf("%s\n", response_to_file(response, filepath, filename));
     }
 }

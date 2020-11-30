@@ -82,7 +82,26 @@ char *response_to_str(struct IncomingResponse *response) {
     return response_str;
 }
 
-char *response_to_file(struct IncomingResponse *response, const char *filename) {
+void create_full_dir(const char *dir) {
+    register int i;
+    int pre_index = 0;
+    int temp_size = 0;
+    char *temp = malloc(temp_size);
+    for (i = 0; i < (int) strlen(dir); i++) {
+        if (i != 0 && *(dir + i) == '/') {
+            temp = realloc(temp, temp_size + (i - pre_index + 2));
+            memset(temp + temp_size, 0, temp_size + (i - pre_index + 2));
+            memcpy(temp + temp_size, dir + pre_index, i - pre_index);
+            _mkdir(temp);
+            temp_size += (i - pre_index);
+            *(temp + temp_size) = '/';
+            temp_size++;
+            pre_index = i + 1;
+        }
+    }
+}
+
+char *response_to_file(struct IncomingResponse *response, const char *filepath, const char *filename) {
     char *action_str = "";
     switch (response->status) {
         case RESPONSE_OK:
@@ -104,8 +123,36 @@ char *response_to_file(struct IncomingResponse *response, const char *filename) 
             action_str = "InvalidSyntax: ";
             break;
     }
-    FILE *f = fopen(filename, "wb");
+
+    char *fixed_filepath;
+    if (*(filepath + strlen(filepath) - 1) != '/') {
+        fixed_filepath = malloc(strlen(filepath) + 2);
+        memset(fixed_filepath, 0, strlen(filepath) + 2);
+        memcpy(fixed_filepath, filepath, strlen(filepath));
+        *(fixed_filepath + strlen(filepath)) = '/';
+    } else {
+        fixed_filepath = malloc(strlen(filepath) + 1);
+        memset(fixed_filepath, 0, strlen(filepath) + 1);
+        memcpy(fixed_filepath, filepath, strlen(filepath));
+    }
+
+    create_full_dir(fixed_filepath);
+
+    char *absolute_path = malloc(strlen(fixed_filepath) + strlen(filename) + 1);
+    memset(absolute_path, 0, strlen(fixed_filepath) + strlen(filename) + 1);
+
+    memcpy(absolute_path, fixed_filepath, strlen(fixed_filepath));
+    memcpy(absolute_path + strlen(fixed_filepath), filename, strlen(filename));
+
+    FILE *f = fopen(absolute_path, "wb");
     fwrite(response->data, sizeof(char), response->data_size, f);
     fclose(f);
-    return action_str;
+
+    char *result_str = malloc(strlen(action_str) + strlen(absolute_path) + 1);
+    memset(result_str, 0, strlen(action_str) + strlen(absolute_path) + 1);
+
+    memcpy(result_str, action_str, strlen(action_str));
+    memcpy(result_str + strlen(action_str), absolute_path, strlen(absolute_path));
+
+    return result_str;
 }
