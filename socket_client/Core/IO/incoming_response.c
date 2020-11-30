@@ -156,3 +156,46 @@ char *response_to_file(struct IncomingResponse *response, const char *filepath, 
 
     return result_str;
 }
+
+char *response_to_file_single_path(struct IncomingResponse *response, const char *filename) {
+    char *action_str = "";
+    switch (response->status) {
+        case RESPONSE_OK:
+            action_str = "OK: ";
+            break;
+        case RESPONSE_NOT_FOUND:
+            action_str = "NotFound: ";
+            break;
+        case RESPONSE_BAD_REQUEST:
+            action_str = "BadRequest: ";
+            break;
+        case RESPONSE_INVALID_ACTION:
+            action_str = "InvalidAction: ";
+            break;
+        case RESPONSE_SERVER_ERROR:
+            action_str = "ServerError: ";
+            break;
+        case RESPONSE_INVALID_SYNTAX:
+            action_str = "InvalidSyntax: ";
+            break;
+    }
+
+    create_full_dir(filename);
+
+    char *absolute_path = malloc(strlen(filename) + 1);
+    memset(absolute_path, 0, strlen(filename) + 1);
+
+    memcpy(absolute_path, filename, strlen(filename));
+
+    FILE *f = fopen(absolute_path, "wb");
+    fwrite(response->data, sizeof(char), response->data_size, f);
+    fclose(f);
+
+    char *result_str = malloc(strlen(action_str) + strlen(absolute_path) + 1);
+    memset(result_str, 0, strlen(action_str) + strlen(absolute_path) + 1);
+
+    memcpy(result_str, action_str, strlen(action_str));
+    memcpy(result_str + strlen(action_str), absolute_path, strlen(absolute_path));
+
+    return result_str;
+}

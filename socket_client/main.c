@@ -9,6 +9,8 @@ void login_invalid_action();
 
 void login_not_found();
 
+void html_test();
+
 int main() {
 //    login_ok();
 
@@ -17,6 +19,21 @@ int main() {
 //    login_invalid_action();
 //
 //    login_not_found();
+
+//    html_test();
+}
+
+void html_test() {
+    struct IncomingResponse *response = api_read("/digikala.html", NULL, 0);
+    printf("%s\n", response_to_file(response, "output/", "digikala.html"));
+
+    struct HtmlParser *html_parser = malloc(sizeof(struct HtmlParser));
+    memset(html_parser, 0, sizeof(struct HtmlParser));
+
+    init_html_parser(html_parser, response->data, response->data_size);
+    if (has_more_img(html_parser)) {
+        download_current_img(html_parser);
+    }
 }
 
 void login_ok() {
@@ -32,7 +49,7 @@ void static_file() {
         printf("static file notfound");
         return;
     }
-    printf("%s\n", response_to_file(response, "output/img/", "csgo.png"));
+    printf("%s\n", response_to_file_single_path(response, "output/img/csgo.png"));
 }
 
 void login_invalid_action() {
