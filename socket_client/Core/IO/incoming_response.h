@@ -16,22 +16,22 @@
 struct IncomingResponse {
     int status;
     void *data;
-    int data_size;
+    unsigned long long int data_size;
 };
 
-void init(struct IncomingResponse *response, void *data, int data_size);
+void init(struct IncomingResponse *response, void *data, unsigned long long int data_size);
 
-void init_ok(struct IncomingResponse *response, void *data, int data_size);
+void init_ok(struct IncomingResponse *response, void *data, unsigned long long int data_size);
 
-void init_not_found(struct IncomingResponse *response, void *data, int data_size);
+void init_not_found(struct IncomingResponse *response, void *data, unsigned long long int data_size);
 
-void init_bad_request(struct IncomingResponse *response, void *data, int data_size);
+void init_bad_request(struct IncomingResponse *response, void *data, unsigned long long int data_size);
 
-void init_invalid_action(struct IncomingResponse *response, void *data, int data_size);
+void init_invalid_action(struct IncomingResponse *response, void *data, unsigned long long int data_size);
 
-void init_server_error(struct IncomingResponse *response, void *data, int data_size);
+void init_server_error(struct IncomingResponse *response, void *data, unsigned long long int data_size);
 
-void init_invalid_syntax(struct IncomingResponse *response, void *data, int data_size);
+void init_invalid_syntax(struct IncomingResponse *response, void *data, unsigned long long int data_size);
 
 char *response_to_str(struct IncomingResponse *response);
 

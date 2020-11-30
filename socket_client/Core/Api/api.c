@@ -50,8 +50,8 @@ struct IncomingResponse *send_request(struct OutgoingRequest *request, struct Cl
 
     send(client->socket, request_buffer, request_buffer_size, 0);
 
-    int response_buffer_size = 0;
-    int response_buffer_index;
+    unsigned long long int response_buffer_size = 0;
+    unsigned long long int response_buffer_index;
     int current_buffer_size;
     char *response_buffer = malloc(response_buffer_size);
     memset(response_buffer, 0, response_buffer_size);
