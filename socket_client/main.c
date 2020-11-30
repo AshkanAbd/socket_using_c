@@ -25,15 +25,25 @@ int main() {
 
 void html_test() {
     struct IncomingResponse *response = api_read("/digikala.html", NULL, 0);
-    printf("%s\n", response_to_file(response, "output/", "digikala.html"));
+    printf("%s\n", response_to_file_single_path(response, "output/digikala.html"));
 
     struct HtmlParser *html_parser = malloc(sizeof(struct HtmlParser));
     memset(html_parser, 0, sizeof(struct HtmlParser));
 
     init_html_parser(html_parser, response->data, response->data_size);
     while (has_more_img(html_parser)) {
-        download_current_img(html_parser);
+        download_current_img(html_parser, "output/");
     }
+    printf("Images downloaded\n");
+    while (has_more_script(html_parser)) {
+        download_current_script(html_parser, "output/");
+    }
+    printf("Scripts downloaded\n");
+    while (has_more_css(html_parser)) {
+        download_current_css(html_parser, "output/");
+    }
+    printf("Css downloaded\n");
+    printf("Total downloaded files: %d\n", html_parser->total_downloads);
 }
 
 void login_ok() {

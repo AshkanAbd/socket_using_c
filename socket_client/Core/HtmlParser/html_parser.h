@@ -5,6 +5,7 @@
 
 struct HtmlParser {
     char *content;
+    int total_downloads;
     unsigned long long int content_size;
     unsigned long long int img_position;
     unsigned long long int script_position;
@@ -15,14 +16,14 @@ void init_html_parser(struct HtmlParser *htmlParser, char *data, unsigned long l
 
 int has_more_img(struct HtmlParser *htmlParser);
 
-int download_current_img(struct HtmlParser *htmlParser);
+int download_current_img(struct HtmlParser *htmlParser, const char *prefix);
 
 int has_more_script(struct HtmlParser *htmlParser);
 
-int download_current_script(struct HtmlParser *htmlParser);
+int download_current_script(struct HtmlParser *htmlParser, const char *prefix);
 
 int has_more_css(struct HtmlParser *htmlParser);
 
-int download_current_css(struct HtmlParser *htmlParser);
+int download_current_css(struct HtmlParser *htmlParser, const char *prefix);
 
 #endif //SOCKET_CLIENT_HTML_PARSER_H
