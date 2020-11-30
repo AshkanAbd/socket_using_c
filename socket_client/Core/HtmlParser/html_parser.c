@@ -92,9 +92,12 @@ int download_current_img(struct HtmlParser *htmlParser, const char *prefix) {
         if (*(htmlParser->content + i) == '>') {
             return 0;
         }
-        if (*(htmlParser->content + i + 0) == 's' &&
-            *(htmlParser->content + i + 1) == 'r' &&
-            *(htmlParser->content + i + 2) == 'c') {
+        if (
+                *(htmlParser->content + i + -1) == ' ' &&
+                *(htmlParser->content + i + 0) == 's' &&
+                *(htmlParser->content + i + 1) == 'r' &&
+                *(htmlParser->content + i + 2) == 'c'
+                ) {
             src_check = 1;
         }
         if (*(htmlParser->content + i) == '\"' && src_check && start_index != -1) {
