@@ -72,10 +72,11 @@ int parse_request(struct IncomingRequest *request, const char *buffer, int buffe
         if (c != 0x1D) {
             *(buff + buff_index++) = c;
         } else {
-            if (*(buffer + i) == *(buffer + i - 1) && *(buffer + i) == *(buffer + i + 1)) {
+            if (*(buffer + i) == *(buffer + i - 1) && *(buffer + i) == *(buffer + i + 1) && (i + 1 < buffer_size)) {
                 break;
             }
             if (!fill(request, state, buff, buff_index)) {
+                free(buff);
                 return 0;
             }
             state++;
@@ -85,7 +86,9 @@ int parse_request(struct IncomingRequest *request, const char *buffer, int buffe
     }
 
     if (state == 1) {
+        free(buff);
         return 0;
     }
+    free(buff);
     return 1;
 }

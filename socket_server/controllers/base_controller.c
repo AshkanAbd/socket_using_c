@@ -6,6 +6,6 @@ struct OutgoingResponse *login(struct IncomingRequest *request) {
 
     char *hi_str = "login successful";
 
-    init_ok(response, hi_str, strlen(hi_str));
+    init_ok(response, hi_str, strlen(hi_str) + 1);
     return response;
 }

@@ -57,4 +57,5 @@ void send_to_client(struct OutgoingResponse *response, struct Client *client, in
     *(buffer + response->data_size + 2) = 0x1C;
 
     send(*client->socket, buffer, response->data_size + 3, 0);
+    free(buffer);
 }

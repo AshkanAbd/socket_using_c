@@ -65,8 +65,12 @@ int request_static_files(struct Pipeline *pipeline, struct IncomingRequest *requ
 
     stat(file_path, stat_buffer);
     if (S_ISREG(stat_buffer->st_mode)) {
+        free(file_path);
+        free(stat_buffer);
         return 1;
     }
+    free(file_path);
+    free(stat_buffer);
     return 0;
 }
 
@@ -83,14 +87,22 @@ void serve_static_file(struct OutgoingResponse *response, struct Pipeline *pipel
     fseek(static_file, 0, SEEK_SET);
 
     int max_each_response = MAX - 4;
-    char *buffer;
+    char *buffer = NULL;
 
     int current_read = 0;
     int count = 0;
+    response->status = RESPONSE_OK;
+    response->data_size = max_each_response;
 
     while (1) {
-        response->status = RESPONSE_OK;
-        response->data_size = max_each_response;
+
+        if (response->data != NULL) {
+            free(response->data);
+        }
+        if (buffer != NULL) {
+            free(buffer);
+        }
+
         response->data = malloc(max_each_response);
         memset(response->data, 0, max_each_response);
 
@@ -111,15 +123,15 @@ void serve_static_file(struct OutgoingResponse *response, struct Pipeline *pipel
         wait_for_client(client);
     }
     fclose(static_file);
+    free(file_path);
     printf("sent packet count: %d\n", count);
-
-    close_client(client);
 }
 
-void wait_for_client(struct Client *client){
+void wait_for_client(struct Client *client) {
     char *tmp = malloc(1);
     memset(tmp, 0, 1);
     while (*tmp != 48) {
         recv(*client->socket, tmp, 1, 0);
     }
+    free(tmp);
 }

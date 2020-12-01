@@ -7,17 +7,9 @@
 
 struct Client {
     int *socket;
-    int buffer_size;
-    char *buffer;
-
-    void (*message_func)(struct Client *, char *);
-
-    void (*connect_func)(struct Client *);
-
-    void (*disconnect_func)(struct Client *);
 };
 
-void init_client(struct Client *c, int buffer_size, int *socket);
+void init_client(struct Client *c, int *socket);
 
 void close_client(struct Client *c);
 

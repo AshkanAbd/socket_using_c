@@ -8,16 +8,10 @@ void *handle_client(void *obj);
 
 void init_server(struct ServerSocket *server_socket);
 
-struct Client *clients;
-int clientIndex = 0;
-
 struct Pipeline *pipeline;
 
 int main() {
     struct ServerSocket server_socket;
-
-    clients = malloc(MAX * sizeof(struct Client));
-    memset(clients, 0, MAX * sizeof(struct Client));
 
     pipeline = malloc(sizeof(struct Pipeline));
     memset(pipeline, 0, sizeof(struct Pipeline));
@@ -33,8 +27,9 @@ int main() {
             printf("Failed to accept connection\n");
             printf("Error= %d:%s\n", connection, strerror(connection));
         } else {
-            struct Client *client = (clients + clientIndex++);
-            init_client(client, MAX, &connection);
+            struct Client *client = malloc(sizeof(struct Client));
+            memset(client, 0, sizeof(struct Client));
+            init_client(client, &connection);
             pthread_t receive_thread;
             pthread_create(&receive_thread, NULL, handle_client, client);
         }
@@ -72,30 +67,37 @@ void init_server(struct ServerSocket *server_socket) {
 void *handle_client(void *obj) {
     struct Client *client = (struct Client *) obj;
 
-    char *buffer = malloc(MAX);
-    memset(buffer, 0x1D, MAX);
+    char *buffer = malloc(MAX + 1);
+    memset(buffer, 0x1D, MAX + 1);
     *(buffer + MAX) = 0;
     recv(*client->socket, buffer, MAX, 0);
 
-    struct IncomingRequest request;
+    struct IncomingRequest *request = malloc(sizeof(struct IncomingRequest));
+    memset(request, 0, sizeof(struct IncomingRequest));
     struct OutgoingResponse *response = malloc(sizeof(struct OutgoingResponse));
     memset(response, 0, sizeof(struct OutgoingResponse));
-    if (!parse_request(&request, buffer, MAX)) {
+    if (!parse_request(request, buffer, MAX)) {
         init_invalid_syntax(response, NULL, 0);
     } else {
-        struct RouteTemplate *routeTemplate = match_request(pipeline, &request);
-        if (request_static_files(pipeline, &request)) {
-            serve_static_file(response, pipeline, &request, client);
-            return NULL;
-        } else if (routeTemplate == NULL) {
+        struct RouteTemplate *route_template = match_request(pipeline, request);
+        if (request_static_files(pipeline, request)) {
+            serve_static_file(response, pipeline, request, client);
+            goto close_client;
+        } else if (route_template == NULL) {
             init_not_found(response, NULL, 0);
-        } else if (routeTemplate->action != request.action) {
+        } else if (route_template->action != request->action) {
             init_invalid_action(response, NULL, 0);
         } else {
-            memmove(response, execute_controller(&request, routeTemplate), sizeof(struct OutgoingResponse));
+            struct OutgoingResponse *controller_response = execute_controller(request, route_template);
+            memmove(response, controller_response, sizeof(struct OutgoingResponse));
+            free(controller_response);
         }
     }
     send_to_client(response, client, 1);
 
+    close_client:
+    free(buffer);
+    free(request);
+    free(response);
     close_client(client);
 }
