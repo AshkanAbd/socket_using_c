@@ -98,6 +98,9 @@ void *handle_client(void *obj) {
     close_client:
     free(buffer);
     free(request);
+    if (response->data != NULL) {
+        free(response->data);
+    }
     free(response);
     close_client(client);
 }

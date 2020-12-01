@@ -124,6 +124,9 @@ void serve_static_file(struct OutgoingResponse *response, struct Pipeline *pipel
             break;
         }
     }
+    if (buffer != NULL) {
+        free(buffer);
+    }
     fclose(static_file);
     free(file_path);
     printf("sent packet count: %d\n", count);

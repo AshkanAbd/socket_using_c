@@ -14,13 +14,13 @@ void html_test();
 int main() {
 //    login_ok();
 
-    static_file();
+//    static_file();
 
 //    login_invalid_action();
 
 //    login_not_found();
 
-//    html_test();
+    html_test();
 }
 
 void html_test() {
