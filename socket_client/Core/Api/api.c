@@ -36,7 +36,10 @@ void prepare_request(struct OutgoingRequest *request, char *buffer) {
 }
 
 void request_next_packet(struct Client *client) {
-    send(client->socket, "0", 1, 0);
+    char *temp = malloc(1);
+    *temp = '0';
+    send(client->socket, temp, 1, 0);
+    free(temp);
 }
 
 struct IncomingResponse *send_request(struct OutgoingRequest *request, struct Client *client) {
@@ -49,18 +52,24 @@ struct IncomingResponse *send_request(struct OutgoingRequest *request, struct Cl
     prepare_request(request, request_buffer);
 
     send(client->socket, request_buffer, request_buffer_size, 0);
+    free(request_buffer);
+    free(request);
 
     unsigned long long int response_buffer_size = 0;
     unsigned long long int response_buffer_index;
     int current_buffer_size;
     char *response_buffer = malloc(response_buffer_size);
     memset(response_buffer, 0, response_buffer_size);
-    char *current_buffer;
+    char *current_buffer = NULL;
 
     int count = 0;
 
     do {
         count++;
+
+        if (current_buffer != NULL) {
+            free(current_buffer);
+        }
 
         current_buffer_size = client->buffer_size;
         current_buffer = malloc(current_buffer_size);
@@ -82,8 +91,8 @@ struct IncomingResponse *send_request(struct OutgoingRequest *request, struct Cl
         response_buffer_size += current_buffer_size;
 
         if (count == 1) {
-            response_buffer = realloc(response_buffer, response_buffer_size + 1);
-            memset(response_buffer + response_buffer_index, 0, current_buffer_size + 1);
+            response_buffer = realloc(response_buffer, response_buffer_size);
+            memset(response_buffer + response_buffer_index, 0, current_buffer_size);
             memcpy(response_buffer + response_buffer_index, current_buffer, current_buffer_size);
             if (*(current_buffer + 1) == 0x1C) {
                 break;
@@ -91,8 +100,8 @@ struct IncomingResponse *send_request(struct OutgoingRequest *request, struct Cl
         } else {
             current_buffer_size -= 2;
             response_buffer_size -= 2;
-            response_buffer = realloc(response_buffer, response_buffer_size + 1);
-            memset(response_buffer + response_buffer_index, 0, current_buffer_size + 1);
+            response_buffer = realloc(response_buffer, response_buffer_size);
+            memset(response_buffer + response_buffer_index, 0, current_buffer_size);
             memcpy(response_buffer + response_buffer_index, current_buffer + 2, current_buffer_size);
             if (*(current_buffer + 1) == 0x1C) {
                 break;
@@ -100,6 +109,7 @@ struct IncomingResponse *send_request(struct OutgoingRequest *request, struct Cl
         }
         request_next_packet(client);
     } while (1);
+    free(client);
 
 //    printf("received packet count: %d\n", count);
 
@@ -118,6 +128,7 @@ struct IncomingResponse *send_request(struct OutgoingRequest *request, struct Cl
     } else if (*response_buffer == RESPONSE_INVALID_SYNTAX) {
         init_invalid_syntax(response, response_buffer, response_buffer_size);
     }
+    free(response_buffer);
     return response;
 }
 
@@ -129,8 +140,7 @@ struct IncomingResponse *api_read(char *route, void *param, int param_size) {
 
     init_read(request, route, param, param_size);
 
-    struct IncomingResponse *response = send_request(request, client);
-    return response;
+    return send_request(request, client);
 }
 
 struct IncomingResponse *api_create(char *route, void *param, int param_size, void *body, int body_size) {
@@ -141,8 +151,7 @@ struct IncomingResponse *api_create(char *route, void *param, int param_size, vo
 
     init_create(request, route, param, param_size, body, body_size);
 
-    struct IncomingResponse *response = send_request(request, client);
-    return response;
+    return send_request(request, client);
 }
 
 struct IncomingResponse *api_update(char *route, void *param, int param_size, void *body, int body_size) {
@@ -153,8 +162,7 @@ struct IncomingResponse *api_update(char *route, void *param, int param_size, vo
 
     init_update(request, route, param, param_size, body, body_size);
 
-    struct IncomingResponse *response = send_request(request, client);
-    return response;
+    return send_request(request, client);
 }
 
 struct IncomingResponse *api_delete(char *route, void *param, int param_size) {
@@ -165,6 +173,5 @@ struct IncomingResponse *api_delete(char *route, void *param, int param_size) {
 
     init_delete(request, route, param, param_size);
 
-    struct IncomingResponse *response = send_request(request, client);
-    return response;
+    return send_request(request, client);
 }

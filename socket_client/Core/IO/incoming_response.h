@@ -39,4 +39,6 @@ char *response_to_file(struct IncomingResponse *response, const char *filepath, 
 
 char *response_to_file_single_path(struct IncomingResponse *response, const char *filename);
 
+char *get_action_str(struct IncomingResponse *response);
+
 #endif //SOCKET_SERVER_OUTGOING_RESPONSE_H

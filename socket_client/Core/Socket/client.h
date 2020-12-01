@@ -11,7 +11,7 @@
 #define MAX 1024
 
 struct Client {
-    int socket, buffer_size;;
+    int socket, buffer_size;
 };
 
 void init_client(struct Client *c, int buffer_size, int socket);

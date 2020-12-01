@@ -8,6 +8,7 @@ void init_request(struct OutgoingRequest *request, char *route, void *param, int
 
     if (param_size != 0) {
         request->param = malloc(param_size);
+        memset(request->param, 0, param_size);
         memcpy(request->param, param, param_size);
 
         request->param_size = param_size;
@@ -18,6 +19,7 @@ void init_request(struct OutgoingRequest *request, char *route, void *param, int
 
     if (body_size != 0) {
         request->body = malloc(body_size);
+        memset(request->body, 0, body_size);
         memcpy(request->body, body, body_size);
 
         request->body_size = body_size;

@@ -31,6 +31,7 @@ void html_test() {
     memset(html_parser, 0, sizeof(struct HtmlParser));
 
     init_html_parser(html_parser, response->data, response->data_size);
+    free(response);
     while (has_more_img(html_parser)) {
         download_current_img(html_parser, "output/");
     }
@@ -60,6 +61,7 @@ void static_file() {
         return;
     }
     printf("%s\n", response_to_file_single_path(response, "output/img/csgo.png"));
+    free(response);
 }
 
 void login_invalid_action() {
