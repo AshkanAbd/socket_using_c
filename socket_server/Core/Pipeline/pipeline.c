@@ -120,18 +120,28 @@ void serve_static_file(struct OutgoingResponse *response, struct Pipeline *pipel
             break;
         }
         send_to_client(response, client, 0);
-        wait_for_client(client);
+        if (!wait_for_client(client)) {
+            break;
+        }
     }
     fclose(static_file);
     free(file_path);
     printf("sent packet count: %d\n", count);
 }
 
-void wait_for_client(struct Client *client) {
-    char *tmp = malloc(1);
-    memset(tmp, 0, 1);
+int wait_for_client(struct Client *client) {
+    char *tmp = malloc(3);
+    *(tmp + 0) = 1;
+    *(tmp + 1) = 1;
+    *(tmp + 2) = 0;
     while (*tmp != 48) {
-        recv(*client->socket, tmp, 1, 0);
+        if (*tmp == 0) {
+            free(tmp);
+            printf("dc");
+            return 0;
+        }
+        recv(*client->socket, tmp, 3, 0);
     }
     free(tmp);
+    return 1;
 }
