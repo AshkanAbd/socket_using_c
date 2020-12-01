@@ -224,9 +224,10 @@ int download_html_object(struct HtmlParser *html_parser, const char *prefix, uns
     char *download_path = response_to_file_single_path(response, url);
     printf("%s\n", download_path);
 
+    free(response->data);
+    free(response);
     free(url);
     free(absolute_url);
-    free(response);
     free(download_path);
 
     html_parser->total_downloads++;

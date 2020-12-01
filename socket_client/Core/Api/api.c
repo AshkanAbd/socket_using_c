@@ -61,7 +61,7 @@ struct IncomingResponse *send_request(struct OutgoingRequest *request, struct Cl
     char *response_buffer = malloc(response_buffer_size);
     memset(response_buffer, 0, response_buffer_size);
     char *current_buffer = NULL;
-
+    char *tmp = NULL;
     int count = 0;
 
     do {
@@ -91,7 +91,11 @@ struct IncomingResponse *send_request(struct OutgoingRequest *request, struct Cl
         response_buffer_size += current_buffer_size;
 
         if (count == 1) {
-            response_buffer = realloc(response_buffer, response_buffer_size);
+            tmp = malloc(response_buffer_index + 1);
+            memset(tmp, 0, response_buffer_index + 1);
+            memcpy(tmp, response_buffer, response_buffer_index);
+            free(response_buffer);
+            response_buffer = realloc(tmp, response_buffer_size);
             memset(response_buffer + response_buffer_index, 0, current_buffer_size);
             memcpy(response_buffer + response_buffer_index, current_buffer, current_buffer_size);
             if (*(current_buffer + 1) == 0x1C) {
@@ -100,7 +104,14 @@ struct IncomingResponse *send_request(struct OutgoingRequest *request, struct Cl
         } else {
             current_buffer_size -= 2;
             response_buffer_size -= 2;
-            response_buffer = realloc(response_buffer, response_buffer_size);
+            if (tmp != NULL) {
+                free(tmp);
+            }
+            tmp = malloc(response_buffer_index + 1);
+            memset(tmp, 0, response_buffer_index + 1);
+            memcpy(tmp, response_buffer, response_buffer_index);
+            free(response_buffer);
+            response_buffer = realloc(tmp, response_buffer_size);
             memset(response_buffer + response_buffer_index, 0, current_buffer_size);
             memcpy(response_buffer + response_buffer_index, current_buffer + 2, current_buffer_size);
             if (*(current_buffer + 1) == 0x1C) {
@@ -110,6 +121,8 @@ struct IncomingResponse *send_request(struct OutgoingRequest *request, struct Cl
         request_next_packet(client);
     } while (1);
     free(client);
+    free(current_buffer);
+    free(tmp);
 
 //    printf("received packet count: %d\n", count);
 
