@@ -131,17 +131,15 @@ void serve_static_file(struct OutgoingResponse *response, struct Pipeline *pipel
 
 int wait_for_client(struct Client *client) {
     char *tmp = malloc(3);
-    *(tmp + 0) = 1;
-    *(tmp + 1) = 1;
-    *(tmp + 2) = 0;
-    while (*tmp != 48) {
-        if (*tmp == 0) {
+    memset(tmp, 0, 3);
+    do {
+        recv(*client->socket, tmp, 3, 0);
+        if (strlen(tmp) == 0) {
             free(tmp);
             printf("dc");
             return 0;
         }
-        recv(*client->socket, tmp, 3, 0);
-    }
+    } while (*tmp != 48);
     free(tmp);
     return 1;
 }
