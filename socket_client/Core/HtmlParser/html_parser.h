@@ -5,6 +5,8 @@
 
 struct HtmlParser {
     char *content;
+    char *ip;
+    int port;
     int total_downloads;
     unsigned long long int content_size;
     unsigned long long int img_position;
@@ -17,7 +19,8 @@ struct HtmlParser {
     const char *script_tag;
 };
 
-void init_html_parser(struct HtmlParser *html_parser, char *data, unsigned long long int data_size);
+void init_html_parser(struct HtmlParser *html_parser, char *data, unsigned long long int data_size,
+                      char *ip, int port);
 
 int has_more_img(struct HtmlParser *html_parser);
 

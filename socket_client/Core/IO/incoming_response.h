@@ -17,7 +17,11 @@ struct IncomingResponse {
     int status;
     void *data;
     unsigned long long int data_size;
+    int port;
+    char *ip;
 };
+
+void set_port_and_ip(struct IncomingResponse *response, char *ip, int port);
 
 void init(struct IncomingResponse *response, void *data, unsigned long long int data_size);
 

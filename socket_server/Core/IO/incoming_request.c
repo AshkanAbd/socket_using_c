@@ -90,5 +90,8 @@ int parse_request(struct IncomingRequest *request, const char *buffer, int buffe
         return 0;
     }
     free(buff);
+    if (request->route == NULL) {
+        return 0;
+    }
     return 1;
 }

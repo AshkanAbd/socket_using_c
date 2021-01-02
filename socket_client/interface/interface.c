@@ -1,6 +1,15 @@
 #include "interface.h"
 
 struct IncomingResponse *request_builder() {
+    char *ip = malloc(1024);
+    memset(ip, 0, 1024);
+    printf("Enter ip:\n");
+    scanf("%s", ip);
+
+    int port = 0;
+    printf("Enter port:\n");
+    scanf("%d", &port);
+
     int action;
     do {
         printf("Select action:\n");
@@ -49,20 +58,32 @@ struct IncomingResponse *request_builder() {
         }
     }
 
+    struct IncomingResponse *incoming_response = NULL;
     switch (action) {
         case REQUEST_READ:
-            return api_read(route, param, param_size);
+            incoming_response = api_read(route, param, param_size, ip, port);
+            set_port_and_ip(incoming_response, ip, port);
+            break;
         case REQUEST_CREATE:
-            return api_create(route, param, param_size, body, body_size);
+            incoming_response = api_create(route, param, param_size, body, body_size, ip, port);
+            set_port_and_ip(incoming_response, ip, port);
+            break;
         case REQUEST_UPDATE:
-            return api_update(route, param, param_size, body, body_size);
+            incoming_response = api_update(route, param, param_size, body, body_size, ip, port);
+            set_port_and_ip(incoming_response, ip, port);
+            break;
         case REQUEST_DELETE:
-            return api_delete(route, param, param_size);
+            incoming_response = api_delete(route, param, param_size, ip, port);
+            set_port_and_ip(incoming_response, ip, port);
+            break;
     }
-    return NULL;
+    return incoming_response;
 }
 
 void response_handler(struct IncomingResponse *response) {
+    if (response == NULL) {
+        return;
+    }
     int output_type;
     do {
         printf("Print content to console or file?\n");
@@ -89,5 +110,28 @@ void response_handler(struct IncomingResponse *response) {
     }
     if (output_type == '2') {
         printf("%s\n", response_to_file_single_path(response, filepath));
+        printf("Do you need HTML parser?(Y/n)\n");
+        c = getchar();
+        if (c == 'y' || c == 'Y') {
+            struct HtmlParser *html_parser = malloc(sizeof(struct HtmlParser));
+            memset(html_parser, 0, sizeof(struct HtmlParser));
+
+            init_html_parser(html_parser, response->data, response->data_size, response->ip, response->port);
+            free(response->data);
+            free(response);
+            while (has_more_img(html_parser)) {
+                download_current_img(html_parser, "output/");
+            }
+            printf("Images downloaded\n");
+            while (has_more_script(html_parser)) {
+                download_current_script(html_parser, "output/");
+            }
+            printf("Scripts downloaded\n");
+            while (has_more_css(html_parser)) {
+                download_current_css(html_parser, "output/");
+            }
+            printf("Css downloaded\n");
+            printf("Total downloaded files: %d\n", html_parser->total_downloads);
+        }
     }
 }

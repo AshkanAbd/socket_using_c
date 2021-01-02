@@ -30,7 +30,7 @@ void close_socket(struct ClientSocket *s) {
     WSACleanup();
 }
 
-void init_socket(struct ClientSocket *client_socket) {
+void init_socket(struct ClientSocket *client_socket, char *ip, int port) {
     int error;
 
     if ((error = create_socket(client_socket) != 0)) {
@@ -39,7 +39,7 @@ void init_socket(struct ClientSocket *client_socket) {
         exit(1);
     }
 
-    assign_port(client_socket, "127.0.0.1", PORT);
+    assign_port(client_socket, ip, port);
 
     if ((error = connect_socket(client_socket) != 0)) {
         printf("Failed to connect\n");

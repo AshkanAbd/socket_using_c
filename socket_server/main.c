@@ -79,11 +79,12 @@ void *handle_client(void *obj) {
     if (!parse_request(request, buffer, MAX)) {
         init_invalid_syntax(response, NULL, 0);
     } else {
-        struct RouteTemplate *route_template = match_request(pipeline, request);
         if (request_static_files(pipeline, request)) {
             serve_static_file(response, pipeline, request, client);
             goto close_client;
-        } else if (route_template == NULL) {
+        }
+        struct RouteTemplate *route_template = match_request(pipeline, request);
+        if (route_template == NULL) {
             init_not_found(response, NULL, 0);
         } else if (route_template->action != request->action) {
             init_invalid_action(response, NULL, 0);

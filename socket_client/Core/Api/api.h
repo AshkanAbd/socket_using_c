@@ -8,12 +8,14 @@
 
 struct IncomingResponse *send_request(struct OutgoingRequest *request, struct Client *client);
 
-struct IncomingResponse *api_read(char *route, void *param, int param_size);
+struct IncomingResponse *api_read(char *route, void *param, int param_size, char *ip, int port);
 
-struct IncomingResponse *api_create(char *route, void *param, int param_size, void *body, int body_size);
+struct IncomingResponse *
+api_create(char *route, void *param, int param_size, void *body, int body_size, char *ip, int port);
 
-struct IncomingResponse *api_update(char *route, void *param, int param_size, void *body, int body_size);
+struct IncomingResponse *
+api_update(char *route, void *param, int param_size, void *body, int body_size, char *ip, int port);
 
-struct IncomingResponse *api_delete(char *route, void *param, int param_size);
+struct IncomingResponse *api_delete(char *route, void *param, int param_size, char *ip, int port);
 
 #endif //SOCKET_CLIENT_API_H

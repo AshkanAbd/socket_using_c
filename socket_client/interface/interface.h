@@ -2,6 +2,7 @@
 #define SOCKET_CLIENT_INTERFACE_H
 
 #include "../Core/Api/api.h"
+#include "../Core/HtmlParser/html_parser.h"
 
 struct IncomingResponse *request_builder();
 

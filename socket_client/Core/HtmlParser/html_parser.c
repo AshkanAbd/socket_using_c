@@ -1,7 +1,14 @@
 #include "html_parser.h"
 
-void init_html_parser(struct HtmlParser *html_parser, char *data, unsigned long long int data_size) {
+void init_html_parser(struct HtmlParser *html_parser, char *data, unsigned long long int data_size,
+                      char *ip, int port) {
     html_parser->content_size = data_size;
+
+    html_parser->port = port;
+
+    html_parser->ip = malloc(strlen(ip) + 1);
+    memset(html_parser->ip, 0, strlen(ip) + 1);
+    memcpy(html_parser->ip, ip, strlen(ip));
 
     html_parser->content = malloc(html_parser->content_size);
     memset(html_parser->content, 0, html_parser->content_size);
@@ -118,7 +125,7 @@ int download_current_img(struct HtmlParser *html_parser, const char *prefix) {
     int src_check = 0;
     int done_check = 0;
     for (; i < html_parser->content_size - 4; i++) {
-        if (*(html_parser->content + i) == '>') {
+        if (*(html_parser->content + i) == '>' || *(html_parser->content + i) == ':') {
             return 0;
         }
         if (
@@ -129,7 +136,7 @@ int download_current_img(struct HtmlParser *html_parser, const char *prefix) {
                 ) {
             src_check = 1;
         }
-        if (*(html_parser->content + i) == '\"' && src_check && start_index != -1) {
+        if (*(html_parser->content + i) == '\"' && src_check && start_index != (unsigned long long) -1) {
             end_index = i;
             done_check = 1;
             break;
@@ -158,7 +165,7 @@ int download_current_script(struct HtmlParser *html_parser, const char *prefix) 
             *(html_parser->content + i + 2) == 'c') {
             src_check = 1;
         }
-        if (*(html_parser->content + i) == '\"' && src_check && start_index != -1) {
+        if (*(html_parser->content + i) == '\"' && src_check && start_index != (unsigned long long) -1) {
             end_index = i;
             done_check = 1;
             break;
@@ -189,7 +196,7 @@ int download_current_css(struct HtmlParser *html_parser, const char *prefix) {
             *(html_parser->content + i + 3) == 'f') {
             src_check = 1;
         }
-        if (*(html_parser->content + i) == '\"' && src_check && start_index != -1) {
+        if (*(html_parser->content + i) == '\"' && src_check && start_index != (unsigned long long) -1) {
             end_index = i;
             done_check = 1;
             break;
@@ -217,7 +224,12 @@ int download_html_object(struct HtmlParser *html_parser, const char *prefix, uns
     memcpy(url, prefix, strlen(prefix));
     memcpy(url + strlen(prefix), html_parser->content + start_index, end_index - start_index);
 
-    struct IncomingResponse *response = api_read(absolute_url, NULL, 0);
+    struct IncomingResponse *response = api_read(absolute_url, NULL, 0, html_parser->ip, html_parser->port);
+    if (response == NULL) {
+        free(url);
+        free(absolute_url);
+        return 0;
+    }
     if (response->status == RESPONSE_NOT_FOUND) {
         return 0;
     }

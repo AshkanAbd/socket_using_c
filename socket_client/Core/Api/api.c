@@ -1,15 +1,17 @@
 #include "api.h"
 
-struct Client *request_client() {
+struct Client *request_client(char *ip, int port) {
     struct ClientSocket *client_socket = malloc(sizeof(struct ClientSocket));
     memset(client_socket, 0, sizeof(struct ClientSocket));
 
     struct Client *client = malloc(sizeof(struct Client));
     memset(client, 0, sizeof(struct Client));
 
-    init_socket(client_socket);
+    init_socket(client_socket, ip, port);
 
     init_client(client, MAX, client_socket->socket_fd);
+
+    return client;
 }
 
 void prepare_request(struct OutgoingRequest *request, char *buffer) {
@@ -75,6 +77,9 @@ struct IncomingResponse *send_request(struct OutgoingRequest *request, struct Cl
         memset(current_buffer, 0, current_buffer_size);
 
         recv(client->socket, current_buffer, current_buffer_size, 0);
+        if (strlen(current_buffer) == 0) {
+            return NULL;
+        }
 
         int wrong_packet_count = 0;
         register int i;
@@ -129,22 +134,25 @@ struct IncomingResponse *send_request(struct OutgoingRequest *request, struct Cl
         init_invalid_syntax(response, response_buffer, response_buffer_size);
     }
     free(response_buffer);
+//    printf("receive\n");
+
     return response;
 }
 
-struct IncomingResponse *api_read(char *route, void *param, int param_size) {
-    struct Client *client = request_client();
+struct IncomingResponse *api_read(char *route, void *param, int param_size, char *ip, int port) {
+    struct Client *client = request_client(ip, port);
 
     struct OutgoingRequest *request = malloc(sizeof(struct OutgoingRequest));
     memset(request, 0, sizeof(struct OutgoingRequest));
 
     init_read(request, route, param, param_size);
-
+//    printf("send\n");
     return send_request(request, client);
 }
 
-struct IncomingResponse *api_create(char *route, void *param, int param_size, void *body, int body_size) {
-    struct Client *client = request_client();
+struct IncomingResponse *
+api_create(char *route, void *param, int param_size, void *body, int body_size, char *ip, int port) {
+    struct Client *client = request_client(ip, port);
 
     struct OutgoingRequest *request = malloc(sizeof(struct OutgoingRequest));
     memset(request, 0, sizeof(struct OutgoingRequest));
@@ -154,8 +162,9 @@ struct IncomingResponse *api_create(char *route, void *param, int param_size, vo
     return send_request(request, client);
 }
 
-struct IncomingResponse *api_update(char *route, void *param, int param_size, void *body, int body_size) {
-    struct Client *client = request_client();
+struct IncomingResponse *
+api_update(char *route, void *param, int param_size, void *body, int body_size, char *ip, int port) {
+    struct Client *client = request_client(ip, port);
 
     struct OutgoingRequest *request = malloc(sizeof(struct OutgoingRequest));
     memset(request, 0, sizeof(struct OutgoingRequest));
@@ -165,8 +174,8 @@ struct IncomingResponse *api_update(char *route, void *param, int param_size, vo
     return send_request(request, client);
 }
 
-struct IncomingResponse *api_delete(char *route, void *param, int param_size) {
-    struct Client *client = request_client();
+struct IncomingResponse *api_delete(char *route, void *param, int param_size, char *ip, int port) {
+    struct Client *client = request_client(ip, port);
 
     struct OutgoingRequest *request = malloc(sizeof(struct OutgoingRequest));
     memset(request, 0, sizeof(struct OutgoingRequest));

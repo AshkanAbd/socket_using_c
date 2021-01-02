@@ -4,6 +4,12 @@ project(socket_client C)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} "-static")
 
+if (MSVC)
+    #    add_compile_options(/W4 /WX)
+else ()
+    #    add_compile_options(-Wall -Wextra -pedantic -Werror)
+endif ()
+
 add_executable(socket_client
         main.c
         Core/Socket/client_socket.h Core/Socket/client_socket.c

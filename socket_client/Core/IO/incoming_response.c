@@ -1,10 +1,22 @@
 #include "incoming_response.h"
 
+void set_port_and_ip(struct IncomingResponse *response, char *ip, int port) {
+    response->ip = malloc(strlen(ip) + 1);
+    memset(response->ip, 0, strlen(ip) + 1);
+    memcpy(response->ip, ip, strlen(ip));
+
+    response->port = port;
+}
+
 void init(struct IncomingResponse *response, void *data, unsigned long long int data_size) {
     response->data_size = data_size - 2;
 
     response->data = malloc(data_size - 2);
-    memcpy(response->data, data + 2, data_size - 2);
+    memset(response->data, 0, data_size - 2);
+    memcpy(response->data, (char *) data + 2, data_size - 2);
+
+    response->ip = NULL;
+    response->port = 0;
 }
 
 void init_ok(struct IncomingResponse *response, void *data, unsigned long long int data_size) {
@@ -48,22 +60,28 @@ char *get_action_str(struct IncomingResponse *response) {
     memset(action_str, 0, 20);
     switch (response->status) {
         case RESPONSE_OK:
-            strncpy(action_str, "OK: ", 4);
+            strcpy(action_str, "OK: ");
+//            strncpy(action_str, "OK: ", 4);
             break;
         case RESPONSE_NOT_FOUND:
-            strncpy(action_str, "NotFound: ", 10);
+            strcpy(action_str, "NotFound: ");
+//            strncpy(action_str, "NotFound: ", 10);
             break;
         case RESPONSE_BAD_REQUEST:
-            strncpy(action_str, "BadRequest: ", 12);
+            strcpy(action_str, "BadRequest: ");
+//            strncpy(action_str, "BadRequest: ", 12);
             break;
         case RESPONSE_INVALID_ACTION:
-            strncpy(action_str, "InvalidAction: ", 15);
+            strcpy(action_str, "InvalidAction: ");
+//            strncpy(action_str, "InvalidAction: ", 15);
             break;
         case RESPONSE_SERVER_ERROR:
-            strncpy(action_str, "ServerError: ", 12);
+            strcpy(action_str, "ServerError: ");
+//            strncpy(action_str, "ServerError: ", 12);
             break;
         case RESPONSE_INVALID_SYNTAX:
-            strncpy(action_str, "InvalidSyntax: ", 15);
+            strcpy(action_str, "InvalidSyntax: ");
+//            strncpy(action_str, "InvalidSyntax: ", 15);
             break;
     }
     return action_str;
@@ -79,7 +97,8 @@ char *response_to_str(struct IncomingResponse *response) {
     if (strlen(data_str) == 0) {
         data_str = realloc(data_str, 16);
         memset(data_str, 0, 16);
-        strncpy(data_str, "<content empty>", 15);
+        strcpy(data_str, "<content empty>");
+//        strncpy(data_str, "<content empty>", 15);
     }
 
     char *response_str = malloc(strlen(action_str) + strlen(data_str) + 1);
@@ -165,6 +184,7 @@ char *response_to_file_single_path(struct IncomingResponse *response, const char
     fclose(f);
 
     char *result_str = malloc(strlen(action_str) + strlen(absolute_path) + 1);
+//    printf("to file\n");
     memset(result_str, 0, strlen(action_str) + strlen(absolute_path) + 1);
 
     memcpy(result_str, action_str, strlen(action_str));
@@ -172,5 +192,6 @@ char *response_to_file_single_path(struct IncomingResponse *response, const char
 
     free(absolute_path);
     free(action_str);
+
     return result_str;
 }

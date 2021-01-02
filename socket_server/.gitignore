@@ -4,6 +4,7 @@ cmake/
 
 # IDEA
 .idea/
+.vs/
 
 # Prerequisites
 *.d
