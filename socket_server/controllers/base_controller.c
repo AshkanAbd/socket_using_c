@@ -1,8 +1,8 @@
 #include "base_controller.h"
 
-struct OutgoingResponse *login(struct IncomingRequest *request) {
-    struct OutgoingResponse *response = malloc(sizeof(struct OutgoingResponse));
-    memset(response, 0, sizeof(struct OutgoingResponse));
+OutgoingResponse *login1(IncomingRequest *request) {
+    OutgoingResponse *response = malloc(sizeof(OutgoingResponse));
+    memset(response, 0, sizeof(OutgoingResponse));
 
     printf("Client query parameters:<%s>\n", request->param);
     printf("Client body:<%s>\n", request->body);

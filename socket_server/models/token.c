@@ -1,7 +1,13 @@
 #include "token.h"
 
-void init_token(Token *token, int id, const char *login_token, int user_id) {
+void init_token_full(Token *token, int id, const char *login_token, int user_id) {
     token->id = id;
+    token->user_id = user_id;
+
+    set_token_column(&token->token, login_token);
+}
+
+void init_token(Token *token, const char *login_token, int user_id) {
     token->user_id = user_id;
 
     set_token_column(&token->token, login_token);
@@ -23,4 +29,37 @@ void set_token_column(char **column, const char *value) {
     } else {
         *column = NULL;
     }
+}
+
+int insert_token(Token *token, int (*callback)(void *, int, char **, char **), char **msg) {
+    if (token->token == NULL) {
+        *msg = "token is null";
+        return 0;
+    }
+
+    if (token->user_id == 0) {
+        *msg = "token is invalid";
+        return 0;
+    }
+
+    char *base_insert_sql = "INSERT INTO tokens (token, user_id) VALUES (";
+    size_t custom_insert_sql_size = strlen(base_insert_sql) + 1 + strlen(token->token) + 5;
+    char *custom_insert_sql = malloc(custom_insert_sql_size);
+    memset(custom_insert_sql, 0, custom_insert_sql_size);
+
+    memcpy(custom_insert_sql, base_insert_sql, strlen(base_insert_sql));
+
+    *(custom_insert_sql + strlen(base_insert_sql)) = '\'';
+    memcpy(custom_insert_sql + strlen(base_insert_sql) + 1, token->token, strlen(token->token));
+    *(custom_insert_sql + strlen(base_insert_sql) + 1 + strlen(token->token)) = '\'';
+
+    *(custom_insert_sql + strlen(base_insert_sql) + 1 + strlen(token->token) + 1) = ',';
+
+    *(custom_insert_sql + strlen(base_insert_sql) + 1 + strlen(token->token) + 2) = (char) ('0' + token->user_id);
+    *(custom_insert_sql + strlen(base_insert_sql) + 1 + strlen(token->token) + 3) = ')';
+
+    if (sqlite3_exec(db_connection, custom_insert_sql, callback, 0, msg)) {
+        return 0;
+    }
+    return 1;
 }
