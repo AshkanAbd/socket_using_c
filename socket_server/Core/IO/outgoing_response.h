@@ -12,24 +12,26 @@
 
 #define MAX 1024
 
+typedef struct OutgoingResponse OutgoingResponse;
+
 struct OutgoingResponse {
     int status;
     void *data;
     int data_size;
 };
 
-void init_ok(struct OutgoingResponse *response, void *data, int data_size);
+void init_ok(OutgoingResponse *response, void *data, int data_size);
 
-void init_not_found(struct OutgoingResponse *response, void *data, int data_size);
+void init_not_found(OutgoingResponse *response, void *data, int data_size);
 
-void init_bad_request(struct OutgoingResponse *response, void *data, int data_size);
+void init_bad_request(OutgoingResponse *response, void *data, int data_size);
 
-void init_invalid_action(struct OutgoingResponse *response, void *data, int data_size);
+void init_invalid_action(OutgoingResponse *response, void *data, int data_size);
 
-void init_server_error(struct OutgoingResponse *response, void *data, int data_size);
+void init_server_error(OutgoingResponse *response, void *data, int data_size);
 
-void init_invalid_syntax(struct OutgoingResponse *response, void *data, int data_size);
+void init_invalid_syntax(OutgoingResponse *response, void *data, int data_size);
 
-void send_to_client(struct OutgoingResponse *response, struct Client *client, int final_packet);
+void send_to_client(OutgoingResponse *response, Client *client, int final_packet);
 
 #endif //SOCKET_SERVER_OUTGOING_RESPONSE_H

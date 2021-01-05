@@ -5,14 +5,16 @@
 #include "../IO/outgoing_response.h"
 #include "../IO/incoming_request.h"
 
+typedef struct RouteTemplate RouteTemplate;
+
 struct RouteTemplate {
     int action;
     char *route;
 
-    struct OutgoingResponse *(*func)(struct IncomingRequest *request);
+    OutgoingResponse *(*func)(IncomingRequest *request);
 };
 
-void initRouteTemplate(struct RouteTemplate *template, int action, char *route,
-                       struct OutgoingResponse *(*func)(struct IncomingRequest *request));
+void initRouteTemplate(RouteTemplate *template, int action, char *route,
+                       OutgoingResponse *(*func)(IncomingRequest *request));
 
 #endif //SOCKET_SERVER_ROUTE_TEMPLATE_H

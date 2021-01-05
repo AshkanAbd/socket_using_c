@@ -1,6 +1,6 @@
 #include "outgoing_response.h"
 
-void init(struct OutgoingResponse *response, void *data, int data_size) {
+void init(OutgoingResponse *response, void *data, int data_size) {
     response->data_size = data_size;
 
     response->data = malloc(response->data_size);
@@ -9,43 +9,43 @@ void init(struct OutgoingResponse *response, void *data, int data_size) {
     memcpy(response->data, data, response->data_size);
 }
 
-void init_ok(struct OutgoingResponse *response, void *data, int data_size) {
+void init_ok(OutgoingResponse *response, void *data, int data_size) {
     response->status = RESPONSE_OK;
 
     init(response, data, data_size);
 }
 
-void init_not_found(struct OutgoingResponse *response, void *data, int data_size) {
+void init_not_found(OutgoingResponse *response, void *data, int data_size) {
     response->status = RESPONSE_NOT_FOUND;
 
     init(response, data, data_size);
 }
 
-void init_bad_request(struct OutgoingResponse *response, void *data, int data_size) {
+void init_bad_request(OutgoingResponse *response, void *data, int data_size) {
     response->status = RESPONSE_BAD_REQUEST;
 
     init(response, data, data_size);
 }
 
-void init_invalid_action(struct OutgoingResponse *response, void *data, int data_size) {
+void init_invalid_action(OutgoingResponse *response, void *data, int data_size) {
     response->status = RESPONSE_INVALID_ACTION;
 
     init(response, data, data_size);
 }
 
-void init_server_error(struct OutgoingResponse *response, void *data, int data_size) {
+void init_server_error(OutgoingResponse *response, void *data, int data_size) {
     response->status = RESPONSE_SERVER_ERROR;
 
     init(response, data, data_size);
 }
 
-void init_invalid_syntax(struct OutgoingResponse *response, void *data, int data_size) {
+void init_invalid_syntax(OutgoingResponse *response, void *data, int data_size) {
     response->status = RESPONSE_INVALID_SYNTAX;
 
     init(response, data, data_size);
 }
 
-void send_to_client(struct OutgoingResponse *response, struct Client *client, int final_packet) {
+void send_to_client(OutgoingResponse *response, Client *client, int final_packet) {
     char *buffer = malloc(response->data_size + 3);
     memset(buffer, 0x1D, response->data_size + 3);
 

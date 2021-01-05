@@ -1,28 +1,28 @@
 #include "pipeline.h"
 #include "../Router/router.h"
 
-void init_pipeline(struct Pipeline *pipeline) {
+void init_pipeline(Pipeline *pipeline) {
     pipeline->route_count = 0;
 
     pipeline->static_files_prefix = NULL;
 
-    pipeline->templates = malloc(1024 * sizeof(struct RouteTemplate));
-    memset(pipeline->templates, 0, 1024 * sizeof(struct RouteTemplate));
+    pipeline->templates = malloc(1024 * sizeof(RouteTemplate));
+    memset(pipeline->templates, 0, 1024 * sizeof(RouteTemplate));
 
     registerRoutes(pipeline);
 }
 
-void set_root_dir(struct Pipeline *pipeline, const char *root_dir) {
+void set_root_dir(Pipeline *pipeline, const char *root_dir) {
     pipeline->static_files_prefix = malloc(strlen(root_dir) + 1);
     memset(pipeline->static_files_prefix, 0, strlen(root_dir) + 1);
     memcpy(pipeline->static_files_prefix, root_dir, strlen(root_dir));
 }
 
-struct RouteTemplate *match_request(struct Pipeline *pipeline, struct IncomingRequest *request) {
-    struct RouteTemplate *template = NULL;
+RouteTemplate *match_request(Pipeline *pipeline, IncomingRequest *request) {
+    RouteTemplate *template = NULL;
     register int i;
     for (i = 0; i < pipeline->route_count; ++i) {
-        struct RouteTemplate *tmp = pipeline->templates + i;
+        RouteTemplate *tmp = pipeline->templates + i;
         if (check_route(tmp, request)) {
             if (check_action(tmp, request)) {
                 return tmp;
@@ -33,25 +33,25 @@ struct RouteTemplate *match_request(struct Pipeline *pipeline, struct IncomingRe
     return template;
 }
 
-int check_route(struct RouteTemplate *template, struct IncomingRequest *request) {
+int check_route(RouteTemplate *template, IncomingRequest *request) {
     if (strcmp(template->route, request->route) == 0) {
         return 1;
     }
     return 0;
 }
 
-int check_action(struct RouteTemplate *template, struct IncomingRequest *request) {
+int check_action(RouteTemplate *template, IncomingRequest *request) {
     if (template->action == request->action) {
         return 1;
     }
     return 0;
 }
 
-struct OutgoingResponse *execute_controller(struct IncomingRequest *request, struct RouteTemplate *template) {
+OutgoingResponse *execute_controller(IncomingRequest *request, RouteTemplate *template) {
     return (*template->func)(request);
 }
 
-int request_static_files(struct Pipeline *pipeline, struct IncomingRequest *request) {
+int request_static_files(Pipeline *pipeline, IncomingRequest *request) {
     if (request->action != RESPONSE_OK) {
         return 0;
     }
@@ -74,8 +74,8 @@ int request_static_files(struct Pipeline *pipeline, struct IncomingRequest *requ
     return 0;
 }
 
-void serve_static_file(struct OutgoingResponse *response, struct Pipeline *pipeline, struct IncomingRequest *request,
-                       struct Client *client) {
+void serve_static_file(OutgoingResponse *response, Pipeline *pipeline, IncomingRequest *request,
+                       Client *client) {
     char *file_path = malloc(strlen(pipeline->static_files_prefix) + strlen(request->route) + 1);
     memset(file_path, 0, strlen(pipeline->static_files_prefix) + strlen(request->route) + 1);
     memcpy(file_path, pipeline->static_files_prefix, strlen(pipeline->static_files_prefix));
@@ -132,7 +132,7 @@ void serve_static_file(struct OutgoingResponse *response, struct Pipeline *pipel
     printf("sent packet count: %d\n", count);
 }
 
-int wait_for_client(struct Client *client) {
+int wait_for_client(Client *client) {
     char *tmp = malloc(3);
     memset(tmp, 0, 3);
     do {

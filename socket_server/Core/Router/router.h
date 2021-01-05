@@ -3,18 +3,18 @@
 
 #include "../Pipeline/pipeline.h"
 
-void registerRoutes(struct Pipeline *pipeline);
+void registerRoutes(Pipeline *pipeline);
 
-void readAction(struct Pipeline *pipeline, char *route,
-                struct OutgoingResponse *(*func)(struct IncomingRequest *));
+void readAction(Pipeline *pipeline, char *route,
+                OutgoingResponse *(*func)(IncomingRequest *));
 
-void createAction(struct Pipeline *pipeline, char *route,
-                  struct OutgoingResponse *(*func)(struct IncomingRequest *));
+void createAction(Pipeline *pipeline, char *route,
+                  OutgoingResponse *(*func)(IncomingRequest *));
 
-void updateAction(struct Pipeline *pipeline, char *route,
-                  struct OutgoingResponse *(*func)(struct IncomingRequest *));
+void updateAction(Pipeline *pipeline, char *route,
+                  OutgoingResponse *(*func)(IncomingRequest *));
 
-void deleteAction(struct Pipeline *pipeline, char *route,
-                  struct OutgoingResponse *(*func)(struct IncomingRequest *));
+void deleteAction(Pipeline *pipeline, char *route,
+                  OutgoingResponse *(*func)(IncomingRequest *));
 
 #endif //SOCKET_SERVER_ROUTER_H

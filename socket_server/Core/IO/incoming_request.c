@@ -1,6 +1,6 @@
 #include "incoming_request.h"
 
-void init_request(struct IncomingRequest *request, int action, char *route, void *param, int param_size,
+void init_request(IncomingRequest *request, int action, char *route, void *param, int param_size,
                   void *body, int body_size) {
     request->action = action;
 
@@ -16,7 +16,7 @@ void init_request(struct IncomingRequest *request, int action, char *route, void
     memcpy(request->body, body, body_size);
 }
 
-int fill(struct IncomingRequest *request, int state, const char *buff, int buff_size) {
+int fill(IncomingRequest *request, int state, const char *buff, int buff_size) {
     if (state == 1) {
         if (buff_size != 1 || *buff > 4 || *buff < 1) {
             return 0;
@@ -60,7 +60,7 @@ int fill(struct IncomingRequest *request, int state, const char *buff, int buff_
     return 1;
 }
 
-int parse_request(struct IncomingRequest *request, const char *buffer, int buffer_size) {
+int parse_request(IncomingRequest *request, const char *buffer, int buffer_size) {
     char *buff = malloc(buffer_size);
     memset(buff, 0, buffer_size);
     int buff_index = 0;

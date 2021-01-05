@@ -5,21 +5,23 @@
 #include <winsock2.h>
 #include <io.h>
 
+typedef struct ServerSocket ServerSocket;
+
 struct ServerSocket {
     int socket_fd;
     struct sockaddr_in server_address;
 };
 
-int create_socket(struct ServerSocket *s);
+int create_socket(ServerSocket *s);
 
-void assign_port(struct ServerSocket *s, int port);
+void assign_port(ServerSocket *s, int port);
 
-int bind_socket(struct ServerSocket *s);
+int bind_socket(ServerSocket *s);
 
-int listen_socket(struct ServerSocket *s);
+int listen_socket(ServerSocket *s);
 
-int accept_connection(struct ServerSocket *s);
+int accept_connection(ServerSocket *s);
 
-void close_socket(struct ServerSocket *s);
+void close_socket(ServerSocket *s);
 
 #endif //SOCKET_SERVER_SERVER_SOCKET_H
