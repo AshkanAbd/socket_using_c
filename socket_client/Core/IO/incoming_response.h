@@ -13,6 +13,8 @@
 #define RESPONSE_SERVER_ERROR 5
 #define RESPONSE_INVALID_SYNTAX 6
 
+typedef struct IncomingResponse IncomingResponse;
+
 struct IncomingResponse {
     int status;
     void *data;

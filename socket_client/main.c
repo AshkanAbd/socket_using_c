@@ -1,6 +1,9 @@
 #include "interface/interface.h"
+#include "weblog/life_cycle.h"
 
 void login_ok();
+
+void sign_up_op();
 
 void static_file();
 
@@ -10,9 +13,22 @@ void login_not_found();
 
 void html_test();
 
-int main() {
-    login_ok();
+void get_posts() {
+    struct IncomingResponse *response = api_read("/post", NULL, 0, "127.0.0.1", 8080);
 
+
+    int *posts_index = (int *) response->data;
+
+    int *posts_count = (int *) (response->data + sizeof(int));
+    Post **posts = (Post **) (response->data + (2 * sizeof(int)));
+    printf("%s\n", response_to_str(response));
+}
+
+int main(int argc, char **argv) {
+    start_life_cycle("127.0.0.1", 8080);
+//    login_ok();
+//    sign_up_op();
+//    get_posts();
 //    static_file();
 
 //    login_invalid_action();
@@ -53,7 +69,31 @@ void html_test() {
 }
 
 void login_ok() {
-    struct IncomingResponse *response = api_create("/login", "test params", 12, "test body", 11, "127.0.0.1", 8080);
+    const char *username = "username";
+    const char *password = "password";
+    char *params = malloc(strlen(username) + 1 + strlen(password) + 2);
+    memset(params, 0, strlen(username) + 1 + strlen(password) + 2);
+    memcpy(params, username, strlen(username));
+    memcpy(params + strlen(username) + 1, password, strlen(password));
+    *(params + strlen(username)) = 0x1E;
+    *(params + strlen(username) + 1 + strlen(password)) = 0x1E;
+    struct IncomingResponse *response = api_create("/sign_in", NULL, 0, params, (int) strlen(params), "127.0.0.1",
+                                                   8080);
+
+    printf("%s\n", response_to_str(response));
+}
+
+void sign_up_op() {
+    const char *username = "username";
+    const char *password = "password";
+    char *params = malloc(strlen(username) + 1 + strlen(password) + 2);
+    memset(params, 0, strlen(username) + 1 + strlen(password) + 2);
+    memcpy(params, username, strlen(username));
+    memcpy(params + strlen(username) + 1, password, strlen(password));
+    *(params + strlen(username)) = 0x1E;
+    *(params + strlen(username) + 1 + strlen(password)) = 0x1E;
+    struct IncomingResponse *response = api_create("/sign_up", NULL, 0, params, (int) strlen(params), "127.0.0.1",
+                                                   8080);
 
     printf("%s\n", response_to_str(response));
 }
