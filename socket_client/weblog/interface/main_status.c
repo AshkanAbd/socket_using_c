@@ -1,4 +1,4 @@
-#include "main_status.h"
+#include "interface.h"
 
 void start_status(int *current_status) {
     int input = 0;

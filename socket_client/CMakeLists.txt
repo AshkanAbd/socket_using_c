@@ -28,7 +28,7 @@ add_executable(socket_client
         weblog/life_cycle.h weblog/life_cycle.c
         weblog/apis/apis.h
         weblog/apis/auth_api.c weblog/apis/auth_api.h
-        weblog/models/user.c weblog/models/user.h weblog/interface/interface.h weblog/interface/main_status.c weblog/interface/main_status.h weblog/interface/sign_in_status.c weblog/interface/sign_in_status.h)
+        weblog/models/user.c weblog/models/user.h weblog/interface/interface.h weblog/interface/main_status.c weblog/interface/sign_in_status.c weblog/interface/sign_up_status.c)
 
 if (WIN32)
     target_link_libraries(socket_client wsock32 ws2_32)

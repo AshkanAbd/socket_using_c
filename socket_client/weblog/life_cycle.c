@@ -20,5 +20,8 @@ void start_life_cycle(const char *ip, int port) {
         if (current_status == STATUS_SIGN_IN) {
             sign_in_status(&current_status);
         }
+        if (current_status == STATUS_SIGN_UP) {
+            sign_up_status(&current_status);
+        }
     }
 }

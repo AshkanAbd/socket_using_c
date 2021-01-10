@@ -2,10 +2,10 @@
 
 char *token;
 
-void sign_in_callback(IncomingResponse *response, void *ptr) {
+void sign_up_callback(IncomingResponse *response, void *ptr) {
     int *current_status = (int *) ptr;
     if (response->status == RESPONSE_OK) {
-        printf("Sign in successful\n");
+        printf("Sign up successful\n");
         *current_status = STATUS_GET_POST_LIST;
 
         token = malloc(response->data_size + 1);
@@ -20,8 +20,8 @@ void sign_in_callback(IncomingResponse *response, void *ptr) {
     }
 }
 
-void sign_in_status(int *current_status) {
-    printf("Fill information for sign in\n");
+void sign_up_status(int *current_status) {
+    printf("Fill information for sign up\n");
 
     char c;
     int index = 0;
@@ -43,6 +43,7 @@ void sign_in_status(int *current_status) {
         *(password + index++) = c;
     }
 
-    printf("Sending sign in request, please wait...\n");
-    sign_in_api(username, password, sign_in_callback, current_status);
+    printf("Sending sign up request, please wait...\n");
+    sign_up_api(username, password, sign_up_callback, current_status);
 }
+
