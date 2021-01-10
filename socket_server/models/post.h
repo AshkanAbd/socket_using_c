@@ -11,10 +11,15 @@ struct Post {
     char *title;
     char *description;
     int user_id;
+    char *created_at;
+    char *updated_at;
 };
 
-void init_post(Post *post, int id, char *title, char *description, int user_id);
+void init_post_full(Post *post, int id, char *title, char *description, int user_id,
+                    char *created_at, char *updated_at);
 
-void set_post_column(char **column, const char *value);
+void init_post(Post *post, char *title, char *description, int user_id);
+
+void set_post_column(char **column, const char *value, int with_free);
 
 #endif //SOCKET_SERVER_POST_H

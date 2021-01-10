@@ -13,7 +13,7 @@ void generate_token(char **output, int length) {
     }
 }
 
-int find_user_by_username(void *ptr, int row_count, char **data, char **columns) {
+int find_user_by_username_callback(void *ptr, int row_count, char **data, char **columns) {
     User **user = (User **) ptr;
     *user = malloc(sizeof(User));
     memset(*user, 0, sizeof(User));
@@ -46,7 +46,7 @@ OutgoingResponse *sign_in(IncomingRequest *request) {
 
     User *user = NULL;
     char *db_msg = 0;
-    if (user_search_by_username(username, &user, find_user_by_username, &db_msg) == 0) {
+    if (user_search_by_username(username, &user, find_user_by_username_callback, &db_msg) == 0) {
         init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
         return response;
     }
@@ -103,7 +103,7 @@ OutgoingResponse *sign_up(IncomingRequest *request) {
 
     User *user = NULL;
     char *db_msg = 0;
-    if (user_search_by_username(username, &user, find_user_by_username, &db_msg) == 0) {
+    if (user_search_by_username(username, &user, find_user_by_username_callback, &db_msg) == 0) {
         init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
         return response;
     }
@@ -123,7 +123,7 @@ OutgoingResponse *sign_up(IncomingRequest *request) {
         return response;
     }
 
-    if (user_search_by_username(username, &user, find_user_by_username, &db_msg) == 0) {
+    if (user_search_by_username(username, &user, find_user_by_username_callback, &db_msg) == 0) {
         init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
         return response;
     }

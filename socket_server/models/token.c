@@ -1,10 +1,14 @@
 #include "token.h"
 
-void init_token_full(Token *token, int id, const char *login_token, int user_id) {
+void init_token_full(Token *token, int id, const char *login_token, int user_id, char *created_at, char *updated_at) {
     token->id = id;
     token->user_id = user_id;
 
     set_token_column(&token->token, login_token);
+
+    set_token_column(&token->created_at, created_at);
+
+    set_token_column(&token->updated_at, updated_at);
 }
 
 void init_token(Token *token, const char *login_token, int user_id) {
@@ -59,6 +63,24 @@ int insert_token(Token *token, int (*callback)(void *, int, char **, char **), c
     *(custom_insert_sql + strlen(base_insert_sql) + 1 + strlen(token->token) + 3) = ')';
 
     if (sqlite3_exec(db_connection, custom_insert_sql, callback, 0, msg)) {
+        return 0;
+    }
+    return 1;
+}
+
+int find_token(const char *token, void *ptr, int (*callback)(void *, int, char **, char **), char **msg) {
+    char *base_search_sql = "SELECT * FROM tokens WHERE token = ";
+    size_t custom_search_sql_size = strlen(base_search_sql) + 1 + strlen(token) + 2;
+    char *custom_search_sql = malloc(strlen(base_search_sql) + 1 + strlen(token) + 2);
+    memset(custom_search_sql, 0, custom_search_sql_size);
+
+    memcpy(custom_search_sql, base_search_sql, strlen(base_search_sql));
+
+    *(custom_search_sql + strlen(base_search_sql)) = '\'';
+    memcpy(custom_search_sql + strlen(base_search_sql) + 1, token, strlen(token));
+    *(custom_search_sql + strlen(base_search_sql) + 1 + strlen(token)) = '\'';
+
+    if (sqlite3_exec(db_connection, custom_search_sql, callback, ptr, msg) != SQLITE_OK) {
         return 0;
     }
     return 1;

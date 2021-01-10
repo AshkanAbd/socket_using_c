@@ -37,7 +37,8 @@ void set_user_column(char **column, const char *value) {
     }
 }
 
-int user_search_by_username(char *username, void *ptr, int (*callback)(void *, int, char **, char **), char **msg) {
+int
+user_search_by_username(const char *username, void *ptr, int (*callback)(void *, int, char **, char **), char **msg) {
     char *base_search_sql = "SELECT * FROM users WHERE username = ";
     size_t custom_search_sql_size = strlen(base_search_sql) + 1 + strlen(username) + 2;
     char *custom_search_sql = malloc(strlen(base_search_sql) + 1 + strlen(username) + 2);
