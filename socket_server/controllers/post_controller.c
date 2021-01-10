@@ -8,6 +8,13 @@ int posts_count_callback(void *ptr, int row_count, char **data, char **columns) 
     return 0;
 }
 
+void put_separator(void *data, size_t *data_index) {
+    char *data_char = (char *) data;
+//    *((char *) (data + *data_index)) = 0x1E;
+    *(data_char + *data_index) = 0x1E;
+    *data_index += 1;
+}
+
 int get_posts_callback(void *ptr, int row_count, char **data, char **columns) {
     int *posts_index = (int *) ptr;
 
@@ -59,6 +66,48 @@ OutgoingResponse *post_list(IncomingRequest *request) {
         return response;
     }
 
-    init_ok(response, ptr, (int) ((2 * sizeof(int)) + (posts_count * sizeof(Post))));
+    size_t data_size = sizeof(int) + 1;
+    size_t data_index = 0;
+    for (int i = 0; i < posts_count; ++i) {
+        data_size += (sizeof(int) + 1);
+        data_size += (strlen((*(posts + i))->title) + 1);
+        data_size += (strlen((*(posts + i))->created_at) + 1);
+    }
+
+    void *data = malloc(data_size);
+    memset(data, 0, data_size);
+
+    char posts_count_char[sizeof(int)];
+    itoa(posts_count, posts_count_char, 10);
+
+    memcpy(data, posts_count_char, sizeof(int));
+    data_index += sizeof(int);
+
+    put_separator(data, &data_index);
+
+    for (int i = 0; i < posts_count; ++i) {
+        char id_char[sizeof(int)];
+        itoa((*(posts + i))->id, id_char, 10);
+
+//        memcpy(data + data_index, &(*(posts + i))->id, sizeof(int));
+        memcpy(data + data_index, id_char, sizeof(int));
+        data_index += sizeof(int);
+
+        put_separator(data, &data_index);
+
+        size_t title_length = strlen((*(posts + i))->title);
+        memcpy(data + data_index, (*(posts + i))->title, title_length);
+        data_index += title_length;
+
+        put_separator(data, &data_index);
+
+        size_t created_at_length = strlen((*(posts + i))->created_at);
+        memcpy(data + data_index, (*(posts + i))->created_at, created_at_length);
+        data_index += created_at_length;
+
+        put_separator(data, &data_index);
+    }
+
+    init_ok(response, data, data_size);
     return response;
 }
