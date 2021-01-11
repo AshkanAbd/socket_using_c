@@ -5,7 +5,7 @@ char *token;
 void sign_up_callback(IncomingResponse *response, void *ptr) {
     if (response->status == RESPONSE_OK) {
         printf("Sign up successful\n");
-        change_life_cycle_status(STATUS_POST_LIST);
+        change_life_cycle_status(STATUS_POST_ACTION);
 
         token = malloc(response->data_size + 1);
         memset(token, 0, response->data_size + 1);
@@ -41,5 +41,7 @@ void sign_up_status() {
 
     printf("Sending sign up request, please wait...\n");
     sign_up_api(username, password, sign_up_callback, NULL);
+    free(username);
+    free(password);
 }
 

@@ -25,10 +25,10 @@ void get_posts() {
 }
 
 int main(int argc, char **argv) {
-//    start_life_cycle("127.0.0.1", 8080);
+    start_life_cycle("127.0.0.1", 8080);
 //    login_ok();
 //    sign_up_op();
-    get_posts();
+//    get_posts();
 //    static_file();
 
 //    login_invalid_action();

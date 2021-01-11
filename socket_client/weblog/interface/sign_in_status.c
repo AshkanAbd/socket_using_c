@@ -5,7 +5,7 @@ char *token;
 void sign_in_callback(IncomingResponse *response, void *ptr) {
     if (response->status == RESPONSE_OK) {
         printf("Sign in successful\n");
-        change_life_cycle_status(STATUS_POST_LIST);
+        change_life_cycle_status(STATUS_POST_ACTION);
 
         token = malloc(response->data_size + 1);
         memset(token, 0, response->data_size + 1);
@@ -41,4 +41,6 @@ void sign_in_status() {
 
     printf("Sending sign in request, please wait...\n");
     sign_in_api(username, password, sign_in_callback, NULL);
+    free(username);
+    free(password);
 }

@@ -20,4 +20,7 @@ void sign_up_status();
 
 void post_list_status();
 
+void post_action_status();
+
+
 #endif //SOCKET_CLIENT_INTERFACE_H

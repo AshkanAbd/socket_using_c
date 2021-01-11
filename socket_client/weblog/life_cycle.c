@@ -21,6 +21,9 @@ void start_life_cycle(const char *ip, int port) {
         if (get_life_cycle_status() == STATUS_SIGN_UP) {
             sign_up_status();
         }
+        if (get_life_cycle_status() == STATUS_POST_ACTION) {
+            post_action_status();
+        }
         if (get_life_cycle_status() == STATUS_POST_LIST) {
             post_list_status();
         }

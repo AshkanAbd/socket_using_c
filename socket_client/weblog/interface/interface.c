@@ -7,6 +7,7 @@ void print_error_repose(IncomingResponse *response) {
     memset(msg, 0, response->data_size + 1);
     memcpy(msg, response->data, response->data_size);
     printf("Error: %s\n", msg);
+    free(msg);
 }
 
 void change_life_cycle_status(int next_status) {
