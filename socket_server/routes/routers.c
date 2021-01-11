@@ -5,5 +5,6 @@ void registerRoutes(Pipeline *pipeline) {
     createAction(pipeline, "/sign_in", sign_in);
     createAction(pipeline, "/sign_up", sign_up);
 
-    readAction(pipeline, "/post", post_list);
+    readAction(pipeline, "/post_list", post_list);
+    readAction(pipeline, "/get_post", get_post);
 }

@@ -1,4 +1,4 @@
-#include "post_controller.h"
+#include "controllers.h"
 
 int posts_count_callback(void *ptr, int row_count, char **data, char **columns) {
     int *posts_count = (int *) ptr;
@@ -43,7 +43,7 @@ OutgoingResponse *post_list(IncomingRequest *request) {
 
     char *posts_count_sql = "SELECT COUNT() FROM posts";
     char *db_msg = 0;
-    if (sqlite3_exec(db_connection, posts_count_sql, posts_count_callback, &posts_count, &db_msg)) {
+    if (sqlite3_exec(db_connection, posts_count_sql, posts_count_callback, &posts_count, &db_msg) != SQLITE_OK) {
         init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
         return response;
     }
@@ -61,7 +61,7 @@ OutgoingResponse *post_list(IncomingRequest *request) {
     memcpy(ptr + (2 * sizeof(int)), posts, posts_count * sizeof(Post));
 
     char *get_posts_sql = "SELECT id,title,created_at FROM posts;";
-    if (sqlite3_exec(db_connection, get_posts_sql, get_posts_callback, ptr, &db_msg)) {
+    if (sqlite3_exec(db_connection, get_posts_sql, get_posts_callback, ptr, &db_msg) != SQLITE_OK) {
         init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
         return response;
     }
@@ -107,6 +107,102 @@ OutgoingResponse *post_list(IncomingRequest *request) {
 
         put_separator(data, &data_index);
     }
+
+    init_ok(response, data, data_size);
+    return response;
+}
+
+int find_post_by_id_callback(void *ptr, int row_count, char **data, char **columns) {
+    Post **post = (Post **) ptr;
+    *post = malloc(sizeof(Post));
+    memset(*post, 0, sizeof(Post));
+
+    init_post_full(*post, atoi(data[0]), data[1], data[2], atoi(data[3]),
+                   data[4], data[5]);
+    return 0;
+}
+
+int find_user_by_id_callback(void *ptr, int row_count, char **data, char **columns) {
+    User **user = (User **) ptr;
+    *user = malloc(sizeof(User));
+    memset(*user, 0, sizeof(User));
+
+    init_user_full(*user, atoi(data[0]), data[1], data[2], data[3], data[4]);
+    return 0;
+}
+
+OutgoingResponse *get_post(IncomingRequest *request) {
+    OutgoingResponse *response = malloc(sizeof(OutgoingResponse));
+    memset(response, 0, sizeof(OutgoingResponse));
+
+    char *post_id_char = malloc(request->param_size + 1);
+    memset(post_id_char, 0, request->param_size + 1);
+    memcpy(post_id_char, request->param, request->param_size);
+
+    Post *post = NULL;
+    char *db_msg = 0;
+    if (post_search_by_id(post_id_char, &post, find_post_by_id_callback, &db_msg) != SQLITE_OK) {
+        init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
+        return response;
+    }
+
+    if (post == NULL) {
+        init_not_found(response, "Post notfound", 13);
+        return response;
+    }
+
+    char user_id_char[sizeof(int) + 1];
+    memset(user_id_char, 0, sizeof(int) + 1);
+    itoa(post->user_id, user_id_char, 10);
+
+    User *user = NULL;
+    db_msg = 0;
+    if (user_search_by_id(user_id_char, &user, find_user_by_id_callback, &db_msg) != SQLITE_OK) {
+        init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
+        return response;
+    }
+
+    size_t data_size = 0;
+    size_t data_index = 0;
+    data_size += sizeof(int);
+    data_size++;
+    data_size += strlen(post->title);
+    data_size++;
+    data_size += strlen(post->description);
+    data_size++;
+    data_size += strlen(post->created_at);
+    data_size++;
+    data_size += sizeof(int);
+    data_size++;
+    data_size += strlen(user->username);
+    data_size++;
+
+    char *data = malloc(data_size);
+    memset(data, 0, data_size);
+
+    memcpy(data, post_id_char, sizeof(int));
+    data_index += sizeof(int);
+    put_separator(data, &data_index);
+
+    memcpy(data + data_index, post->title, strlen(post->title));
+    data_index += strlen(post->title);
+    put_separator(data, &data_index);
+
+    memcpy(data + data_index, post->description, strlen(post->description));
+    data_index += strlen(post->description);
+    put_separator(data, &data_index);
+
+    memcpy(data + data_index, post->created_at, strlen(post->created_at));
+    data_index += strlen(post->created_at);
+    put_separator(data, &data_index);
+
+    memcpy(data, user_id_char, sizeof(int));
+    data_index += sizeof(int);
+    put_separator(data, &data_index);
+
+    memcpy(data + data_index, user->username, strlen(user->username));
+    data_index += strlen(user->username);
+    put_separator(data, &data_index);
 
     init_ok(response, data, data_size);
     return response;

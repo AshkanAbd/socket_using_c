@@ -22,8 +22,10 @@ void init_user(User *user, const char *username, const char *password);
 
 void set_user_column(char **column, const char *value);
 
-int
-user_search_by_username(const char *username, void *ptr, int (*callback)(void *, int, char **, char **), char **msg);
+int user_search_by_username(const char *username, void *ptr, int (*callback)(void *, int, char **, char **),
+                            char **msg);
+
+int user_search_by_id(const char *id, void *ptr, int (*callback)(void *, int, char **, char **), char **msg);
 
 int insert_user(User *user, int (*callback)(void *, int, char **, char **), char **msg);
 

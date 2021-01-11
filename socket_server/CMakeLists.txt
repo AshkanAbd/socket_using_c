@@ -15,7 +15,7 @@ add_executable(socket_server
         Core/Pipeline/pipeline.h Core/Pipeline/pipeline.c
         routes/routers.c
         Core/db/sqlite/sqlite3.c Core/db/sqlite/sqlite3.h
-        Core/db/sqlite/migration.c Core/db/sqlite/migration.h controllers/login_controller.c controllers/login_controller.h models/user.c models/user.h models/token.c models/token.h models/post.c models/post.h controllers/post_controller.c controllers/post_controller.h models/models.h controllers/controllers.h)
+        Core/db/sqlite/migration.c Core/db/sqlite/migration.h controllers/login_controller.c models/user.c models/user.h models/token.c models/token.h models/post.c models/post.h controllers/post_controller.c models/models.h controllers/controllers.h)
 
 if (WIN32)
     target_link_libraries(socket_server wsock32 ws2_32)

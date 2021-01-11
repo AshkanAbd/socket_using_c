@@ -37,11 +37,11 @@ void set_user_column(char **column, const char *value) {
     }
 }
 
-int
-user_search_by_username(const char *username, void *ptr, int (*callback)(void *, int, char **, char **), char **msg) {
+int user_search_by_username(const char *username, void *ptr, int (*callback)(void *, int, char **, char **),
+                            char **msg) {
     char *base_search_sql = "SELECT * FROM users WHERE username = ";
     size_t custom_search_sql_size = strlen(base_search_sql) + 1 + strlen(username) + 2;
-    char *custom_search_sql = malloc(strlen(base_search_sql) + 1 + strlen(username) + 2);
+    char *custom_search_sql = malloc(custom_search_sql_size);
     memset(custom_search_sql, 0, custom_search_sql_size);
 
     memcpy(custom_search_sql, base_search_sql, strlen(base_search_sql));
@@ -50,10 +50,7 @@ user_search_by_username(const char *username, void *ptr, int (*callback)(void *,
     memcpy(custom_search_sql + strlen(base_search_sql) + 1, username, strlen(username));
     *(custom_search_sql + strlen(base_search_sql) + 1 + strlen(username)) = '\'';
 
-    if (sqlite3_exec(db_connection, custom_search_sql, callback, ptr, msg) != SQLITE_OK) {
-        return 0;
-    }
-    return 1;
+    return sqlite3_exec(db_connection, custom_search_sql, callback, ptr, msg);
 }
 
 int insert_user(User *user, int (*callback)(void *, int, char **, char **), char **msg) {
@@ -85,8 +82,18 @@ int insert_user(User *user, int (*callback)(void *, int, char **, char **), char
 
     *(custom_insert_sql + strlen(base_insert_sql) + 1 + strlen(user->username) + 3 + strlen(user->password) + 1) = ')';
 
-    if (sqlite3_exec(db_connection, custom_insert_sql, callback, 0, msg)) {
-        return 0;
-    }
-    return 1;
+    return sqlite3_exec(db_connection, custom_insert_sql, callback, 0, msg);
+}
+
+int user_search_by_id(const char *id, void *ptr, int (*callback)(void *, int, char **, char **), char **msg) {
+    char *base_search_sql = "SELECT * FROM users WHERE id = ";
+    size_t custom_search_sql_size = strlen(base_search_sql) + strlen(id) + 1;
+    char *custom_search_sql = malloc(custom_search_sql_size);
+    memset(custom_search_sql, 0, custom_search_sql_size);
+
+    memcpy(custom_search_sql, base_search_sql, strlen(base_search_sql));
+
+    memcpy(custom_search_sql + strlen(base_search_sql), id, strlen(id));
+
+    return sqlite3_exec(db_connection, custom_search_sql, callback, ptr, msg);
 }

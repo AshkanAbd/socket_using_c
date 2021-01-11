@@ -62,10 +62,7 @@ int insert_token(Token *token, int (*callback)(void *, int, char **, char **), c
     *(custom_insert_sql + strlen(base_insert_sql) + 1 + strlen(token->token) + 2) = (char) ('0' + token->user_id);
     *(custom_insert_sql + strlen(base_insert_sql) + 1 + strlen(token->token) + 3) = ')';
 
-    if (sqlite3_exec(db_connection, custom_insert_sql, callback, 0, msg)) {
-        return 0;
-    }
-    return 1;
+    return sqlite3_exec(db_connection, custom_insert_sql, callback, 0, msg);
 }
 
 int find_token(const char *token, void *ptr, int (*callback)(void *, int, char **, char **), char **msg) {
@@ -80,8 +77,5 @@ int find_token(const char *token, void *ptr, int (*callback)(void *, int, char *
     memcpy(custom_search_sql + strlen(base_search_sql) + 1, token, strlen(token));
     *(custom_search_sql + strlen(base_search_sql) + 1 + strlen(token)) = '\'';
 
-    if (sqlite3_exec(db_connection, custom_search_sql, callback, ptr, msg) != SQLITE_OK) {
-        return 0;
-    }
-    return 1;
+    sqlite3_exec(db_connection, custom_search_sql, callback, ptr, msg);
 }
