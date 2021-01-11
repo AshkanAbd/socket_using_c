@@ -43,13 +43,15 @@ void set_post_column(char **column, const char *value, int with_free) {
 
 int post_search_by_id(const char *id, void *ptr, int (*callback)(void *, int, char **, char **), char **msg) {
     char *base_search_sql = "SELECT * FROM posts WHERE id = ";
-    size_t custom_search_sql_size = strlen(base_search_sql) + strlen(id) + 1;
+    size_t custom_search_sql_size = strlen(base_search_sql) + 1 + strlen(id) + 2;
     char *custom_search_sql = malloc(custom_search_sql_size);
     memset(custom_search_sql, 0, custom_search_sql_size);
 
     memcpy(custom_search_sql, base_search_sql, strlen(base_search_sql));
 
-    memcpy(custom_search_sql + strlen(base_search_sql), id, strlen(id));
+    *(custom_search_sql + strlen(base_search_sql)) = '\'';
+    memcpy(custom_search_sql + strlen(base_search_sql) + 1, id, strlen(id));
+    *(custom_search_sql + strlen(base_search_sql) + 1 + strlen(id)) = '\'';
 
     return sqlite3_exec(db_connection, custom_search_sql, callback, ptr, msg);
 }

@@ -151,7 +151,7 @@ OutgoingResponse *get_post(IncomingRequest *request) {
         return response;
     }
 
-    char user_id_char[sizeof(int) + 1];
+    char *user_id_char = malloc(sizeof(int) + 1);
     memset(user_id_char, 0, sizeof(int) + 1);
     itoa(post->user_id, user_id_char, 10);
 
@@ -196,7 +196,7 @@ OutgoingResponse *get_post(IncomingRequest *request) {
     data_index += strlen(post->created_at);
     put_separator(data, &data_index);
 
-    memcpy(data, user_id_char, sizeof(int));
+    memcpy(data + data_index, user_id_char, sizeof(int));
     data_index += sizeof(int);
     put_separator(data, &data_index);
 
