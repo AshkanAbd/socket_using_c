@@ -27,5 +27,8 @@ void start_life_cycle(const char *ip, int port) {
         if (get_life_cycle_status() == STATUS_POST_LIST) {
             post_list_status();
         }
+        if (get_life_cycle_status() == STATUS_GET_ONE_POST) {
+            get_post_status();
+        }
     }
 }

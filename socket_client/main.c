@@ -14,13 +14,8 @@ void login_not_found();
 void html_test();
 
 void get_posts() {
-    struct IncomingResponse *response = api_read("/post", NULL, 0, "127.0.0.1", 8080);
+    struct IncomingResponse *response = api_read("/get_post", "3", 1, "127.0.0.1", 8080);
 
-
-    int *posts_index = (int *) response->data;
-
-    int *posts_count = (int *) (response->data + sizeof(int));
-    Post **posts = (Post **) (response->data + (2 * sizeof(int)));
     printf("%s\n", response_to_str(response));
 }
 
