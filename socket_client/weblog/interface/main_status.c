@@ -1,6 +1,6 @@
 #include "interface.h"
 
-void start_status(int *current_status) {
+void start_status() {
     int input = 0;
 
     do {
@@ -11,5 +11,5 @@ void start_status(int *current_status) {
         while (getchar() != '\n');
     } while (input != 1 && input != 2);
 
-    *current_status = input;
+    change_life_cycle_status(input);
 }

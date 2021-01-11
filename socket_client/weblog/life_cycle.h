@@ -7,7 +7,7 @@
 #define STATUS_START            0
 #define STATUS_SIGN_IN          1
 #define STATUS_SIGN_UP          2
-#define STATUS_GET_POST_LIST    3
+#define STATUS_POST_LIST    3
 #define STATUS_GET_ONE_POST     4
 #define STATUS_CREATE_POST      5
 #define STATUS_UPDATE_POST      6

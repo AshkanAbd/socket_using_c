@@ -6,10 +6,18 @@
 #include "../apis/apis.h"
 #include "../life_cycle.h"
 
-void start_status(int *current_status);
+int get_life_cycle_status();
 
-void sign_in_status(int *current_status);
+void change_life_cycle_status(int next_status);
 
-void sign_up_status(int *current_status);
+void print_error_repose(IncomingResponse *response);
+
+void start_status();
+
+void sign_in_status();
+
+void sign_up_status();
+
+void post_list_status();
 
 #endif //SOCKET_CLIENT_INTERFACE_H

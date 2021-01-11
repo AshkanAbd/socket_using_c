@@ -1,7 +1,5 @@
 #include "life_cycle.h"
 
-int current_status = 0;
-
 int server_port;
 char *server_ip;
 char *token;
@@ -14,14 +12,17 @@ void start_life_cycle(const char *ip, int port) {
     memcpy(server_ip, ip, strlen(ip));
 
     while (1) {
-        if (current_status == STATUS_START) {
-            start_status(&current_status);
+        if (get_life_cycle_status() == STATUS_START) {
+            start_status();
         }
-        if (current_status == STATUS_SIGN_IN) {
-            sign_in_status(&current_status);
+        if (get_life_cycle_status() == STATUS_SIGN_IN) {
+            sign_in_status();
         }
-        if (current_status == STATUS_SIGN_UP) {
-            sign_up_status(&current_status);
+        if (get_life_cycle_status() == STATUS_SIGN_UP) {
+            sign_up_status();
+        }
+        if (get_life_cycle_status() == STATUS_POST_LIST) {
+            post_list_status();
         }
     }
 }

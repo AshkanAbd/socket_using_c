@@ -1,4 +1,4 @@
-#include "auth_api.h"
+#include "apis.h"
 
 int server_port;
 char *server_ip;

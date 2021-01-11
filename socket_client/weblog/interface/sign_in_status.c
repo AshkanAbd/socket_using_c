@@ -3,24 +3,20 @@
 char *token;
 
 void sign_in_callback(IncomingResponse *response, void *ptr) {
-    int *current_status = (int *) ptr;
     if (response->status == RESPONSE_OK) {
         printf("Sign in successful\n");
-        *current_status = STATUS_GET_POST_LIST;
+        change_life_cycle_status(STATUS_POST_LIST);
 
         token = malloc(response->data_size + 1);
         memset(token, 0, response->data_size + 1);
         memcpy(token, response->data, response->data_size);
     } else {
-        char *msg = malloc(response->data_size + 1);
-        memset(msg, 0, response->data_size + 1);
-        memcpy(msg, response->data, response->data_size);
-        printf("Error: %s\n", msg);
-        *current_status = STATUS_START;
+        print_error_repose(response);
+        change_life_cycle_status(STATUS_START);
     }
 }
 
-void sign_in_status(int *current_status) {
+void sign_in_status() {
     printf("Fill information for sign in\n");
 
     char c;
@@ -44,5 +40,5 @@ void sign_in_status(int *current_status) {
     }
 
     printf("Sending sign in request, please wait...\n");
-    sign_in_api(username, password, sign_in_callback, current_status);
+    sign_in_api(username, password, sign_in_callback, NULL);
 }
