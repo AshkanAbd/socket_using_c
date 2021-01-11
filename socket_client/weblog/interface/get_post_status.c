@@ -54,7 +54,7 @@ void get_post_status() {
     char c;
     int index = 0;
     while ((c = getchar()) != '\n') {
-        *(id_char + index) = c;
+        *(id_char + index++) = c;
     }
 
     printf("Fetching posts from server, please wait...\n");
