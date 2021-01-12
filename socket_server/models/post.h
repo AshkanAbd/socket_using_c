@@ -23,6 +23,6 @@ void init_post(Post *post, char *title, char *description, int user_id);
 
 void set_post_column(char **column, const char *value, int with_free);
 
-int post_search_by_id(const char *id, void *ptr, int (*callback)(void *, int, char **, char **), char **msg);
+//int post_search_by_id(const char *id, void *ptr, int (*callback)(void *, int, char **, char **), char **msg);
 
 #endif //SOCKET_SERVER_POST_H

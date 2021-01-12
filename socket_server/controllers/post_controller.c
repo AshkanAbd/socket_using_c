@@ -20,7 +20,7 @@ int get_posts_callback(void *ptr, int row_count, char **data, char **columns) {
 
     int *posts_count = (int *) (ptr + sizeof(int));
 
-    Post **posts = (Post **) (ptr + (2 * sizeof(int)));
+    Post **posts = (Post * *)(ptr + (2 * sizeof(int)));
 
     Post *post = *(posts + *posts_index);
 
@@ -141,7 +141,7 @@ OutgoingResponse *get_post(IncomingRequest *request) {
 
     Post *post = NULL;
     char *db_msg = 0;
-    if (post_search_by_id(post_id_char, &post, find_post_by_id_callback, &db_msg) != SQLITE_OK) {
+    if (search_query("posts", "id", post_id_char, &post, find_post_by_id_callback, &db_msg) != SQLITE_OK) {
         init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
         return response;
     }
@@ -157,7 +157,7 @@ OutgoingResponse *get_post(IncomingRequest *request) {
 
     User *user = NULL;
     db_msg = 0;
-    if (user_search_by_id(user_id_char, &user, find_user_by_id_callback, &db_msg) != SQLITE_OK) {
+    if (search_query("users", "id", user_id_char, &user, find_user_by_id_callback, &db_msg) != SQLITE_OK) {
         init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
         return response;
     }
