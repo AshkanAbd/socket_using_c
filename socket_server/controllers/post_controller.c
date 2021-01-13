@@ -10,7 +10,6 @@ int posts_count_callback(void *ptr, int row_count, char **data, char **columns) 
 
 void put_separator(void *data, size_t *data_index) {
     char *data_char = (char *) data;
-//    *((char *) (data + *data_index)) = 0x1E;
     *(data_char + *data_index) = 0x1E;
     *data_index += 1;
 }
@@ -20,7 +19,7 @@ int get_posts_callback(void *ptr, int row_count, char **data, char **columns) {
 
     int *posts_count = (int *) (ptr + sizeof(int));
 
-    Post **posts = (Post * *)(ptr + (2 * sizeof(int)));
+    Post **posts = (Post **) (ptr + (2 * sizeof(int)));
 
     Post *post = *(posts + *posts_index);
 
@@ -60,7 +59,7 @@ OutgoingResponse *post_list(IncomingRequest *request) {
     memcpy(ptr + sizeof(int), &posts_count, sizeof(int));
     memcpy(ptr + (2 * sizeof(int)), posts, posts_count * sizeof(Post));
 
-    char *get_posts_sql = "SELECT id,title,created_at FROM posts;";
+    char *get_posts_sql = "SELECT id,title,created_at FROM posts ORDER BY created_at DESC, id DESC";
     if (sqlite3_exec(db_connection, get_posts_sql, get_posts_callback, ptr, &db_msg) != SQLITE_OK) {
         init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
         return response;
@@ -150,6 +149,146 @@ OutgoingResponse *get_post(IncomingRequest *request) {
         init_not_found(response, "Post notfound", 13);
         return response;
     }
+
+    char *user_id_char = malloc(sizeof(int) + 1);
+    memset(user_id_char, 0, sizeof(int) + 1);
+    itoa(post->user_id, user_id_char, 10);
+
+    User *user = NULL;
+    db_msg = 0;
+    if (search_query("users", "id", user_id_char, &user, find_user_by_id_callback, &db_msg) != SQLITE_OK) {
+        init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
+        return response;
+    }
+
+    size_t data_size = 0;
+    size_t data_index = 0;
+    data_size += sizeof(int);
+    data_size++;
+    data_size += strlen(post->title);
+    data_size++;
+    data_size += strlen(post->description);
+    data_size++;
+    data_size += strlen(post->created_at);
+    data_size++;
+    data_size += sizeof(int);
+    data_size++;
+    data_size += strlen(user->username);
+    data_size++;
+
+    char *data = malloc(data_size);
+    memset(data, 0, data_size);
+
+    memcpy(data, post_id_char, sizeof(int));
+    data_index += sizeof(int);
+    put_separator(data, &data_index);
+
+    memcpy(data + data_index, post->title, strlen(post->title));
+    data_index += strlen(post->title);
+    put_separator(data, &data_index);
+
+    memcpy(data + data_index, post->description, strlen(post->description));
+    data_index += strlen(post->description);
+    put_separator(data, &data_index);
+
+    memcpy(data + data_index, post->created_at, strlen(post->created_at));
+    data_index += strlen(post->created_at);
+    put_separator(data, &data_index);
+
+    memcpy(data + data_index, user_id_char, sizeof(int));
+    data_index += sizeof(int);
+    put_separator(data, &data_index);
+
+    memcpy(data + data_index, user->username, strlen(user->username));
+    data_index += strlen(user->username);
+    put_separator(data, &data_index);
+
+    init_ok(response, data, data_size);
+    return response;
+}
+
+int get_token_callback(void *ptr, int row_count, char **data, char **columns) {
+    Token **token = (Token **) ptr;
+
+    *token = malloc(sizeof(Token));
+    memset(*token, 0, sizeof(Token));
+
+    init_token(*token, data[1], atoi(data[2]));
+
+    return 0;
+}
+
+int get_new_post_callback(void *ptr, int row_count, char **data, char **columns) {
+    Post **post = (Post **) ptr;
+    *post = malloc(sizeof(Post));
+    memset(*post, 0, sizeof(Post));
+
+    init_post_full(*post, atoi(data[0]), data[1], data[2], atoi(data[3]),
+                   data[4], data[5]);
+    return 0;
+}
+
+OutgoingResponse *create_post(IncomingRequest *request) {
+    OutgoingResponse *response = malloc(sizeof(OutgoingResponse));
+    memset(response, 0, sizeof(OutgoingResponse));
+
+    if (request->param_size == 0) {
+        init_bad_request(response, "Unauthorized", 12);
+        return response;
+    }
+
+    char *token_char = malloc(request->param_size + 1);
+    memset(token_char, 0, request->param_size + 1);
+    memcpy(token_char, request->param, request->param_size);
+
+    Token *token = NULL;
+    char *db_msg = 0;
+    if (search_query("tokens", "token", token_char, &token, get_token_callback, &db_msg) != SQLITE_OK) {
+        init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
+        return response;
+    }
+
+    if (token == NULL) {
+        init_bad_request(response, "Unauthorized", 12);
+        return response;
+    }
+
+    char *post_title = NULL;
+    char *post_description = NULL;
+    int index = 0;
+    for (int i = 0; i < request->body_size; ++i) {
+        if (*((char *) (request->body + i)) == 0x1E) {
+            if (post_title == NULL) {
+                post_title = malloc(i - index + 1);
+                memset(post_title, 0, i - index + 1);
+                memcpy(post_title, request->body + index, i - index);
+            } else if (post_description == NULL) {
+                post_description = malloc(i - index + 1);
+                memset(post_description, 0, i - index + 1);
+                memcpy(post_description, request->body + index, i - index);
+            }
+            index = i + 1;
+        }
+    }
+
+    Post *post = malloc(sizeof(Post));
+    memset(post, 0, sizeof(Post));
+
+    init_post(post, post_title, post_description, token->user_id);
+    if (insert_post(post, 0, &db_msg) != SQLITE_OK) {
+        init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
+        return response;
+    }
+
+    if (sqlite3_exec(db_connection, "SELECT * FROM posts ORDER BY id DESC LIMIT 1", get_new_post_callback, &post,
+                     &db_msg) != SQLITE_OK) {
+        init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
+        return response;
+    }
+
+    char *post_id_char = malloc(sizeof(int) + 1);
+    memset(post_id_char, 0, sizeof(int) + 1);
+    itoa(post->id, post_id_char, 10);
 
     char *user_id_char = malloc(sizeof(int) + 1);
     memset(user_id_char, 0, sizeof(int) + 1);

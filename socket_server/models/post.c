@@ -41,17 +41,55 @@ void set_post_column(char **column, const char *value, int with_free) {
     }
 }
 
-int post_search_by_id(const char *id, void *ptr, int (*callback)(void *, int, char **, char **), char **msg) {
-    char *base_search_sql = "SELECT * FROM posts WHERE id = ";
-    size_t custom_search_sql_size = strlen(base_search_sql) + 1 + strlen(id) + 2;
-    char *custom_search_sql = malloc(custom_search_sql_size);
-    memset(custom_search_sql, 0, custom_search_sql_size);
+int insert_post(Post *post, int (*callback)(void *, int, char **, char **), char **msg) {
+    if (post->title == NULL) {
+        *msg = "title is null";
+        return 0;
+    }
 
-    memcpy(custom_search_sql, base_search_sql, strlen(base_search_sql));
+    if (post->description == NULL) {
+        *msg = "description is null";
+        return 0;
+    }
 
-    *(custom_search_sql + strlen(base_search_sql)) = '\'';
-    memcpy(custom_search_sql + strlen(base_search_sql) + 1, id, strlen(id));
-    *(custom_search_sql + strlen(base_search_sql) + 1 + strlen(id)) = '\'';
+    if (post->user_id == 0) {
+        *msg = "user_id is not valid";
+        return 0;
+    }
 
-    return sqlite3_exec(db_connection, custom_search_sql, callback, ptr, msg);
+    char *user_id_char = malloc(sizeof(int) + 1);
+    memset(user_id_char, 0, sizeof(int) + 1);
+    itoa(post->user_id, user_id_char, 10);
+
+    char *base_insert_sql = "INSERT INTO posts (title, description, user_id) VALUES (";
+    size_t custom_insert_sql_size = strlen(base_insert_sql) + 1 + strlen(post->title) +
+                                    3 + strlen(post->description) + 3 + strlen(user_id_char) + 3;
+    char *custom_insert_sql = malloc(custom_insert_sql_size);
+    memset(custom_insert_sql, 0, custom_insert_sql_size);
+    memcpy(custom_insert_sql, base_insert_sql, strlen(base_insert_sql));
+
+    *(custom_insert_sql + strlen(base_insert_sql)) = '\'';
+    memcpy(custom_insert_sql + strlen(base_insert_sql) + 1, post->title, strlen(post->title));
+    *(custom_insert_sql + strlen(base_insert_sql) + 1 + strlen(post->title)) = '\'';
+
+    *(custom_insert_sql + strlen(base_insert_sql) + 1 + strlen(post->title) + 1) = ',';
+
+    *(custom_insert_sql + strlen(base_insert_sql) + 1 + strlen(post->title) + 2) = '\'';
+    memcpy(custom_insert_sql + strlen(base_insert_sql) + 1 + strlen(post->title) + 3,
+           post->description, strlen(post->description));
+    *(custom_insert_sql + strlen(base_insert_sql) + 1 + strlen(post->title) + 3 + strlen(post->description)) = '\'';
+
+
+    *(custom_insert_sql + strlen(base_insert_sql) + 1 + strlen(post->title) + 3 + strlen(post->description) + 1) = ',';
+
+    *(custom_insert_sql + strlen(base_insert_sql) + 1 + strlen(post->title) + 3 + strlen(post->description) + 2) = '\'';
+    memcpy(custom_insert_sql + strlen(base_insert_sql) + 1 + strlen(post->title) + 3 + strlen(post->description) + 3,
+           user_id_char, strlen(user_id_char));
+    *(custom_insert_sql + strlen(base_insert_sql) + 1 + strlen(post->title) + 3 + strlen(post->description) + 3 +
+      strlen(user_id_char)) = '\'';
+
+    *(custom_insert_sql + strlen(base_insert_sql) + 1 + strlen(post->title) + 3 + strlen(post->description) + 3 +
+      strlen(user_id_char) + 1) = ')';
+
+    return sqlite3_exec(db_connection, custom_insert_sql, callback, 0, msg);
 }

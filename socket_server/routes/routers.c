@@ -7,4 +7,5 @@ void registerRoutes(Pipeline *pipeline) {
 
     readAction(pipeline, "/post_list", post_list);
     readAction(pipeline, "/get_post", get_post);
+    createAction(pipeline, "/create_post", create_post);
 }

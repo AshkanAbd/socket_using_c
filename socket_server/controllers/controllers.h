@@ -15,4 +15,6 @@ OutgoingResponse *post_list(IncomingRequest *request);
 
 OutgoingResponse *get_post(IncomingRequest *request);
 
+OutgoingResponse *create_post(IncomingRequest *request);
+
 #endif //SOCKET_SERVER_CONTROLLERS_H

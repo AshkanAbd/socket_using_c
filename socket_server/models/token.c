@@ -64,18 +64,3 @@ int insert_token(Token *token, int (*callback)(void *, int, char **, char **), c
 
     return sqlite3_exec(db_connection, custom_insert_sql, callback, 0, msg);
 }
-
-int find_token(const char *token, void *ptr, int (*callback)(void *, int, char **, char **), char **msg) {
-    char *base_search_sql = "SELECT * FROM tokens WHERE token = ";
-    size_t custom_search_sql_size = strlen(base_search_sql) + 1 + strlen(token) + 2;
-    char *custom_search_sql = malloc(strlen(base_search_sql) + 1 + strlen(token) + 2);
-    memset(custom_search_sql, 0, custom_search_sql_size);
-
-    memcpy(custom_search_sql, base_search_sql, strlen(base_search_sql));
-
-    *(custom_search_sql + strlen(base_search_sql)) = '\'';
-    memcpy(custom_search_sql + strlen(base_search_sql) + 1, token, strlen(token));
-    *(custom_search_sql + strlen(base_search_sql) + 1 + strlen(token)) = '\'';
-
-    sqlite3_exec(db_connection, custom_search_sql, callback, ptr, msg);
-}
