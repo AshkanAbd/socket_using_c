@@ -23,12 +23,19 @@ add_executable(socket_client
         Core/IO/incoming_response.h Core/IO/incoming_response.c
         Core/Api/api.h Core/Api/api.c
         interface/interface.h interface/interface.c Core/HtmlParser/html_parser.h Core/HtmlParser/html_parser.c
-        weblog/models/models.h
-        weblog/models/post.h weblog/models/post.c
         weblog/life_cycle.h weblog/life_cycle.c
         weblog/apis/apis.h
         weblog/apis/auth_api.c
-        weblog/models/user.c weblog/models/user.h weblog/interface/interface.h weblog/interface/main_status.c weblog/interface/sign_in_status.c weblog/interface/sign_up_status.c weblog/apis/post_api.c weblog/interface/post_list_status.c weblog/interface/interface.c weblog/interface/post_action_status.c weblog/interface/get_post_status.c)
+        weblog/apis/post_api.c
+        weblog/interface/interface.h weblog/interface/interface.c
+        weblog/interface/main_status.c
+        weblog/interface/sign_in_status.c
+        weblog/interface/sign_up_status.c
+        weblog/interface/post_list_status.c
+        weblog/interface/post_action_status.c
+        weblog/interface/get_post_status.c
+        weblog/interface/create_post_status.c
+        )
 
 if (WIN32)
     target_link_libraries(socket_client wsock32 ws2_32)

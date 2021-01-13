@@ -14,7 +14,21 @@ void login_not_found();
 void html_test();
 
 void get_posts() {
-    struct IncomingResponse *response = api_read("/get_post", "3", 1, "127.0.0.1", 8080);
+    const char *title = "my test title";
+    const char *description = "my test description";
+    char *params = malloc(strlen(title) + 1 + strlen(description) + 2);
+    memset(params, 0, strlen(title) + 1 + strlen(description) + 2);
+    memcpy(params, title, strlen(title));
+    memcpy(params + strlen(title) + 1, description, strlen(description));
+    *(params + strlen(title)) = 0x1E;
+    *(params + strlen(title) + 1 + strlen(description)) = 0x1E;
+
+    struct IncomingResponse *response = api_create("/create_post",
+                                                   "mCbfWHbB6qCoxFLdyKLAmmHXoRRGZVMGGB7arRob",
+                                                   strlen("mCbfWHbB6qCoxFLdyKLAmmHXoRRGZVMGGB7arRob"),
+                                                   params,
+                                                   strlen(params),
+                                                   "127.0.0.1", 8080);
 
     printf("%s\n", response_to_str(response));
 }

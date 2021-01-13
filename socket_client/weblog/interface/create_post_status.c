@@ -1,6 +1,8 @@
 #include "interface.h"
 
-void get_one_post_callback(IncomingResponse *response, void *ptr) {
+char *token;
+
+void create_post_callback(IncomingResponse *response, void *ptr) {
     change_life_cycle_status(STATUS_POST_ACTION);
     if (response->status != RESPONSE_OK) {
         print_error_repose(response);
@@ -25,7 +27,7 @@ void get_one_post_callback(IncomingResponse *response, void *ptr) {
                 printf("User id: ");
                 break;
             case 5:
-                printf("Username: ");
+                printf("title: ");
                 break;
         }
 
@@ -46,19 +48,40 @@ void get_one_post_callback(IncomingResponse *response, void *ptr) {
     }
 }
 
-void get_post_status() {
-    printf("Enter post id: ");
-    char *id_char = malloc(1024);
-    memset(id_char, 0, 1024);
+void create_post_status() {
+    printf("Fill information to create a post\n");
 
     char c;
     int index = 0;
+
+    char *title = malloc(1024);
+    memset(title, 0, 1024);
+    printf("Enter post title: ");
+
     while ((c = getchar()) != '\n') {
-        *(id_char + index++) = c;
+        *(title + index++) = c;
     }
 
-    printf("Fetching post with given id from server, please wait...\n");
+    char *description = malloc(1024);
+    memset(description, 0, 1024);
+    printf("Enter post description: ");
+    index = 0;
 
-    get_post_api(id_char, get_one_post_callback, NULL);
-    free(id_char);
+    while ((c = getchar()) != '\n') {
+        *(description + index++) = c;
+    }
+
+    char *params = malloc(strlen(title) + 1 + strlen(description) + 2);
+    memset(params, 0, strlen(title) + 1 + strlen(description) + 2);
+    memcpy(params, title, strlen(title));
+    memcpy(params + strlen(title) + 1, description, strlen(description));
+    *(params + strlen(title)) = 0x1E;
+    *(params + strlen(title) + 1 + strlen(description)) = 0x1E;
+
+    printf("Creating a post in server, please wait...\n");
+    create_post_api(token, params, create_post_callback, NULL);
+
+    free(title);
+    free(description);
+    free(params);
 }

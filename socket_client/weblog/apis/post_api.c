@@ -14,3 +14,10 @@ void get_post_api(const char *id, void callback(IncomingResponse *, void *), voi
 
     callback(response, ptr);
 }
+
+void create_post_api(const char *token, const char *post_char, void callback(IncomingResponse *, void *), void *ptr) {
+    IncomingResponse *response = api_create("/create_post", (char *) token, (int) strlen(token),
+                                            (char *) post_char, strlen(post_char), server_ip, server_port);
+
+    callback(response, ptr);
+}
