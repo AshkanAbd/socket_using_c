@@ -22,7 +22,8 @@ add_executable(socket_client
         Core/IO/outgoing_request.h Core/IO/outgoing_request.c
         Core/IO/incoming_response.h Core/IO/incoming_response.c
         Core/Api/api.h Core/Api/api.c
-        interface/interface.h interface/interface.c Core/HtmlParser/html_parser.h Core/HtmlParser/html_parser.c
+        Core/HtmlParser/html_parser.h Core/HtmlParser/html_parser.c
+        interface/interface.h interface/interface.c
         weblog/life_cycle.h weblog/life_cycle.c
         weblog/apis/apis.h
         weblog/apis/auth_api.c
