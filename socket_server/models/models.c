@@ -2,45 +2,79 @@
 
 int search_query(const char *table, const char *column, const char *value, void *ptr,
                  int (*callback)(void *, int, char **, char **), char **msg) {
-    char *select_sql_part = "SELECT * FROM ";
+    const char *buffer_template = "SELECT * FROM %s WHERE %s = '%s'";
 
-    size_t from_sql_part_size = strlen(select_sql_part) + strlen(table) + 1;
-    char *from_sql_part = malloc(from_sql_part_size);
-    memset(from_sql_part, 0, from_sql_part_size);
+    size_t buffer_size = strlen(buffer_template) - (2 * 3) + strlen(table) + strlen(column) + strlen(value) + 1;
 
-    memcpy(from_sql_part, select_sql_part, strlen(select_sql_part));
-    memcpy(from_sql_part + strlen(select_sql_part), table, strlen(table));
-    *(from_sql_part + strlen(select_sql_part) + strlen(table)) = ' ';
+    char *buffer = malloc(buffer_size);
+    memset(buffer, 0, buffer_size);
 
-    char *where_word = "where ";
-    size_t where_sql_part_size = from_sql_part_size + strlen(where_word) + strlen(column) + 1;
-    char *where_sql_part = malloc(where_sql_part_size);
-    memset(where_sql_part, 0, from_sql_part_size);
+    sprintf(buffer, buffer_template, table, column, value);
 
-    memcpy(where_sql_part, from_sql_part, from_sql_part_size);
-    memcpy(where_sql_part + from_sql_part_size, where_word, strlen(where_word));
-    memcpy(where_sql_part + from_sql_part_size + strlen(where_word), column, strlen(column));
-    *(where_sql_part + from_sql_part_size + strlen(where_word) + strlen(column)) = ' ';
+    return sqlite3_exec(db_connection, buffer, callback, ptr, msg);
+}
 
+int insert_query(int type, const void *obj, void *ptr, int (*callback)(void *, int, char **, char **), char **msg) {
+    char *table = 0;
+    char *columns = 0;
+    char *values_template = 0;
+    char *values = 0;
+    size_t values_size = 0;
 
-    size_t custom_search_sql_size = where_sql_part_size + 4 + strlen(value) + 2;
-    char *custom_search_sql = malloc(custom_search_sql_size);
-    memset(custom_search_sql, 0, custom_search_sql_size);
+    if (type == POST_TYPE) {
+        Post *post = (Post *) obj;
 
-    memcpy(custom_search_sql, where_sql_part, where_sql_part_size);
+        table = "posts";
+        columns = "title, description, user_id";
 
-    *(custom_search_sql + where_sql_part_size) = ' ';
-    *(custom_search_sql + where_sql_part_size + 1) = '=';
-    *(custom_search_sql + where_sql_part_size + 2) = ' ';
-    *(custom_search_sql + where_sql_part_size + 3) = '\'';
-    memcpy(custom_search_sql + where_sql_part_size + 4, value, strlen(value));
-    *(custom_search_sql + where_sql_part_size + 4 + strlen(value)) = '\'';
+        values_template = "'%s', '%s', '%d'";
 
-    int query_result = sqlite3_exec(db_connection, custom_search_sql, callback, ptr, msg);
+        values_size += strlen(values_template) - (2 * 3) + strlen(post->title) +
+                       strlen(post->description) + sizeof(int) + 1;
+        values = malloc(values_size);
+        memset(values, 0, values_size);
 
-    free(from_sql_part);
-    free(where_sql_part);
-    free(custom_search_sql);
+        sprintf(values, values_template, post->title, post->description, post->user_id);
 
-    return query_result;
+    } else if (type == TOKEN_TYPE) {
+        Token *token = (Token *) obj;
+
+        table = "tokens";
+        columns = "token, user_id";
+
+        values_template = "'%s', '%d'";
+
+        values_size += strlen(values_template) - (2 * 2) + strlen(token->token) + sizeof(int) + 1;
+        values = malloc(values_size);
+        memset(values, 0, values_size);
+
+        sprintf(values, values_template, token->token, token->user_id);
+    } else if (type == USER_TYPE) {
+        User *user = (User *) obj;
+
+        table = "users";
+        columns = "username, password";
+
+        values_template = "'%s', '%s'";
+
+        values_size += strlen(values_template) - (2 * 2) + strlen(user->username) + strlen(user->password) + 1;
+        values = malloc(values_size);
+        memset(values, 0, values_size);
+
+        sprintf(values, values_template, user->username, user->password);
+    } else {
+        *msg = "Invalid insert type.";
+        return 1;
+    }
+
+    char *buffer_template = "INSERT INTO %s (%s) VALUES (%s)";
+
+    size_t buffer_size = strlen(buffer_template) - (2 * 3) + strlen(table) + strlen(columns) + values_size + 1;
+
+    char *buffer = malloc(buffer_size);
+    memset(buffer, 0, buffer_size);
+
+    sprintf(buffer, buffer_template, table, columns, values);
+
+    return sqlite3_exec(db_connection, buffer, callback, ptr, msg);
 }

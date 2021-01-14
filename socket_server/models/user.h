@@ -22,6 +22,4 @@ void init_user(User *user, const char *username, const char *password);
 
 void set_user_column(char **column, const char *value);
 
-int insert_user(User *user, int (*callback)(void *, int, char **, char **), char **msg);
-
 #endif //SOCKET_SERVER_USER_H

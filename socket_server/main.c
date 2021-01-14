@@ -1,6 +1,7 @@
 #include "Core/Socket/server_socket.h"
 #include "Core/Pipeline/pipeline.h"
 #include "Core/db/sqlite/migration.h"
+#include <stdarg.h>
 
 #define MAX 1024
 #define PORT 8080

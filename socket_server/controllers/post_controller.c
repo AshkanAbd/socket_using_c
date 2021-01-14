@@ -275,7 +275,7 @@ OutgoingResponse *create_post(IncomingRequest *request) {
     memset(post, 0, sizeof(Post));
 
     init_post(post, post_title, post_description, token->user_id);
-    if (insert_post(post, 0, &db_msg) != SQLITE_OK) {
+    if (insert_query(POST_TYPE, post, NULL, 0, &db_msg) != SQLITE_OK) {
         init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
         return response;
     }

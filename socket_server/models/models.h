@@ -5,7 +5,13 @@
 #include "token.h"
 #include "user.h"
 
+#define POST_TYPE   1
+#define TOKEN_TYPE  2
+#define USER_TYPE   3
+
 int search_query(const char *table, const char *column, const char *value, void *ptr,
                  int (*callback)(void *, int, char **, char **), char **msg);
+
+int insert_query(int type, const void *obj, void *ptr, int (*callback)(void *, int, char **, char **), char **msg);
 
 #endif //SOCKET_SERVER_MODELS_H

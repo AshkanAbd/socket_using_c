@@ -36,35 +36,3 @@ void set_user_column(char **column, const char *value) {
         *column = NULL;
     }
 }
-
-int insert_user(User *user, int (*callback)(void *, int, char **, char **), char **msg) {
-    if (user->username == NULL) {
-        *msg = "username is null";
-        return 0;
-    }
-    if (user->password == NULL) {
-        *msg = "password is null";
-        return 0;
-    }
-    char *base_insert_sql = "INSERT INTO users (username, password) VALUES (";
-    size_t custom_insert_sql_size = strlen(base_insert_sql) + 1 + strlen(user->username) +
-                                    3 + strlen(user->password) + 3;
-    char *custom_insert_sql = malloc(custom_insert_sql_size);
-    memset(custom_insert_sql, 0, custom_insert_sql_size);
-    memcpy(custom_insert_sql, base_insert_sql, strlen(base_insert_sql));
-
-    *(custom_insert_sql + strlen(base_insert_sql)) = '\'';
-    memcpy(custom_insert_sql + strlen(base_insert_sql) + 1, user->username, strlen(user->username));
-    *(custom_insert_sql + strlen(base_insert_sql) + 1 + strlen(user->username)) = '\'';
-
-    *(custom_insert_sql + strlen(base_insert_sql) + 1 + strlen(user->username) + 1) = ',';
-
-    *(custom_insert_sql + strlen(base_insert_sql) + 1 + strlen(user->username) + 2) = '\'';
-    memcpy(custom_insert_sql + strlen(base_insert_sql) + 1 + strlen(user->username) + 3,
-           user->password, strlen(user->password));
-    *(custom_insert_sql + strlen(base_insert_sql) + 1 + strlen(user->username) + 3 + strlen(user->password)) = '\'';
-
-    *(custom_insert_sql + strlen(base_insert_sql) + 1 + strlen(user->username) + 3 + strlen(user->password) + 1) = ')';
-
-    return sqlite3_exec(db_connection, custom_insert_sql, callback, 0, msg);
-}

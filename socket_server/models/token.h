@@ -21,6 +21,4 @@ void init_token(Token *token, const char *login_token, int user_id);
 
 void set_token_column(char **column, const char *value);
 
-int insert_token(Token *token, int (*callback)(void *, int, char **, char **), char **msg);
-
 #endif //SOCKET_SERVER_TOKEN_H

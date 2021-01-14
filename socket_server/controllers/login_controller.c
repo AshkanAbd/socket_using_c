@@ -71,7 +71,7 @@ OutgoingResponse *sign_in(IncomingRequest *request) {
     memset(token, 0, sizeof(Token));
     init_token(token, generated_token, user->id);
 
-    if (insert_token(token, 0, &db_msg) != SQLITE_OK) {
+    if (insert_query(TOKEN_TYPE, token, NULL, 0, &db_msg) != SQLITE_OK) {
         init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
         return response;
     }
@@ -120,7 +120,7 @@ OutgoingResponse *sign_up(IncomingRequest *request) {
     memset(user, 0, sizeof(User));
     init_user(user, username, password);
 
-    if (insert_user(user, 0, &db_msg) != SQLITE_OK) {
+    if (insert_query(USER_TYPE, user, NULL, 0, &db_msg) != SQLITE_OK) {
         init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
         return response;
     }
@@ -138,7 +138,7 @@ OutgoingResponse *sign_up(IncomingRequest *request) {
     memset(token, 0, sizeof(Token));
     init_token(token, generated_token, user->id);
 
-    if (insert_token(token, 0, &db_msg) != SQLITE_OK) {
+    if (insert_query(TOKEN_TYPE, token, NULL, 0, &db_msg) != SQLITE_OK) {
         init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
         return response;
     }
