@@ -10,6 +10,19 @@ void create_post_callback(IncomingResponse *response, void *ptr) {
     }
 
     for (size_t i = 0, j = 0; i < response->data_size; j++) {
+        size_t data_size = i;
+        size_t data_start = i;
+
+        while (*((char *) response->data + data_size++) != 0x1E) {
+            if (data_size >= response->data_size) {
+                return;
+            }
+        }
+
+        char *data = malloc(((data_size - data_start) * sizeof(char)));
+        memset(data, 0, ((data_size - data_start) * sizeof(char)));
+        memcpy(data, response->data + data_start, data_size - data_start - 1);
+
         switch (j % 6) {
             case 0:
                 printf("Post id: ");
@@ -27,18 +40,9 @@ void create_post_callback(IncomingResponse *response, void *ptr) {
                 printf("User id: ");
                 break;
             case 5:
-                printf("title: ");
+                printf("Username: ");
                 break;
         }
-
-        size_t data_size = i;
-        size_t data_start = i;
-
-        while (*((char *) response->data + data_size++) != 0x1E);
-
-        char *data = malloc(((data_size - data_start) * sizeof(char)));
-        memset(data, 0, ((data_size - data_start) * sizeof(char)));
-        memcpy(data, response->data + data_start, data_size - data_start - 1);
 
         printf("%s\n", data);
 

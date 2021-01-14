@@ -16,7 +16,13 @@ void get_post_api(const char *id, void callback(IncomingResponse *, void *), voi
 }
 
 void create_post_api(const char *token, const char *post_char, void callback(IncomingResponse *, void *), void *ptr) {
-    IncomingResponse *response = api_create("/create_post", (char *) token, (int) strlen(token),
+    char *param = malloc(strlen(token) + 2);
+    memset(param, 0, strlen(token) + 2);
+
+    memcpy(param, token, strlen(token));
+    *(param + strlen(token)) = 0x1E;
+
+    IncomingResponse *response = api_create("/create_post", param, strlen(param),
                                             (char *) post_char, strlen(post_char), server_ip, server_port);
 
     callback(response, ptr);
