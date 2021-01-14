@@ -140,7 +140,7 @@ OutgoingResponse *get_post(IncomingRequest *request) {
 
     Post *post = NULL;
     char *db_msg = 0;
-    if (search_query("posts", "id", post_id_char, &post, find_post_by_id_callback, &db_msg) != SQLITE_OK) {
+    if (search_query(POST_TYPE, "id", post_id_char, &post, find_post_by_id_callback, &db_msg) != SQLITE_OK) {
         init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
         return response;
     }
@@ -156,7 +156,7 @@ OutgoingResponse *get_post(IncomingRequest *request) {
 
     User *user = NULL;
     db_msg = 0;
-    if (search_query("users", "id", user_id_char, &user, find_user_by_id_callback, &db_msg) != SQLITE_OK) {
+    if (search_query(USER_TYPE, "id", user_id_char, &user, find_user_by_id_callback, &db_msg) != SQLITE_OK) {
         init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
         return response;
     }
@@ -243,7 +243,7 @@ OutgoingResponse *create_post(IncomingRequest *request) {
 
     Token *token = NULL;
     char *db_msg = 0;
-    if (search_query("tokens", "token", token_char, &token, get_token_callback, &db_msg) != SQLITE_OK) {
+    if (search_query(TOKEN_TYPE, "token", token_char, &token, get_token_callback, &db_msg) != SQLITE_OK) {
         init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
         return response;
     }
@@ -296,7 +296,7 @@ OutgoingResponse *create_post(IncomingRequest *request) {
 
     User *user = NULL;
     db_msg = 0;
-    if (search_query("users", "id", user_id_char, &user, find_user_by_id_callback, &db_msg) != SQLITE_OK) {
+    if (search_query(USER_TYPE, "id", user_id_char, &user, find_user_by_id_callback, &db_msg) != SQLITE_OK) {
         init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
         return response;
     }

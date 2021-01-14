@@ -46,7 +46,7 @@ OutgoingResponse *sign_in(IncomingRequest *request) {
 
     User *user = NULL;
     char *db_msg = 0;
-    if (search_query("users", "username", username, &user,
+    if (search_query(USER_TYPE, "username", username, &user,
                      find_user_by_username_callback, &db_msg) != SQLITE_OK) {
         init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
         return response;
@@ -104,7 +104,7 @@ OutgoingResponse *sign_up(IncomingRequest *request) {
 
     User *user = NULL;
     char *db_msg = 0;
-    if (search_query("users", "username", username, &user,
+    if (search_query(USER_TYPE, "username", username, &user,
                      find_user_by_username_callback, &db_msg) != SQLITE_OK) {
         init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
         return response;
@@ -125,7 +125,7 @@ OutgoingResponse *sign_up(IncomingRequest *request) {
         return response;
     }
 
-    if (search_query("users", "username", username, &user,
+    if (search_query(USER_TYPE, "username", username, &user,
                      find_user_by_username_callback, &db_msg) != SQLITE_OK) {
         init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
         return response;
