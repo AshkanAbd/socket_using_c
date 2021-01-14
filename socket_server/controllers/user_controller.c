@@ -13,15 +13,6 @@ void generate_token(char **output, int length) {
     }
 }
 
-int find_user_by_username_callback(void *ptr, int row_count, char **data, char **columns) {
-    User **user = (User **) ptr;
-    *user = malloc(sizeof(User));
-    memset(*user, 0, sizeof(User));
-
-    init_user_full(*user, atoi(data[0]), data[1], data[2], data[3], data[4]);
-    return 0;
-}
-
 OutgoingResponse *sign_in(IncomingRequest *request) {
     OutgoingResponse *response = malloc(sizeof(OutgoingResponse));
     memset(response, 0, sizeof(OutgoingResponse));

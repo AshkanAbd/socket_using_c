@@ -1,37 +1,9 @@
 #include "controllers.h"
 
-int posts_count_callback(void *ptr, int row_count, char **data, char **columns) {
-    int *posts_count = (int *) ptr;
-
-    *posts_count = atoi(data[0]);
-
-    return 0;
-}
-
 void put_separator(void *data, size_t *data_index) {
     char *data_char = (char *) data;
     *(data_char + *data_index) = 0x1E;
     *data_index += 1;
-}
-
-int get_posts_callback(void *ptr, int row_count, char **data, char **columns) {
-    int *posts_index = (int *) ptr;
-
-    int *posts_count = (int *) (ptr + sizeof(int));
-
-    Post **posts = (Post **) (ptr + (2 * sizeof(int)));
-
-    Post *post = *(posts + *posts_index);
-
-    post->id = atoi(data[0]);
-    set_post_column(&post->title, data[1], 0);
-    set_post_column(&post->created_at, data[2], 0);
-    post->user_id = 0;
-    post->description = NULL;
-    post->updated_at = NULL;
-
-    (*posts_index)++;
-    return 0;
 }
 
 OutgoingResponse *post_list(IncomingRequest *request) {
@@ -111,25 +83,6 @@ OutgoingResponse *post_list(IncomingRequest *request) {
     return response;
 }
 
-int find_post_by_id_callback(void *ptr, int row_count, char **data, char **columns) {
-    Post **post = (Post **) ptr;
-    *post = malloc(sizeof(Post));
-    memset(*post, 0, sizeof(Post));
-
-    init_post_full(*post, atoi(data[0]), data[1], data[2], atoi(data[3]),
-                   data[4], data[5]);
-    return 0;
-}
-
-int find_user_by_id_callback(void *ptr, int row_count, char **data, char **columns) {
-    User **user = (User **) ptr;
-    *user = malloc(sizeof(User));
-    memset(*user, 0, sizeof(User));
-
-    init_user_full(*user, atoi(data[0]), data[1], data[2], data[3], data[4]);
-    return 0;
-}
-
 OutgoingResponse *get_post(IncomingRequest *request) {
     OutgoingResponse *response = malloc(sizeof(OutgoingResponse));
     memset(response, 0, sizeof(OutgoingResponse));
@@ -205,27 +158,6 @@ OutgoingResponse *get_post(IncomingRequest *request) {
 
     init_ok(response, data, data_size);
     return response;
-}
-
-int get_token_callback(void *ptr, int row_count, char **data, char **columns) {
-    Token **token = (Token **) ptr;
-
-    *token = malloc(sizeof(Token));
-    memset(*token, 0, sizeof(Token));
-
-    init_token(*token, data[1], atoi(data[2]));
-
-    return 0;
-}
-
-int get_new_post_callback(void *ptr, int row_count, char **data, char **columns) {
-    Post **post = (Post **) ptr;
-    *post = malloc(sizeof(Post));
-    memset(*post, 0, sizeof(Post));
-
-    init_post_full(*post, atoi(data[0]), data[1], data[2], atoi(data[3]),
-                   data[4], data[5]);
-    return 0;
 }
 
 OutgoingResponse *create_post(IncomingRequest *request) {

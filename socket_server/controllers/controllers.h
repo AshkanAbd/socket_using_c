@@ -5,6 +5,7 @@
 #include "../Core/IO/incoming_request.h"
 #include "../Core/db/sqlite/migration.h"
 #include "../models/models.h"
+#include "../callbacks/callbacks.h"
 #include <time.h>
 
 OutgoingResponse *sign_in(IncomingRequest *request);
