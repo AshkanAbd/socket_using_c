@@ -113,8 +113,8 @@ void response_handler(struct IncomingResponse *response) {
         printf("Do you need HTML parser?(Y/n)\n");
         c = getchar();
         if (c == 'y' || c == 'Y') {
-            struct HtmlParser *html_parser = malloc(sizeof(struct HtmlParser));
-            memset(html_parser, 0, sizeof(struct HtmlParser));
+            HtmlParser *html_parser = malloc(sizeof(HtmlParser));
+            memset(html_parser, 0, sizeof(HtmlParser));
 
             init_html_parser(html_parser, response->data, response->data_size, response->ip, response->port);
             free(response->data);

@@ -1,6 +1,6 @@
 #include "outgoing_request.h"
 
-void init_request(struct OutgoingRequest *request, char *route, void *param, int param_size,
+void init_request(OutgoingRequest *request, char *route, void *param, int param_size,
                   void *body, int body_size) {
     request->route = malloc(strlen(route) + 1);
     memset(request->route, 0, strlen(route) + 1);
@@ -29,25 +29,25 @@ void init_request(struct OutgoingRequest *request, char *route, void *param, int
     }
 }
 
-void init_read(struct OutgoingRequest *request, char *route, void *param, int param_size) {
+void init_read(OutgoingRequest *request, char *route, void *param, int param_size) {
     request->action = REQUEST_READ;
 
     init_request(request, route, param, param_size, NULL, 0);
 }
 
-void init_create(struct OutgoingRequest *request, char *route, void *param, int param_size, void *body, int body_size) {
+void init_create(OutgoingRequest *request, char *route, void *param, int param_size, void *body, int body_size) {
     request->action = REQUEST_CREATE;
 
     init_request(request, route, param, param_size, body, body_size);
 }
 
-void init_update(struct OutgoingRequest *request, char *route, void *param, int param_size, void *body, int body_size) {
+void init_update(OutgoingRequest *request, char *route, void *param, int param_size, void *body, int body_size) {
     request->action = REQUEST_UPDATE;
 
     init_request(request, route, param, param_size, body, body_size);
 }
 
-void init_delete(struct OutgoingRequest *request, char *route, void *param, int param_size) {
+void init_delete(OutgoingRequest *request, char *route, void *param, int param_size) {
     request->action = REQUEST_DELETE;
 
     init_request(request, route, param, param_size, NULL, 0);

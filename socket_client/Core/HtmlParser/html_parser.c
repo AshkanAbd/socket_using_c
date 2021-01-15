@@ -1,6 +1,6 @@
 #include "html_parser.h"
 
-void init_html_parser(struct HtmlParser *html_parser, char *data, unsigned long long int data_size,
+void init_html_parser(HtmlParser *html_parser, char *data, unsigned long long int data_size,
                       char *ip, int port) {
     html_parser->content_size = data_size;
 
@@ -25,7 +25,7 @@ void init_html_parser(struct HtmlParser *html_parser, char *data, unsigned long 
     html_parser->script_tag = "<script ";
 }
 
-int is_img_tag(struct HtmlParser *html_parser, unsigned long long int index) {
+int is_img_tag(HtmlParser *html_parser, unsigned long long int index) {
     if (index + 5 >= html_parser->content_size) {
         return 0;
     }
@@ -38,7 +38,7 @@ int is_img_tag(struct HtmlParser *html_parser, unsigned long long int index) {
     return html_parser->result_flag;
 }
 
-int is_script_tag(struct HtmlParser *html_parser, unsigned long long int index) {
+int is_script_tag(HtmlParser *html_parser, unsigned long long int index) {
     if (index + 8 >= html_parser->content_size) {
         return 0;
     }
@@ -51,7 +51,7 @@ int is_script_tag(struct HtmlParser *html_parser, unsigned long long int index) 
     return html_parser->result_flag;
 }
 
-int is_css_tag(struct HtmlParser *html_parser, unsigned long long int index) {
+int is_css_tag(HtmlParser *html_parser, unsigned long long int index) {
     if (index + 6 >= html_parser->content_size) {
         return 0;
     }
@@ -86,7 +86,7 @@ int is_css_tag(struct HtmlParser *html_parser, unsigned long long int index) {
     return 0;
 }
 
-int has_more_img(struct HtmlParser *html_parser) {
+int has_more_img(HtmlParser *html_parser) {
     register unsigned long long int i;
     for (i = html_parser->img_position + 1; i < html_parser->content_size; ++i) {
         if (*(html_parser->content + i) == '<' && is_img_tag(html_parser, i)) {
@@ -97,7 +97,7 @@ int has_more_img(struct HtmlParser *html_parser) {
     return 0;
 }
 
-int has_more_script(struct HtmlParser *html_parser) {
+int has_more_script(HtmlParser *html_parser) {
     register unsigned long long int i;
     for (i = html_parser->script_position + 1; i < html_parser->content_size; ++i) {
         if (*(html_parser->content + i) == '<' && is_script_tag(html_parser, i)) {
@@ -108,7 +108,7 @@ int has_more_script(struct HtmlParser *html_parser) {
     return 0;
 }
 
-int has_more_css(struct HtmlParser *html_parser) {
+int has_more_css(HtmlParser *html_parser) {
     register unsigned long long int i;
     for (i = html_parser->css_position + 1; i < html_parser->content_size; ++i) {
         if (*(html_parser->content + i) == '<' && is_css_tag(html_parser, i)) {
@@ -119,7 +119,7 @@ int has_more_css(struct HtmlParser *html_parser) {
     return 0;
 }
 
-int download_current_img(struct HtmlParser *html_parser, const char *prefix) {
+int download_current_img(HtmlParser *html_parser, const char *prefix) {
     register unsigned long long int i = html_parser->img_position;
     unsigned long long int start_index = -1, end_index = -1;
     int src_check = 0;
@@ -151,7 +151,7 @@ int download_current_img(struct HtmlParser *html_parser, const char *prefix) {
     return download_html_object(html_parser, prefix, start_index, end_index);
 }
 
-int download_current_script(struct HtmlParser *html_parser, const char *prefix) {
+int download_current_script(HtmlParser *html_parser, const char *prefix) {
     register unsigned long long int i = html_parser->script_position;
     unsigned long long int start_index = -1, end_index = -1;
     int src_check = 0;
@@ -181,7 +181,7 @@ int download_current_script(struct HtmlParser *html_parser, const char *prefix) 
     return download_html_object(html_parser, prefix, start_index, end_index);
 }
 
-int download_current_css(struct HtmlParser *html_parser, const char *prefix) {
+int download_current_css(HtmlParser *html_parser, const char *prefix) {
     register unsigned long long int i = html_parser->css_position;
     unsigned long long int start_index = -1, end_index = -1;
     int src_check = 0;
@@ -212,7 +212,7 @@ int download_current_css(struct HtmlParser *html_parser, const char *prefix) {
     return download_html_object(html_parser, prefix, start_index, end_index);
 }
 
-int download_html_object(struct HtmlParser *html_parser, const char *prefix, unsigned long long int start_index,
+int download_html_object(HtmlParser *html_parser, const char *prefix, unsigned long long int start_index,
                          unsigned long long int end_index) {
     char *absolute_url = malloc(end_index - start_index + 2);
     memset(absolute_url, 0, end_index - start_index + 2);

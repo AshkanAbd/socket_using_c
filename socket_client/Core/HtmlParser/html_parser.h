@@ -3,6 +3,8 @@
 
 #include "../Api/api.h"
 
+typedef struct HtmlParser HtmlParser;
+
 struct HtmlParser {
     char *content;
     char *ip;
@@ -19,22 +21,22 @@ struct HtmlParser {
     const char *script_tag;
 };
 
-void init_html_parser(struct HtmlParser *html_parser, char *data, unsigned long long int data_size,
+void init_html_parser(HtmlParser *html_parser, char *data, unsigned long long int data_size,
                       char *ip, int port);
 
-int has_more_img(struct HtmlParser *html_parser);
+int has_more_img(HtmlParser *html_parser);
 
-int download_current_img(struct HtmlParser *html_parser, const char *prefix);
+int download_current_img(HtmlParser *html_parser, const char *prefix);
 
-int has_more_script(struct HtmlParser *html_parser);
+int has_more_script(HtmlParser *html_parser);
 
-int download_current_script(struct HtmlParser *html_parser, const char *prefix);
+int download_current_script(HtmlParser *html_parser, const char *prefix);
 
-int has_more_css(struct HtmlParser *html_parser);
+int has_more_css(HtmlParser *html_parser);
 
-int download_current_css(struct HtmlParser *html_parser, const char *prefix);
+int download_current_css(HtmlParser *html_parser, const char *prefix);
 
-int download_html_object(struct HtmlParser *html_parser, const char *prefix, unsigned long long int start_index,
+int download_html_object(HtmlParser *html_parser, const char *prefix, unsigned long long int start_index,
                          unsigned long long int end_index);
 
 #endif //SOCKET_CLIENT_HTML_PARSER_H

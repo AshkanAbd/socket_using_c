@@ -6,22 +6,22 @@
 #include <stdio.h>
 #include <io.h>
 
-#define PORT 8080
+typedef ClientSocket ClientSocket;
 
-struct ClientSocket {
+ClientSocket {
     int socket_fd;
     struct sockaddr_in server_address;
 };
 
-int create_socket(struct ClientSocket *s);
+int create_socket(ClientSocket *s);
 
-void assign_port(struct ClientSocket *s, char *ip, int port);
+void assign_port(ClientSocket *s, char *ip, int port);
 
-int connect_socket(struct ClientSocket *s);
+int connect_socket(ClientSocket *s);
 
-void close_socket(struct ClientSocket *s);
+void close_socket(ClientSocket *s);
 
-void init_socket(struct ClientSocket *client_socket, char *ip, int port);
+void init_socket(ClientSocket *client_socket, char *ip, int port);
 
 
 #endif //SOCKET_CLIENT_CLIENT_SOCKET_H

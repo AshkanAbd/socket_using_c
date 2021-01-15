@@ -10,10 +10,12 @@
 
 #define MAX 1024
 
+typedef struct Client Client;
+
 struct Client {
     int socket, buffer_size;
 };
 
-void init_client(struct Client *c, int buffer_size, int socket);
+void init_client(Client *c, int buffer_size, int socket);
 
 #endif //SOCKET_SERVER_CLIENT_H

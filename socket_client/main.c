@@ -42,8 +42,8 @@ void html_test() {
     struct IncomingResponse *response = api_read("/aparat.html", NULL, 0, "127.0.0.1", 8080);
     printf("%s\n", response_to_file_single_path(response, "output/aparat.html"));
 
-    struct HtmlParser *html_parser = malloc(sizeof(struct HtmlParser));
-    memset(html_parser, 0, sizeof(struct HtmlParser));
+    HtmlParser *html_parser = malloc(sizeof(HtmlParser));
+    memset(html_parser, 0, sizeof(HtmlParser));
 
     init_html_parser(html_parser, response->data, response->data_size, "127.0.0.1", 8080);
     free(response->data);

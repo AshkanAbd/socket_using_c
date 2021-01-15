@@ -1,11 +1,11 @@
 #include "api.h"
 
-struct Client *request_client(char *ip, int port) {
-    struct ClientSocket *client_socket = malloc(sizeof(struct ClientSocket));
-    memset(client_socket, 0, sizeof(struct ClientSocket));
+Client *request_client(char *ip, int port) {
+    ClientSocket *client_socket = malloc(sizeof(ClientSocket));
+    memset(client_socket, 0, sizeof(ClientSocket));
 
-    struct Client *client = malloc(sizeof(struct Client));
-    memset(client, 0, sizeof(struct Client));
+    Client *client = malloc(sizeof(Client));
+    memset(client, 0, sizeof(Client));
 
     init_socket(client_socket, ip, port);
 
@@ -14,7 +14,7 @@ struct Client *request_client(char *ip, int port) {
     return client;
 }
 
-void prepare_request(struct OutgoingRequest *request, char *buffer) {
+void prepare_request(OutgoingRequest *request, char *buffer) {
     memcpy(buffer, (char *) &request->action, 1);
 
     memcpy(buffer + 2, request->route, strlen(request->route));
@@ -37,14 +37,14 @@ void prepare_request(struct OutgoingRequest *request, char *buffer) {
     }
 }
 
-void request_next_packet(struct Client *client) {
+void request_next_packet(Client *client) {
     char *temp = malloc(1);
     *temp = '0';
     send(client->socket, temp, 1, 0);
     free(temp);
 }
 
-struct IncomingResponse *send_request(struct OutgoingRequest *request, struct Client *client) {
+struct IncomingResponse *send_request(OutgoingRequest *request, Client *client) {
     int request_buffer_size = 1 + 1 + (int) strlen(request->route) + 1 + request->param_size +
                               1 + request->body_size + 1;
     char *request_buffer = malloc(request_buffer_size + 1);
@@ -140,10 +140,10 @@ struct IncomingResponse *send_request(struct OutgoingRequest *request, struct Cl
 }
 
 struct IncomingResponse *api_read(char *route, void *param, int param_size, char *ip, int port) {
-    struct Client *client = request_client(ip, port);
+    Client *client = request_client(ip, port);
 
-    struct OutgoingRequest *request = malloc(sizeof(struct OutgoingRequest));
-    memset(request, 0, sizeof(struct OutgoingRequest));
+    OutgoingRequest *request = malloc(sizeof(OutgoingRequest));
+    memset(request, 0, sizeof(OutgoingRequest));
 
     init_read(request, route, param, param_size);
 //    printf("send\n");
@@ -152,10 +152,10 @@ struct IncomingResponse *api_read(char *route, void *param, int param_size, char
 
 struct IncomingResponse *
 api_create(char *route, void *param, int param_size, void *body, int body_size, char *ip, int port) {
-    struct Client *client = request_client(ip, port);
+    Client *client = request_client(ip, port);
 
-    struct OutgoingRequest *request = malloc(sizeof(struct OutgoingRequest));
-    memset(request, 0, sizeof(struct OutgoingRequest));
+    OutgoingRequest *request = malloc(sizeof(OutgoingRequest));
+    memset(request, 0, sizeof(OutgoingRequest));
 
     init_create(request, route, param, param_size, body, body_size);
 
@@ -164,10 +164,10 @@ api_create(char *route, void *param, int param_size, void *body, int body_size, 
 
 struct IncomingResponse *
 api_update(char *route, void *param, int param_size, void *body, int body_size, char *ip, int port) {
-    struct Client *client = request_client(ip, port);
+    Client *client = request_client(ip, port);
 
-    struct OutgoingRequest *request = malloc(sizeof(struct OutgoingRequest));
-    memset(request, 0, sizeof(struct OutgoingRequest));
+    OutgoingRequest *request = malloc(sizeof(OutgoingRequest));
+    memset(request, 0, sizeof(OutgoingRequest));
 
     init_update(request, route, param, param_size, body, body_size);
 
@@ -175,10 +175,10 @@ api_update(char *route, void *param, int param_size, void *body, int body_size, 
 }
 
 struct IncomingResponse *api_delete(char *route, void *param, int param_size, char *ip, int port) {
-    struct Client *client = request_client(ip, port);
+    Client *client = request_client(ip, port);
 
-    struct OutgoingRequest *request = malloc(sizeof(struct OutgoingRequest));
-    memset(request, 0, sizeof(struct OutgoingRequest));
+    OutgoingRequest *request = malloc(sizeof(OutgoingRequest));
+    memset(request, 0, sizeof(OutgoingRequest));
 
     init_delete(request, route, param, param_size);
 

@@ -1,6 +1,6 @@
 #include "client_socket.h"
 
-int create_socket(struct ClientSocket *s) {
+int create_socket(ClientSocket *s) {
     WSADATA Data;
     WSAStartup(MAKEWORD(2, 2), &Data);
 
@@ -12,25 +12,25 @@ int create_socket(struct ClientSocket *s) {
     return 0;
 }
 
-void assign_port(struct ClientSocket *s, char *ip, int port) {
+void assign_port(ClientSocket *s, char *ip, int port) {
     s->server_address.sin_family = AF_INET;
     s->server_address.sin_addr.s_addr = inet_addr(ip);
     s->server_address.sin_port = htons(port);
 }
 
-int connect_socket(struct ClientSocket *s) {
+int connect_socket(ClientSocket *s) {
     if (connect(s->socket_fd, (struct sockaddr *) &s->server_address, sizeof(s->server_address)) != 0) {
         return 1;
     }
     return 0;
 }
 
-void close_socket(struct ClientSocket *s) {
+void close_socket(ClientSocket *s) {
     close(s->socket_fd);
     WSACleanup();
 }
 
-void init_socket(struct ClientSocket *client_socket, char *ip, int port) {
+void init_socket(ClientSocket *client_socket, char *ip, int port) {
     int error;
 
     if ((error = create_socket(client_socket) != 0)) {
