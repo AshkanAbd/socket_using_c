@@ -12,13 +12,17 @@ void init_server(ServerSocket *server_socket);
 
 Pipeline *pipeline;
 
-int main() {
+int main(int argc, char **argv) {
     ServerSocket server_socket;
 
     pipeline = malloc(sizeof(Pipeline));
     memset(pipeline, 0, sizeof(Pipeline));
 
-    init_database("../db/app.sqlite");
+    if (argc > 1) {
+        init_database(*(argv + 1));
+    } else {
+        init_database("../db/app.sqlite");
+    }
 
     init_server(&server_socket);
     init_pipeline(pipeline);
