@@ -11,10 +11,10 @@ struct RouteTemplate {
     int action;
     char *route;
 
-    OutgoingResponse *(*func)(IncomingRequest *request);
+    OutgoingResponse *(*func)(char **, int, char **, int);
 };
 
 void initRouteTemplate(RouteTemplate *template, int action, char *route,
-                       OutgoingResponse *(*func)(IncomingRequest *request));
+                       OutgoingResponse *(*func)(char **, int, char **, int));
 
 #endif //SOCKET_SERVER_ROUTE_TEMPLATE_H

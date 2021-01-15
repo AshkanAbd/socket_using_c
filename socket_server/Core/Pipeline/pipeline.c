@@ -47,8 +47,57 @@ int check_action(RouteTemplate *template, IncomingRequest *request) {
     return 0;
 }
 
+void extract_request_content(void *content, int content_size, char ***argv, int *argc) {
+    if (content_size == 0) {
+        return;
+    }
+
+    *argv = malloc(content_size);
+    memset(*argv, 0, content_size);
+    *argc = 0;
+    int *body_end_index = malloc(sizeof(int) * content_size);
+    memset(body_end_index, 0, sizeof(int) * content_size);
+
+    for (int i = 0; i < content_size; ++i) {
+        if (*((char *) content + i) == 0x1E) {
+            *(body_end_index + *argc) = i;
+
+            int pre_body_index;
+            if (*argc == 0) {
+                pre_body_index = 0;
+            } else {
+                pre_body_index = *(body_end_index + *argc - 1) + 1;
+            }
+
+            *((*argv) + *argc) = malloc(i - pre_body_index + 1);
+            memset(*((*argv) + *argc), 0, i - pre_body_index + 1);
+            memcpy(*((*argv) + *argc), content + pre_body_index, i - pre_body_index);
+
+            (*argc)++;
+        }
+    }
+    free(body_end_index);
+    if (*argc == 0) {
+        return;
+    }
+
+    int body_argv_size = 1;
+    for (int i = 0; i < *argc; ++i) {
+        body_argv_size += strlen(*((*argv) + i)) + 1;
+    }
+    **argv = realloc(**argv, body_argv_size);
+}
+
 OutgoingResponse *execute_controller(IncomingRequest *request, RouteTemplate *template) {
-    return (*template->func)(request);
+    char **param = 0;
+    int param_count = 0;
+    extract_request_content(request->param, request->param_size, &param, &param_count);
+
+    char **body = 0;
+    int body_count = 0;
+    extract_request_content(request->body, request->body_size, &body, &body_count);
+
+    return (*template->func)(param, param_count, body, body_count);
 }
 
 int request_static_files(Pipeline *pipeline, IncomingRequest *request) {

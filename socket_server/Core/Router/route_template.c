@@ -1,7 +1,7 @@
 #include "route_template.h"
 
 void initRouteTemplate(RouteTemplate *template, int action, char *route,
-                       OutgoingResponse *(*func)(IncomingRequest *request)) {
+                       OutgoingResponse *(*func)(char **, int, char **, int)) {
     template->action = action;
 
     template->route = malloc(strlen(route) + 1);

@@ -1,5 +1,31 @@
 #include "incoming_request.h"
 
+void print_request(IncomingRequest *request) {
+    switch (request->action) {
+        case REQUEST_READ:
+            printf("GET: ");
+            break;
+        case REQUEST_CREATE:
+            printf("POST: ");
+            break;
+        case REQUEST_UPDATE:
+            printf("PUT: ");
+            break;
+        case REQUEST_DELETE:
+            printf("DELETE: ");
+            break;
+        default:
+            printf("UNKNOWN VERB: ");
+            break;
+    }
+
+    if (request->route == NULL) {
+        printf("unknown route\n");
+    } else {
+        printf("%s\n", request->route);
+    }
+}
+
 void init_request(IncomingRequest *request, int action, char *route, void *param, int param_size,
                   void *body, int body_size) {
     request->action = action;
@@ -77,6 +103,7 @@ int parse_request(IncomingRequest *request, const char *buffer, int buffer_size)
             }
             if (!fill(request, state, buff, buff_index)) {
                 free(buff);
+                print_request(request);
                 return 0;
             }
             state++;
@@ -87,11 +114,14 @@ int parse_request(IncomingRequest *request, const char *buffer, int buffer_size)
 
     if (state == 1) {
         free(buff);
+        print_request(request);
         return 0;
     }
     free(buff);
     if (request->route == NULL) {
+        print_request(request);
         return 0;
     }
+    print_request(request);
     return 1;
 }

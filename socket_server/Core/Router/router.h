@@ -6,15 +6,15 @@
 void registerRoutes(Pipeline *pipeline);
 
 void readAction(Pipeline *pipeline, char *route,
-                OutgoingResponse *(*func)(IncomingRequest *));
+                OutgoingResponse *(*func)(char **, int, char **, int));
 
 void createAction(Pipeline *pipeline, char *route,
-                  OutgoingResponse *(*func)(IncomingRequest *));
+                  OutgoingResponse *(*func)(char **, int, char **, int));
 
 void updateAction(Pipeline *pipeline, char *route,
-                  OutgoingResponse *(*func)(IncomingRequest *));
+                  OutgoingResponse *(*func)(char **, int, char **, int));
 
 void deleteAction(Pipeline *pipeline, char *route,
-                  OutgoingResponse *(*func)(IncomingRequest *));
+                  OutgoingResponse *(*func)(char **, int, char **, int));
 
 #endif //SOCKET_SERVER_ROUTER_H
