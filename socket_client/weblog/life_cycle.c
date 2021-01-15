@@ -36,5 +36,8 @@ void start_life_cycle(const char *ip, int port) {
         if (get_life_cycle_status() == STATUS_UPDATE_POST) {
             update_post_status();
         }
+        if (get_life_cycle_status() == STATUS_DELETE_POST) {
+            delete_post_status();
+        }
     }
 }

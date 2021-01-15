@@ -28,4 +28,6 @@ void create_post_status();
 
 void update_post_status();
 
+void delete_post_status();
+
 #endif //SOCKET_CLIENT_INTERFACE_H

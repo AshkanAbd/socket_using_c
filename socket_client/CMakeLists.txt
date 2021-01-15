@@ -36,7 +36,7 @@ add_executable(socket_client
         weblog/interface/post_action_status.c
         weblog/interface/get_post_status.c
         weblog/interface/create_post_status.c
-        weblog/interface/update_post_status.c)
+        weblog/interface/update_post_status.c weblog/interface/delete_post_status.c)
 
 if (WIN32)
     target_link_libraries(socket_client wsock32 ws2_32)
