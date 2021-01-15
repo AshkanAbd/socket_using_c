@@ -6,9 +6,9 @@
 #include <stdio.h>
 #include <io.h>
 
-typedef ClientSocket ClientSocket;
+typedef struct ClientSocket ClientSocket;
 
-ClientSocket {
+struct ClientSocket {
     int socket_fd;
     struct sockaddr_in server_address;
 };
