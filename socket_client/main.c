@@ -1,6 +1,11 @@
 #include "interface/interface.h"
 #include "weblog/life_cycle.h"
 
+int port = 8080;
+char *ip = "127.0.0.1";
+
+void check_args(int argc, char **argv);
+
 void login_ok();
 
 void sign_up_op();
@@ -14,13 +19,10 @@ void login_not_found();
 void html_test();
 
 int main(int argc, char **argv) {
-    int port = 8080;
-    char *ip = "127.0.0.1";
-    if (argc >= 3) {
-        ip = *(argv + 1);
-        port = atoi(*(argv + 2));
-    }
+    check_args(argc, argv);
+
     printf("Server IP: %s\nServer port: %d\n", ip, port);
+
     start_life_cycle(ip, port);
 //    login_ok();
 
@@ -115,4 +117,23 @@ void login_not_found() {
     struct IncomingResponse *response = api_delete("/login1", NULL, 0, "127.0.0.1", 8080);
 
     printf("%s\n", response_to_str(response));
+}
+
+void check_args(int argc, char **argv) {
+    if (argc > 1 && (strcmp(*(argv + 1), "--help") == 0 || strcmp(*(argv + 1), "-h") == 0)) {
+        printf("socket_client.exe [ip] [port] [packet_size]");
+        exit(1);
+    }
+
+    if (argc >= 2) {
+        ip = *(argv + 1);
+    }
+
+    if (argc >= 3) {
+        port = atoi(*(argv + 2));
+    }
+
+    if (argc >= 4) {
+        change_max(atoi(*(argv + 3)));
+    }
 }

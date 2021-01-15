@@ -8,13 +8,15 @@
 #include <winsock2.h>
 #include <pthread.h>
 
-#define MAX 1024
+static int MAX = 1024;
 
 typedef struct Client Client;
 
 struct Client {
     int socket, buffer_size;
 };
+
+void change_max(int max);
 
 void init_client(Client *c, int buffer_size, int socket);
 
