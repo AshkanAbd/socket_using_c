@@ -416,7 +416,7 @@ OutgoingResponse *delete_post(IncomingRequest *request) {
     }
 
     if (post->user_id != token->user_id) {
-        init_bad_request(response, "You can't delete other people post.", 33);
+        init_bad_request(response, "You can't delete other people post.", 35);
         return response;
     }
 
