@@ -37,3 +37,50 @@ void change_life_cycle_status(int next_status) {
 int get_life_cycle_status() {
     return current_status;
 }
+
+void print_post(IncomingResponse *response) {
+    printf("\n######### NEW POST #########\n");
+    for (size_t i = 0, j = 0; i < response->data_size; j++) {
+        size_t data_size = i;
+        size_t data_start = i;
+
+        while (*((char *) response->data + data_size++) != 0x1E) {
+            if (data_size >= response->data_size) {
+                goto end;
+            }
+        }
+
+        char *data = malloc(((data_size - data_start) * sizeof(char)));
+        memset(data, 0, ((data_size - data_start) * sizeof(char)));
+        memcpy(data, response->data + data_start, data_size - data_start - 1);
+
+        switch (j % 6) {
+            case 0:
+                printf("Post id: ");
+                break;
+            case 1:
+                printf("Title: ");
+                break;
+            case 2:
+                printf("Description: ");
+                break;
+            case 3:
+                printf("Created at: ");
+                break;
+            case 4:
+                printf("User id: ");
+                break;
+            case 5:
+                printf("Username: ");
+                break;
+        }
+
+        printf("%s\n", data);
+
+        free(data);
+
+        i = data_size;
+    }
+    end:
+    printf("########### END ###########\n\n");
+}

@@ -11,7 +11,7 @@ void post_list_callback(IncomingResponse *response, void *ptr) {
     memmove(posts_count_char, response->data, sizeof(int));
 
     int posts_count = atoi(posts_count_char);
-    printf("%d posts retrieved from server\n", posts_count);
+    printf("\n%d posts retrieved from server:\n", posts_count);
     for (size_t i = sizeof(int) + 1, j = 0; i < response->data_size; j++) {
         switch (j % 3) {
             case 0:
@@ -41,7 +41,7 @@ void post_list_callback(IncomingResponse *response, void *ptr) {
 
         i = data_size;
     }
-    printf("######### END #########\n");
+    printf("######### END #########\n\n");
     change_life_cycle_status(STATUS_POST_ACTION);
 }
 

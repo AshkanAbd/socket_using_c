@@ -10,6 +10,8 @@ int get_life_cycle_status();
 
 void change_life_cycle_status(int next_status);
 
+void print_post(IncomingResponse *response);
+
 void print_error_repose(IncomingResponse *response);
 
 void start_status();

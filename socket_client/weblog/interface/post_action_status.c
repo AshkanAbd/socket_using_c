@@ -6,10 +6,10 @@ void post_action_status() {
     do {
         printf("Select an action\n");
         printf("1) Get post list\n");
-        printf("2) Get one post\n");
+        printf("2) Get post\n");
         printf("3) Create post\n");
-        printf("4) Update a post\n");
-        printf("5) Delete a post\n");
+        printf("4) Update post\n");
+        printf("5) Delete post\n");
         input = getchar() - '0';
         while (getchar() != '\n');
     } while (input < 1 || input > 6);
