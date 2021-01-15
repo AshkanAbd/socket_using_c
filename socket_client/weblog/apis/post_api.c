@@ -10,7 +10,13 @@ void post_list_api(void callback(IncomingResponse *, void *), void *ptr) {
 }
 
 void get_post_api(const char *id, void callback(IncomingResponse *, void *), void *ptr) {
-    IncomingResponse *response = api_read("/get_post", (char *) id, (int) strlen(id), server_ip, server_port);
+    char *param = malloc(strlen(id) + 2);
+    memset(param, 0, strlen(id) + 2);
+
+    memcpy(param, id, strlen(id));
+    *(param + strlen(id)) = 0x1E;
+
+    IncomingResponse *response = api_read("/get_post", param, (int) strlen(param), server_ip, server_port);
 
     callback(response, ptr);
 }
