@@ -10,7 +10,7 @@
 #define RESPONSE_SERVER_ERROR 5
 #define RESPONSE_INVALID_SYNTAX 6
 
-#define MAX 1024
+static int MAX = 1024;
 
 typedef struct OutgoingResponse OutgoingResponse;
 
@@ -19,6 +19,8 @@ struct OutgoingResponse {
     void *data;
     int data_size;
 };
+
+void change_max(int max);
 
 void init_ok(OutgoingResponse *response, void *data, int data_size);
 

@@ -1,10 +1,11 @@
 #include "Core/Socket/server_socket.h"
 #include "Core/Pipeline/pipeline.h"
 #include "Core/db/sqlite/migration.h"
-#include <stdarg.h>
 
-#define MAX 1024
-#define PORT 8080
+int PORT = 8080;
+char *db_path = "../db/app.sqlite";
+
+void check_args(int argc, char **argv);
 
 void *handle_client(void *obj);
 
@@ -13,16 +14,13 @@ void init_server(ServerSocket *server_socket);
 Pipeline *pipeline;
 
 int main(int argc, char **argv) {
+    check_args(argc, argv);
     ServerSocket server_socket;
 
     pipeline = malloc(sizeof(Pipeline));
     memset(pipeline, 0, sizeof(Pipeline));
 
-    if (argc > 1) {
-        init_database(*(argv + 1));
-    } else {
-        init_database("../db/app.sqlite");
-    }
+    init_database(db_path);
 
     init_server(&server_socket);
     init_pipeline(pipeline);
@@ -112,4 +110,23 @@ void *handle_client(void *obj) {
     }
     free(response);
     close_client(client);
+}
+
+void check_args(int argc, char **argv) {
+    if (argc > 1 && (strcmp(*(argv + 1), "--help") == 0 || strcmp(*(argv + 1), "-h") == 0)) {
+        printf("socket_server.exe [sqlite_db_path] [port] [packet_size]");
+        exit(1);
+    }
+
+    if (argc >= 2) {
+        db_path = *(argv + 1);
+    }
+
+    if (argc >= 3) {
+        PORT = atoi(*(argv + 2));
+    }
+
+    if (argc >= 2) {
+        change_max(atoi(*(argv + 3)));
+    }
 }

@@ -1,5 +1,9 @@
 #include "outgoing_response.h"
 
+void change_max(int max) {
+    MAX = max;
+}
+
 void init(OutgoingResponse *response, void *data, int data_size) {
     response->data_size = data_size;
 
