@@ -6,6 +6,82 @@ void put_separator(void *data, size_t *data_index) {
     *data_index += 1;
 }
 
+void authorize_user(IncomingRequest *request, OutgoingResponse *response, Token **token, int token_size) {
+    if (request->param_size == 0) {
+        init_bad_request(response, "Unauthorized", 12);
+        return;
+    }
+
+    char *token_char = malloc(token_size + 1);
+    memset(token_char, 0, token_size + 1);
+    memcpy(token_char, request->param, token_size);
+
+    char *db_msg = 0;
+    if (search_query(TOKEN_TYPE, "token", token_char, token, get_token_callback, &db_msg) != SQLITE_OK) {
+        init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
+        return;
+    }
+
+    if (token == NULL) {
+        init_bad_request(response, "Unauthorized", 12);
+        return;
+    }
+}
+
+void prepare_one_post_response(char **data, size_t *data_size, Post *post, User *user) {
+    char *post_id_char = malloc(sizeof(int) + 1);
+    memset(post_id_char, 0, sizeof(int) + 1);
+    itoa(post->id, post_id_char, 10);
+
+    char *user_id_char = malloc(sizeof(int) + 1);
+    memset(user_id_char, 0, sizeof(int) + 1);
+    itoa(user->id, user_id_char, 10);
+
+    size_t data_index = 0;
+    (*data_size) += sizeof(int);
+    (*data_size)++;
+    (*data_size) += strlen(post->title);
+    (*data_size)++;
+    (*data_size) += strlen(post->description);
+    (*data_size)++;
+    (*data_size) += strlen(post->created_at);
+    (*data_size)++;
+    (*data_size) += sizeof(int);
+    (*data_size)++;
+    (*data_size) += strlen(user->username);
+    (*data_size)++;
+
+    *data = malloc(*data_size);
+    memset(*data, 0, *data_size);
+
+    memcpy(*data, post_id_char, sizeof(int));
+    data_index += sizeof(int);
+    put_separator(*data, &data_index);
+
+    memcpy((*data) + data_index, post->title, strlen(post->title));
+    data_index += strlen(post->title);
+    put_separator(*data, &data_index);
+
+    memcpy((*data) + data_index, post->description, strlen(post->description));
+    data_index += strlen(post->description);
+    put_separator(*data, &data_index);
+
+    memcpy((*data) + data_index, post->created_at, strlen(post->created_at));
+    data_index += strlen(post->created_at);
+    put_separator(*data, &data_index);
+
+    memcpy((*data) + data_index, user_id_char, sizeof(int));
+    data_index += sizeof(int);
+    put_separator(*data, &data_index);
+
+    memcpy((*data) + data_index, user->username, strlen(user->username));
+    data_index += strlen(user->username);
+    put_separator(*data, &data_index);
+
+    free(user_id_char);
+    free(post_id_char);
+}
+
 OutgoingResponse *post_list(IncomingRequest *request) {
     OutgoingResponse *response = malloc(sizeof(OutgoingResponse));
     memset(response, 0, sizeof(OutgoingResponse));
@@ -114,47 +190,13 @@ OutgoingResponse *get_post(IncomingRequest *request) {
         return response;
     }
 
-    size_t data_size = 0;
-    size_t data_index = 0;
-    data_size += sizeof(int);
-    data_size++;
-    data_size += strlen(post->title);
-    data_size++;
-    data_size += strlen(post->description);
-    data_size++;
-    data_size += strlen(post->created_at);
-    data_size++;
-    data_size += sizeof(int);
-    data_size++;
-    data_size += strlen(user->username);
-    data_size++;
+    free(post_id_char);
+    free(user_id_char);
 
-    char *data = malloc(data_size);
-    memset(data, 0, data_size);
+    char *data = 0;
+    size_t data_size = 1;
 
-    memcpy(data, post_id_char, sizeof(int));
-    data_index += sizeof(int);
-    put_separator(data, &data_index);
-
-    memcpy(data + data_index, post->title, strlen(post->title));
-    data_index += strlen(post->title);
-    put_separator(data, &data_index);
-
-    memcpy(data + data_index, post->description, strlen(post->description));
-    data_index += strlen(post->description);
-    put_separator(data, &data_index);
-
-    memcpy(data + data_index, post->created_at, strlen(post->created_at));
-    data_index += strlen(post->created_at);
-    put_separator(data, &data_index);
-
-    memcpy(data + data_index, user_id_char, sizeof(int));
-    data_index += sizeof(int);
-    put_separator(data, &data_index);
-
-    memcpy(data + data_index, user->username, strlen(user->username));
-    data_index += strlen(user->username);
-    put_separator(data, &data_index);
+    prepare_one_post_response(&data, &data_size, post, user);
 
     init_ok(response, data, data_size);
     return response;
@@ -164,24 +206,18 @@ OutgoingResponse *create_post(IncomingRequest *request) {
     OutgoingResponse *response = malloc(sizeof(OutgoingResponse));
     memset(response, 0, sizeof(OutgoingResponse));
 
-    if (request->param_size == 0) {
-        init_bad_request(response, "Unauthorized", 12);
-        return response;
+    int token_size = 0;
+    while (*((char *) request->param + token_size) != 0x1E) {
+        token_size++;
+        if (token_size >= request->param_size) {
+            break;
+        }
     }
-
-    char *token_char = malloc(request->param_size + 1);
-    memset(token_char, 0, request->param_size + 1);
-    memcpy(token_char, request->param, request->param_size);
 
     Token *token = NULL;
-    char *db_msg = 0;
-    if (search_query(TOKEN_TYPE, "token", token_char, &token, get_token_callback, &db_msg) != SQLITE_OK) {
-        init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
-        return response;
-    }
-
-    if (token == NULL) {
-        init_bad_request(response, "Unauthorized", 12);
+    char *db_msg = NULL;
+    authorize_user(request, response, &token, token_size);
+    if (response->status != 0) {
         return response;
     }
 
@@ -233,47 +269,107 @@ OutgoingResponse *create_post(IncomingRequest *request) {
         return response;
     }
 
-    size_t data_size = 0;
-    size_t data_index = 0;
-    data_size += sizeof(int);
-    data_size++;
-    data_size += strlen(post->title);
-    data_size++;
-    data_size += strlen(post->description);
-    data_size++;
-    data_size += strlen(post->created_at);
-    data_size++;
-    data_size += sizeof(int);
-    data_size++;
-    data_size += strlen(user->username);
-    data_size++;
+    free(post_id_char);
+    free(user_id_char);
 
-    char *data = malloc(data_size);
-    memset(data, 0, data_size);
+    char *data = 0;
+    size_t data_size = 1;
 
-    memcpy(data, post_id_char, sizeof(int));
-    data_index += sizeof(int);
-    put_separator(data, &data_index);
+    prepare_one_post_response(&data, &data_size, post, user);
 
-    memcpy(data + data_index, post->title, strlen(post->title));
-    data_index += strlen(post->title);
-    put_separator(data, &data_index);
+    init_ok(response, data, data_size);
+    return response;
+}
 
-    memcpy(data + data_index, post->description, strlen(post->description));
-    data_index += strlen(post->description);
-    put_separator(data, &data_index);
+OutgoingResponse *update_post(IncomingRequest *request) {
+    OutgoingResponse *response = malloc(sizeof(OutgoingResponse));
+    memset(response, 0, sizeof(OutgoingResponse));
 
-    memcpy(data + data_index, post->created_at, strlen(post->created_at));
-    data_index += strlen(post->created_at);
-    put_separator(data, &data_index);
+    int token_size = 0;
+    while (*((char *) request->param + token_size) != 0x1E) {
+        token_size++;
+        if (token_size >= request->param_size) {
+            init_invalid_syntax(response, NULL, 0);
+            return response;
+        }
+    }
 
-    memcpy(data + data_index, user_id_char, sizeof(int));
-    data_index += sizeof(int);
-    put_separator(data, &data_index);
+    Token *token = NULL;
+    char *db_msg = NULL;
+    authorize_user(request, response, &token, token_size);
+    if (response->status != 0) {
+        return response;
+    }
 
-    memcpy(data + data_index, user->username, strlen(user->username));
-    data_index += strlen(user->username);
-    put_separator(data, &data_index);
+    token_size++;
+    int id_size = 0;
+    while (*((char *) request->param + token_size + id_size) != 0x1E) {
+        id_size++;
+        if (token_size + id_size >= request->param_size) {
+            init_invalid_syntax(response, NULL, 0);
+            return response;
+        }
+    }
+
+    char *post_id_char = malloc(id_size + 1);
+    memset(post_id_char, 0, id_size + 1);
+    memcpy(post_id_char, request->param + token_size, id_size);
+
+    Post *post = NULL;
+    if (search_query(POST_TYPE, "id", post_id_char, &post, find_post_by_id_callback, &db_msg) != SQLITE_OK) {
+        init_server_error(response, db_msg, strlen(db_msg));
+        return response;
+    }
+
+    if (post->user_id != token->user_id) {
+        init_bad_request(response, "You can't edit other people post.", 33);
+        return response;
+    }
+
+    char *post_title = NULL;
+    char *post_description = NULL;
+    int index = 0;
+    for (int i = 0; i < request->body_size; ++i) {
+        if (*((char *) (request->body + i)) == 0x1E) {
+            if (post_title == NULL) {
+                post_title = malloc(i - index + 1);
+                memset(post_title, 0, i - index + 1);
+                memcpy(post_title, request->body + index, i - index);
+            } else if (post_description == NULL) {
+                post_description = malloc(i - index + 1);
+                memset(post_description, 0, i - index + 1);
+                memcpy(post_description, request->body + index, i - index);
+            }
+            index = i + 1;
+        }
+    }
+
+    set_post_column(&post->title, post_title, 1);
+    set_post_column(&post->description, post_description, 1);
+
+    if (update_query(POST_TYPE, "id", post_id_char, post, NULL, 0, &db_msg)) {
+        init_bad_request(response, "You can't edit other people post.", 33);
+        return response;
+    }
+
+    char *user_id_char = malloc(sizeof(int) + 1);
+    memset(user_id_char, 0, sizeof(int) + 1);
+    itoa(post->user_id, user_id_char, 10);
+
+    User *user = NULL;
+    db_msg = 0;
+    if (search_query(USER_TYPE, "id", user_id_char, &user, find_user_by_id_callback, &db_msg) != SQLITE_OK) {
+        init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
+        return response;
+    }
+
+    free(post_id_char);
+    free(user_id_char);
+
+    char *data = 0;
+    size_t data_size = 1;
+
+    prepare_one_post_response(&data, &data_size, post, user);
 
     init_ok(response, data, data_size);
     return response;
