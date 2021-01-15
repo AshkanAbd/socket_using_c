@@ -8,18 +8,18 @@
 #include "../callbacks/callbacks.h"
 #include <time.h>
 
-OutgoingResponse *sign_in(IncomingRequest *request);
+OutgoingResponse *sign_in(char **, int, char **, int);
 
-OutgoingResponse *sign_up(IncomingRequest *request);
+OutgoingResponse *sign_up(char **, int, char **, int);
 
-OutgoingResponse *post_list(IncomingRequest *request);
+OutgoingResponse *post_list(char **, int, char **, int);
 
-OutgoingResponse *get_post(IncomingRequest *request);
+OutgoingResponse *get_post(char **, int, char **, int);
 
-OutgoingResponse *create_post(IncomingRequest *request);
+OutgoingResponse *create_post(char **, int, char **, int);
 
-OutgoingResponse *update_post(IncomingRequest *request);
+OutgoingResponse *update_post(char **, int, char **, int);
 
-OutgoingResponse *delete_post(IncomingRequest *request);
+OutgoingResponse *delete_post(char **, int, char **, int);
 
 #endif //SOCKET_SERVER_CONTROLLERS_H

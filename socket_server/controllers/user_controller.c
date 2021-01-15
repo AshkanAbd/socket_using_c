@@ -13,27 +13,18 @@ void generate_token(char **output, int length) {
     }
 }
 
-OutgoingResponse *sign_in(IncomingRequest *request) {
+OutgoingResponse *sign_in(char **param, int param_count, char **body, int body_count) {
     OutgoingResponse *response = malloc(sizeof(OutgoingResponse));
     memset(response, 0, sizeof(OutgoingResponse));
 
-    char *username = NULL;
-    char *password = NULL;
-    int index = 0;
-    for (int i = 0; i < request->body_size; ++i) {
-        if (*((char *) (request->body + i)) == 0x1E) {
-            if (username == NULL) {
-                username = malloc(i - index + 1);
-                memset(username, 0, i - index + 1);
-                memcpy(username, request->body + index, i - index);
-            } else if (password == NULL) {
-                password = malloc(i - index + 1);
-                memset(password, 0, i - index + 1);
-                memcpy(password, request->body + index, i - index);
-            }
-            index = i + 1;
-        }
+    if (body_count < 2) {
+        char *msg = "Username and password are required.";
+        init_bad_request(response, msg, strlen(msg));
+        return response;
     }
+
+    char *username = *(body);
+    char *password = *(body + 1);
 
     User *user = NULL;
     char *db_msg = 0;
@@ -71,27 +62,18 @@ OutgoingResponse *sign_in(IncomingRequest *request) {
     return response;
 }
 
-OutgoingResponse *sign_up(IncomingRequest *request) {
+OutgoingResponse *sign_up(char **param, int param_count, char **body, int body_count) {
     OutgoingResponse *response = malloc(sizeof(OutgoingResponse));
     memset(response, 0, sizeof(OutgoingResponse));
 
-    char *username = NULL;
-    char *password = NULL;
-    int index = 0;
-    for (int i = 0; i < request->body_size; ++i) {
-        if (*((char *) (request->body + i)) == 0x1E) {
-            if (username == NULL) {
-                username = malloc(i - index + 1);
-                memset(username, 0, i - index + 1);
-                memcpy(username, request->body + index, i - index);
-            } else if (password == NULL) {
-                password = malloc(i - index + 1);
-                memset(password, 0, i - index + 1);
-                memcpy(password, request->body + index, i - index);
-            }
-            index = i + 1;
-        }
+    if (body_count < 2) {
+        char *msg = "Username and password are required.";
+        init_bad_request(response, msg, strlen(msg));
+        return response;
     }
+
+    char *username = *(body);
+    char *password = *(body + 1);
 
     User *user = NULL;
     char *db_msg = 0;

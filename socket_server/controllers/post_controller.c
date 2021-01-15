@@ -6,16 +6,7 @@ void put_separator(void *data, size_t *data_index) {
     *data_index += 1;
 }
 
-void authorize_user(IncomingRequest *request, OutgoingResponse *response, Token **token, int token_size) {
-    if (request->param_size == 0) {
-        init_bad_request(response, "Unauthorized", 12);
-        return;
-    }
-
-    char *token_char = malloc(token_size + 1);
-    memset(token_char, 0, token_size + 1);
-    memcpy(token_char, request->param, token_size);
-
+void authorize_user(OutgoingResponse *response, Token **token, char *token_char) {
     char *db_msg = 0;
     if (search_query(TOKEN_TYPE, "token", token_char, token, get_token_callback, &db_msg) != SQLITE_OK) {
         init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
@@ -82,7 +73,7 @@ void prepare_one_post_response(char **data, size_t *data_size, Post *post, User 
     free(post_id_char);
 }
 
-OutgoingResponse *post_list(IncomingRequest *request) {
+OutgoingResponse *post_list(char **param, int param_count, char **body, int body_count) {
     OutgoingResponse *response = malloc(sizeof(OutgoingResponse));
     memset(response, 0, sizeof(OutgoingResponse));
 
@@ -159,13 +150,17 @@ OutgoingResponse *post_list(IncomingRequest *request) {
     return response;
 }
 
-OutgoingResponse *get_post(IncomingRequest *request) {
+OutgoingResponse *get_post(char **param, int param_count, char **body, int body_count) {
     OutgoingResponse *response = malloc(sizeof(OutgoingResponse));
     memset(response, 0, sizeof(OutgoingResponse));
 
-    char *post_id_char = malloc(request->param_size + 1);
-    memset(post_id_char, 0, request->param_size + 1);
-    memcpy(post_id_char, request->param, request->param_size);
+    if (param_count < 1) {
+        char *msg = "Post id is null.";
+        init_bad_request(response, msg, strlen(msg));
+        return response;
+    }
+
+    char *post_id_char = *(param);
 
     Post *post = NULL;
     char *db_msg = 0;
@@ -208,42 +203,31 @@ OutgoingResponse *get_post(IncomingRequest *request) {
     return response;
 }
 
-OutgoingResponse *create_post(IncomingRequest *request) {
+OutgoingResponse *create_post(char **param, int param_count, char **body, int body_count) {
     OutgoingResponse *response = malloc(sizeof(OutgoingResponse));
     memset(response, 0, sizeof(OutgoingResponse));
 
-    int token_size = 0;
-    while (*((char *) request->param + token_size) != 0x1E) {
-        token_size++;
-        if (token_size >= request->param_size) {
-            break;
-        }
+    if (param_count < 1) {
+        char *msg = "Unauthorized";
+        init_bad_request(response, msg, strlen(msg));
+        return response;
+    }
+
+    if (body_count < 2) {
+        char *msg = "Title and description are required.";
+        init_bad_request(response, msg, strlen(msg));
+        return response;
     }
 
     Token *token = NULL;
     char *db_msg = NULL;
-    authorize_user(request, response, &token, token_size);
+    authorize_user(response, &token, *param);
     if (response->status != 0) {
         return response;
     }
 
-    char *post_title = NULL;
-    char *post_description = NULL;
-    int index = 0;
-    for (int i = 0; i < request->body_size; ++i) {
-        if (*((char *) (request->body + i)) == 0x1E) {
-            if (post_title == NULL) {
-                post_title = malloc(i - index + 1);
-                memset(post_title, 0, i - index + 1);
-                memcpy(post_title, request->body + index, i - index);
-            } else if (post_description == NULL) {
-                post_description = malloc(i - index + 1);
-                memset(post_description, 0, i - index + 1);
-                memcpy(post_description, request->body + index, i - index);
-            }
-            index = i + 1;
-        }
-    }
+    char *post_title = *(body);
+    char *post_description = *(body + 1);
 
     Post *post = malloc(sizeof(Post));
     memset(post, 0, sizeof(Post));
@@ -287,39 +271,36 @@ OutgoingResponse *create_post(IncomingRequest *request) {
     return response;
 }
 
-OutgoingResponse *update_post(IncomingRequest *request) {
+OutgoingResponse *update_post(char **param, int param_count, char **body, int body_count) {
     OutgoingResponse *response = malloc(sizeof(OutgoingResponse));
     memset(response, 0, sizeof(OutgoingResponse));
 
-    int token_size = 0;
-    while (*((char *) request->param + token_size) != 0x1E) {
-        token_size++;
-        if (token_size >= request->param_size) {
-            init_invalid_syntax(response, NULL, 0);
-            return response;
-        }
+    if (param_count < 1) {
+        char *msg = "Unauthorized";
+        init_bad_request(response, msg, strlen(msg));
+        return response;
+    }
+
+    if (param_count < 2) {
+        char *msg = "Post id is null.";
+        init_bad_request(response, msg, strlen(msg));
+        return response;
+    }
+
+    if (body_count < 2) {
+        char *msg = "Title and description are required.";
+        init_bad_request(response, msg, strlen(msg));
+        return response;
     }
 
     Token *token = NULL;
     char *db_msg = NULL;
-    authorize_user(request, response, &token, token_size);
+    authorize_user(response, &token, *(param));
     if (response->status != 0) {
         return response;
     }
 
-    token_size++;
-    int id_size = 0;
-    while (*((char *) request->param + token_size + id_size) != 0x1E) {
-        id_size++;
-        if (token_size + id_size >= request->param_size) {
-            init_invalid_syntax(response, NULL, 0);
-            return response;
-        }
-    }
-
-    char *post_id_char = malloc(id_size + 1);
-    memset(post_id_char, 0, id_size + 1);
-    memcpy(post_id_char, request->param + token_size, id_size);
+    char *post_id_char = *(param + 1);
 
     Post *post = NULL;
     if (search_query(POST_TYPE, "id", post_id_char, &post, find_post_by_id_callback, &db_msg) != SQLITE_OK) {
@@ -337,23 +318,8 @@ OutgoingResponse *update_post(IncomingRequest *request) {
         return response;
     }
 
-    char *post_title = NULL;
-    char *post_description = NULL;
-    int index = 0;
-    for (int i = 0; i < request->body_size; ++i) {
-        if (*((char *) (request->body + i)) == 0x1E) {
-            if (post_title == NULL) {
-                post_title = malloc(i - index + 1);
-                memset(post_title, 0, i - index + 1);
-                memcpy(post_title, request->body + index, i - index);
-            } else if (post_description == NULL) {
-                post_description = malloc(i - index + 1);
-                memset(post_description, 0, i - index + 1);
-                memcpy(post_description, request->body + index, i - index);
-            }
-            index = i + 1;
-        }
-    }
+    char *post_title = *(body);
+    char *post_description = *(body + 1);
 
     set_post_column(&post->title, post_title, 1);
     set_post_column(&post->description, post_description, 1);
@@ -392,39 +358,30 @@ OutgoingResponse *update_post(IncomingRequest *request) {
     return response;
 }
 
-OutgoingResponse *delete_post(IncomingRequest *request) {
+OutgoingResponse *delete_post(char **param, int param_count, char **body, int body_count) {
     OutgoingResponse *response = malloc(sizeof(OutgoingResponse));
     memset(response, 0, sizeof(OutgoingResponse));
 
-    int token_size = 0;
-    while (*((char *) request->param + token_size) != 0x1E) {
-        token_size++;
-        if (token_size >= request->param_size) {
-            init_invalid_syntax(response, NULL, 0);
-            return response;
-        }
+    if (param_count < 1) {
+        char *msg = "Unauthorized";
+        init_bad_request(response, msg, strlen(msg));
+        return response;
+    }
+
+    if (param_count < 2) {
+        char *msg = "Post id is null.";
+        init_bad_request(response, msg, strlen(msg));
+        return response;
     }
 
     Token *token = NULL;
     char *db_msg = NULL;
-    authorize_user(request, response, &token, token_size);
+    authorize_user(response, &token, *(param));
     if (response->status != 0) {
         return response;
     }
 
-    token_size++;
-    int id_size = 0;
-    while (*((char *) request->param + token_size + id_size) != 0x1E) {
-        id_size++;
-        if (token_size + id_size >= request->param_size) {
-            init_invalid_syntax(response, NULL, 0);
-            return response;
-        }
-    }
-
-    char *post_id_char = malloc(id_size + 1);
-    memset(post_id_char, 0, id_size + 1);
-    memcpy(post_id_char, request->param + token_size, id_size);
+    char *post_id_char = *(param + 1);
 
     Post *post = NULL;
     if (search_query(POST_TYPE, "id", post_id_char, &post, find_post_by_id_callback, &db_msg) != SQLITE_OK) {
