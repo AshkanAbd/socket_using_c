@@ -126,7 +126,7 @@ void check_args(int argc, char **argv) {
         PORT = atoi(*(argv + 2));
     }
 
-    if (argc >= 2) {
+    if (argc >= 4) {
         change_max(atoi(*(argv + 3)));
     }
 }
