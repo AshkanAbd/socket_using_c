@@ -13,4 +13,7 @@ void get_post_api(const char *id, void callback(IncomingResponse *, void *), voi
 
 void create_post_api(const char *token, const char *post_char, void callback(IncomingResponse *, void *), void *ptr);
 
+void update_post_api(const char *id, const char *token, const char *post_char,
+                     void callback(IncomingResponse *, void *), void *ptr);
+
 #endif //SOCKET_CLIENT_APIS_H
