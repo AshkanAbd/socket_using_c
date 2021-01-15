@@ -37,9 +37,11 @@ void create_post_status() {
 
     char *params = malloc(strlen(title) + 1 + strlen(description) + 2);
     memset(params, 0, strlen(title) + 1 + strlen(description) + 2);
+
     memcpy(params, title, strlen(title));
-    memcpy(params + strlen(title) + 1, description, strlen(description));
     *(params + strlen(title)) = 0x1E;
+
+    memcpy(params + strlen(title) + 1, description, strlen(description));
     *(params + strlen(title) + 1 + strlen(description)) = 0x1E;
 
     printf("Creating a post in server, please wait...\n");
