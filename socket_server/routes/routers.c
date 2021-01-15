@@ -9,4 +9,5 @@ void registerRoutes(Pipeline *pipeline) {
     readAction(pipeline, "/get_post", get_post);
     createAction(pipeline, "/create_post", create_post);
     updateAction(pipeline, "/update_post", update_post);
+    deleteAction(pipeline, "/delete_post", delete_post);
 }

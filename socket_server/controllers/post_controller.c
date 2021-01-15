@@ -374,3 +374,57 @@ OutgoingResponse *update_post(IncomingRequest *request) {
     init_ok(response, data, data_size);
     return response;
 }
+
+OutgoingResponse *delete_post(IncomingRequest *request) {
+    OutgoingResponse *response = malloc(sizeof(OutgoingResponse));
+    memset(response, 0, sizeof(OutgoingResponse));
+
+    int token_size = 0;
+    while (*((char *) request->param + token_size) != 0x1E) {
+        token_size++;
+        if (token_size >= request->param_size) {
+            init_invalid_syntax(response, NULL, 0);
+            return response;
+        }
+    }
+
+    Token *token = NULL;
+    char *db_msg = NULL;
+    authorize_user(request, response, &token, token_size);
+    if (response->status != 0) {
+        return response;
+    }
+
+    token_size++;
+    int id_size = 0;
+    while (*((char *) request->param + token_size + id_size) != 0x1E) {
+        id_size++;
+        if (token_size + id_size >= request->param_size) {
+            init_invalid_syntax(response, NULL, 0);
+            return response;
+        }
+    }
+
+    char *post_id_char = malloc(id_size + 1);
+    memset(post_id_char, 0, id_size + 1);
+    memcpy(post_id_char, request->param + token_size, id_size);
+
+    Post *post = NULL;
+    if (search_query(POST_TYPE, "id", post_id_char, &post, find_post_by_id_callback, &db_msg) != SQLITE_OK) {
+        init_server_error(response, db_msg, strlen(db_msg));
+        return response;
+    }
+
+    if (post->user_id != token->user_id) {
+        init_bad_request(response, "You can't delete other people post.", 33);
+        return response;
+    }
+
+    if (delete_query(POST_TYPE, "id", post_id_char, NULL, 0, &db_msg)) {
+        init_server_error(response, db_msg, strlen(db_msg));
+        return response;
+    }
+
+    init_ok(response, "Post deleted successfully.", 26);
+    return response;
+}

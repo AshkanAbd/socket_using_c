@@ -20,4 +20,6 @@ OutgoingResponse *create_post(IncomingRequest *request);
 
 OutgoingResponse *update_post(IncomingRequest *request);
 
+OutgoingResponse *delete_post(IncomingRequest *request);
+
 #endif //SOCKET_SERVER_CONTROLLERS_H
