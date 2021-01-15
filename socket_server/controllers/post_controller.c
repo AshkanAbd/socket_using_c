@@ -190,6 +190,12 @@ OutgoingResponse *get_post(IncomingRequest *request) {
         return response;
     }
 
+    if (user == NULL) {
+        delete_query(POST_TYPE, "id", post_id_char, NULL, 0, &db_msg);
+        init_not_found(response, "User notfound, post deleted", 27);
+        return response;
+    }
+
     free(post_id_char);
     free(user_id_char);
 
@@ -321,6 +327,11 @@ OutgoingResponse *update_post(IncomingRequest *request) {
         return response;
     }
 
+    if (post == NULL) {
+        init_not_found(response, "Post notfound", 13);
+        return response;
+    }
+
     if (post->user_id != token->user_id) {
         init_bad_request(response, "You can't edit other people post.", 33);
         return response;
@@ -360,6 +371,12 @@ OutgoingResponse *update_post(IncomingRequest *request) {
     db_msg = 0;
     if (search_query(USER_TYPE, "id", user_id_char, &user, find_user_by_id_callback, &db_msg) != SQLITE_OK) {
         init_server_error(response, db_msg, (int) strlen(db_msg) + 1);
+        return response;
+    }
+
+    if (user == NULL) {
+        delete_query(POST_TYPE, "id", post_id_char, NULL, 0, &db_msg);
+        init_not_found(response, "User notfound, post deleted", 27);
         return response;
     }
 
@@ -412,6 +429,11 @@ OutgoingResponse *delete_post(IncomingRequest *request) {
     Post *post = NULL;
     if (search_query(POST_TYPE, "id", post_id_char, &post, find_post_by_id_callback, &db_msg) != SQLITE_OK) {
         init_server_error(response, db_msg, strlen(db_msg));
+        return response;
+    }
+
+    if (post == NULL) {
+        init_not_found(response, "Post notfound", 13);
         return response;
     }
 
