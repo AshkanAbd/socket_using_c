@@ -1,3 +1,4 @@
+Server: [![Build status](https://dev.azure.com/kotksthegame/web_server_c/_apis/build/status/web_server_c_server_side)](https://dev.azure.com/kotksthegame/web_server_c/_build/latest?definitionId=5) Client: [![Build status](https://dev.azure.com/kotksthegame/web_server_c/_apis/build/status/web_server_c_client_side)](https://dev.azure.com/kotksthegame/web_server_c/_build/latest?definitionId=6)
 ## Simple project with C that contains:
 1) a web server
 2) http-like transfer protocol
