@@ -15,9 +15,9 @@
 ## How to run:
 ### Socket server:
 1) cd socket_server
-2) mkdir cmake
-3) cd cmake
-4) cmake ..
+2) mkdir build
+3) cd build
+4) cmake .. -G "MinGW Makefiles"
 5) make
 6) run socket_server.exe binary file
 
@@ -25,9 +25,9 @@
 
 ### Socket client:
 1) cd socket_client
-2) mkdir cmake
-3) cd cmake
-4) cmake ..
+2) mkdir build
+3) cd build
+4) cmake .. -G "MinGW Makefiles"
 5) make
 6) run socket_client.exe binary file
 
