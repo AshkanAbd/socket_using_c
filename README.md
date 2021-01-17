@@ -1,4 +1,3 @@
-[![Build status](https://dev.azure.com/kotksthegame/web_server_c/_apis/build/status/web_server_c-CI)](https://dev.azure.com/kotksthegame/web_server_c/_build/latest?definitionId=-1)
 ## Simple project with C that contains:
 1) a web server
 2) http-like transfer protocol
