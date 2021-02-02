@@ -14,6 +14,6 @@
 #define STATUS_POST_ACTION      8
 
 
-void start_life_cycle(const char *ip, int port);
+_Noreturn void start_life_cycle(const char *ip, int port);
 
 #endif //SOCKET_CLIENT_LIFE_CYCLE_H

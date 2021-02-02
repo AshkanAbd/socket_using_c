@@ -4,7 +4,7 @@ int server_port;
 char *server_ip;
 char *token;
 
-void start_life_cycle(const char *ip, int port) {
+_Noreturn void start_life_cycle(const char *ip, int port) {
 
     server_port = port;
     server_ip = malloc(strlen(ip) + 1);

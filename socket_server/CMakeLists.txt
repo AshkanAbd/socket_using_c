@@ -13,7 +13,7 @@ add_executable(socket_server
         Core/Router/router.h Core/Router/router.c
         Core/Router/route_template.h Core/Router/route_template.c
         Core/Pipeline/pipeline.h Core/Pipeline/pipeline.c
-        routes/routers.c
+        routes/routes.c
         Core/db/sqlite/sqlite3.h Core/db/sqlite/sqlite3.c
         Core/db/sqlite/migration.h Core/db/sqlite/migration.c
         controllers/controllers.h
