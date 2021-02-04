@@ -1,5 +1,11 @@
 #include "api.h"
 
+/**
+ * Internal function that prepares a client and socket to send request.
+ * @param ip
+ * @param port
+ * @return
+ */
 Client *request_client(char *ip, int port) {
     ClientSocket *client_socket = malloc(sizeof(ClientSocket));
     memset(client_socket, 0, sizeof(ClientSocket));
@@ -14,6 +20,11 @@ Client *request_client(char *ip, int port) {
     return client;
 }
 
+/**
+ * Internal function that combine a request to byte array for sending using socket.
+ * @param request
+ * @param buffer
+ */
 void prepare_request(OutgoingRequest *request, char *buffer) {
     memcpy(buffer, (char *) &request->action, 1);
 
@@ -37,6 +48,10 @@ void prepare_request(OutgoingRequest *request, char *buffer) {
     }
 }
 
+/**
+ * Internal function that tells web server to send another packet.
+ * @param client
+ */
 void request_next_packet(Client *client) {
     char *temp = malloc(1);
     *temp = '0';
@@ -116,8 +131,6 @@ struct IncomingResponse *send_request(OutgoingRequest *request, Client *client) 
     free(client);
     free(current_buffer);
 
-//    printf("received packet count: %d\n", count);
-
     struct IncomingResponse *response = malloc(sizeof(struct IncomingResponse));
     memset(response, 0, sizeof(struct IncomingResponse));
     if (*response_buffer == RESPONSE_OK) {
@@ -134,7 +147,6 @@ struct IncomingResponse *send_request(OutgoingRequest *request, Client *client) 
         init_invalid_syntax(response, response_buffer, response_buffer_size);
     }
     free(response_buffer);
-//    printf("receive\n");
 
     return response;
 }
@@ -146,7 +158,6 @@ struct IncomingResponse *api_read(char *route, void *param, int param_size, char
     memset(request, 0, sizeof(OutgoingRequest));
 
     init_read(request, route, param, param_size);
-//    printf("send\n");
     return send_request(request, client);
 }
 

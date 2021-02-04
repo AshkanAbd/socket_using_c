@@ -1,3 +1,6 @@
+/**
+ * Controllers header file, All controller functions should define here.
+ */
 #ifndef SOCKET_SERVER_CONTROLLERS_H
 #define SOCKET_SERVER_CONTROLLERS_H
 

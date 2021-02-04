@@ -12,11 +12,20 @@ int valid_token_table = 0;
 char *tokens_table_sql = "CREATE TABLE tokens(id integer constraint tokens_pk primary key autoincrement, token text not null,user_id INTEGER constraint tokens_users_id_fk references users on delete cascade)";
 char *drop_tokens_sql = "DROP TABLE IF EXISTS tokens;";
 
+/**
+ * Prints database error on startup.
+ * @param db
+ */
 void database_error(sqlite3 *db) {
     printf("Database error %s\n", sqlite3_errmsg(db));
     exit(1);
 }
 
+/**
+ * Connects database with given filepath.
+ * @param filename
+ * @param db
+ */
 void connect_database(char *filename, sqlite3 **db) {
     if (sqlite3_open(filename, db) != SQLITE_OK) {
         database_error(*db);

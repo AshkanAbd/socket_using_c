@@ -1,5 +1,9 @@
 #include "incoming_request.h"
 
+/**
+ * Internal function that logs request.
+ * @param request
+ */
 void print_request(IncomingRequest *request) {
     switch (request->action) {
         case REQUEST_READ:
@@ -42,6 +46,14 @@ void init_request(IncomingRequest *request, int action, char *route, void *param
     memcpy(request->body, body, body_size);
 }
 
+/**
+ * Internal function that filles IncomingRequest struct from parsed packet.
+ * @param request
+ * @param state
+ * @param buff
+ * @param buff_size
+ * @return
+ */
 int fill(IncomingRequest *request, int state, const char *buff, int buff_size) {
     if (state == 1) {
         if (buff_size != 1 || *buff > 4 || *buff < 1) {

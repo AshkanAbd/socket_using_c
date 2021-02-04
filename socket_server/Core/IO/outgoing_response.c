@@ -4,6 +4,12 @@ void change_max(int max) {
     MAX = max;
 }
 
+/**
+ * Internal function that initialize OutgoingResponse from given data.
+ * @param response
+ * @param data
+ * @param data_size
+ */
 void init(OutgoingResponse *response, void *data, int data_size) {
     response->data_size = data_size;
 

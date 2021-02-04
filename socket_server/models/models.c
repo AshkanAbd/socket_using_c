@@ -1,10 +1,7 @@
 #include "models.h"
 
-int search_query(int type, const char *column, const char *value, void *ptr,
-                 int (*callback)(void *, int, char **, char **), char **msg) {
-    const char *buffer_template = "SELECT * FROM %s WHERE %s = '%s'";
-    char *table = 0;
-
+const char *get_table(int type, char **msg) {
+    char *table = NULL;
     if (type == POST_TYPE) {
         table = "posts";
     } else if (type == TOKEN_TYPE) {
@@ -13,6 +10,45 @@ int search_query(int type, const char *column, const char *value, void *ptr,
         table = "users";
     } else {
         *msg = "Invalid insert type.";
+    }
+    return table;
+}
+
+const char *get_columns(int type, char **msg) {
+    char *columns = NULL;
+    if (type == POST_TYPE) {
+        columns = "title, description, user_id";
+    } else if (type == TOKEN_TYPE) {
+        columns = "token, user_id";
+    } else if (type == USER_TYPE) {
+        columns = "username, password";
+    } else {
+        *msg = "Invalid insert type.";
+    }
+    return columns;
+}
+
+const char *get_value_template(int type, char **msg) {
+    char *values_template = NULL;
+    if (type == POST_TYPE) {
+        values_template = "'%s', '%s', '%d'";
+    } else if (type == TOKEN_TYPE) {
+        values_template = "'%s', '%d'";
+    } else if (type == USER_TYPE) {
+        values_template = "'%s', '%s'";
+    } else {
+        *msg = "Invalid insert type.";
+    }
+    return values_template;
+}
+
+
+int search_query(int type, const char *column, const char *value, void *ptr,
+                 int (*callback)(void *, int, char **, char **), char **msg) {
+    const char *buffer_template = "SELECT * FROM %s WHERE %s = '%s'";
+
+    const char *table = get_table(type, msg);
+    if (table == NULL) {
         return 1;
     }
 
@@ -27,19 +63,26 @@ int search_query(int type, const char *column, const char *value, void *ptr,
 }
 
 int insert_query(int type, const void *obj, void *ptr, int (*callback)(void *, int, char **, char **), char **msg) {
-    char *table = 0;
-    char *columns = 0;
-    char *values_template = 0;
+    const char *table = get_table(type, msg);
+    if (table == NULL) {
+        return 1;
+    }
+
+    const char *columns = get_columns(type, msg);
+    if (columns == NULL) {
+        return 1;
+    }
+
+    const char *values_template = get_value_template(type, msg);
+    if (values_template == NULL) {
+        return 1;
+    }
+
     char *values = 0;
     size_t values_size = 0;
 
     if (type == POST_TYPE) {
         Post *post = (Post *) obj;
-
-        table = "posts";
-        columns = "title, description, user_id";
-
-        values_template = "'%s', '%s', '%d'";
 
         values_size += strlen(values_template) - (2 * 3) + strlen(post->title) +
                        strlen(post->description) + sizeof(int) + 1;
@@ -51,11 +94,6 @@ int insert_query(int type, const void *obj, void *ptr, int (*callback)(void *, i
     } else if (type == TOKEN_TYPE) {
         Token *token = (Token *) obj;
 
-        table = "tokens";
-        columns = "token, user_id";
-
-        values_template = "'%s', '%d'";
-
         values_size += strlen(values_template) - (2 * 2) + strlen(token->token) + sizeof(int) + 1;
         values = malloc(values_size);
         memset(values, 0, values_size);
@@ -63,11 +101,6 @@ int insert_query(int type, const void *obj, void *ptr, int (*callback)(void *, i
         sprintf(values, values_template, token->token, token->user_id);
     } else if (type == USER_TYPE) {
         User *user = (User *) obj;
-
-        table = "users";
-        columns = "username, password";
-
-        values_template = "'%s', '%s'";
 
         values_size += strlen(values_template) - (2 * 2) + strlen(user->username) + strlen(user->password) + 1;
         values = malloc(values_size);
@@ -93,19 +126,26 @@ int insert_query(int type, const void *obj, void *ptr, int (*callback)(void *, i
 
 int update_query(int type, const char *column, const char *value, const void *obj, void *ptr,
                  int (*callback)(void *, int, char **, char **), char **msg) {
-    char *table = 0;
-    char *columns = 0;
-    char *values_template = 0;
+    const char *table = get_table(type, msg);
+    if (table == NULL) {
+        return 1;
+    }
+
+    const char *columns = get_columns(type, msg);
+    if (columns == NULL) {
+        return 1;
+    }
+
+    const char *values_template = get_value_template(type, msg);
+    if (values_template == NULL) {
+        return 1;
+    }
+
     char *values = 0;
     size_t values_size = 0;
 
     if (type == POST_TYPE) {
         Post *post = (Post *) obj;
-
-        table = "posts";
-        columns = "title, description, user_id";
-
-        values_template = "'%s', '%s', '%d'";
 
         values_size += strlen(values_template) - (2 * 3) + strlen(post->title) +
                        strlen(post->description) + sizeof(int) + 1;
@@ -117,11 +157,6 @@ int update_query(int type, const char *column, const char *value, const void *ob
     } else if (type == TOKEN_TYPE) {
         Token *token = (Token *) obj;
 
-        table = "tokens";
-        columns = "token, user_id";
-
-        values_template = "'%s', '%d'";
-
         values_size += strlen(values_template) - (2 * 2) + strlen(token->token) + sizeof(int) + 1;
         values = malloc(values_size);
         memset(values, 0, values_size);
@@ -129,11 +164,6 @@ int update_query(int type, const char *column, const char *value, const void *ob
         sprintf(values, values_template, token->token, token->user_id);
     } else if (type == USER_TYPE) {
         User *user = (User *) obj;
-
-        table = "users";
-        columns = "username, password";
-
-        values_template = "'%s', '%s'";
 
         values_size += strlen(values_template) - (2 * 2) + strlen(user->username) + strlen(user->password) + 1;
         values = malloc(values_size);
@@ -162,16 +192,8 @@ int delete_query(int type, const char *column, const char *value, void *ptr,
                  int (*callback)(void *, int, char **, char **), char **msg) {
     const char *buffer_template = "DELETE FROM %s WHERE %s = '%s'";
 
-    char *table = 0;
-
-    if (type == POST_TYPE) {
-        table = "posts";
-    } else if (type == TOKEN_TYPE) {
-        table = "tokens";
-    } else if (type == USER_TYPE) {
-        table = "users";
-    } else {
-        *msg = "Invalid insert type.";
+    const char *table = get_table(type, msg);
+    if (table == NULL) {
         return 1;
     }
 

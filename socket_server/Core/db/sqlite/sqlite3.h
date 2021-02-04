@@ -1,4 +1,5 @@
 /*
+** Official sqlite driver for C.
 ** 2001-09-15
 **
 ** The author disclaims copyright to this source code.  In place of

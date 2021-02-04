@@ -47,6 +47,13 @@ int check_action(RouteTemplate *template, IncomingRequest *request) {
     return 0;
 }
 
+/**
+ * Internal function that parses the request's parameters and body into array.
+ * @param content
+ * @param content_size
+ * @param argv
+ * @param argc
+ */
 void extract_request_content(void *content, int content_size, char ***argv, int *argc) {
     if (content_size == 0) {
         return;

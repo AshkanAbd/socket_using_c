@@ -1,5 +1,14 @@
 #include "outgoing_request.h"
 
+/**
+ * Internal function that is called by the request creation functions to create the request.
+ * @param request
+ * @param route
+ * @param param
+ * @param param_size
+ * @param body
+ * @param body_size
+ */
 void init_request(OutgoingRequest *request, char *route, void *param, int param_size,
                   void *body, int body_size) {
     request->route = malloc(strlen(route) + 1);

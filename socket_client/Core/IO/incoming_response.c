@@ -61,27 +61,21 @@ char *get_action_str(struct IncomingResponse *response) {
     switch (response->status) {
         case RESPONSE_OK:
             strcpy(action_str, "OK: ");
-//            strncpy(action_str, "OK: ", 4);
             break;
         case RESPONSE_NOT_FOUND:
             strcpy(action_str, "NotFound: ");
-//            strncpy(action_str, "NotFound: ", 10);
             break;
         case RESPONSE_BAD_REQUEST:
             strcpy(action_str, "BadRequest: ");
-//            strncpy(action_str, "BadRequest: ", 12);
             break;
         case RESPONSE_INVALID_ACTION:
             strcpy(action_str, "InvalidAction: ");
-//            strncpy(action_str, "InvalidAction: ", 15);
             break;
         case RESPONSE_SERVER_ERROR:
             strcpy(action_str, "ServerError: ");
-//            strncpy(action_str, "ServerError: ", 12);
             break;
         case RESPONSE_INVALID_SYNTAX:
             strcpy(action_str, "InvalidSyntax: ");
-//            strncpy(action_str, "InvalidSyntax: ", 15);
             break;
     }
     return action_str;
@@ -98,7 +92,6 @@ char *response_to_str(struct IncomingResponse *response) {
         data_str = realloc(data_str, 16);
         memset(data_str, 0, 16);
         strcpy(data_str, "<content empty>");
-//        strncpy(data_str, "<content empty>", 15);
     }
 
     char *response_str = malloc(strlen(action_str) + strlen(data_str) + 1);
@@ -184,7 +177,6 @@ char *response_to_file_single_path(struct IncomingResponse *response, const char
     fclose(f);
 
     char *result_str = malloc(strlen(action_str) + strlen(absolute_path) + 1);
-//    printf("to file\n");
     memset(result_str, 0, strlen(action_str) + strlen(absolute_path) + 1);
 
     memcpy(result_str, action_str, strlen(action_str));

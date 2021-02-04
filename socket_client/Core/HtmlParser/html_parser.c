@@ -25,6 +25,12 @@ void init_html_parser(HtmlParser *html_parser, char *data, unsigned long long in
     html_parser->script_tag = "<script ";
 }
 
+/**
+ * Internal function that checks the given index is an image tag
+ * @param html_parser
+ * @param index
+ * @return
+ */
 int is_img_tag(HtmlParser *html_parser, unsigned long long int index) {
     if (index + 5 >= html_parser->content_size) {
         return 0;
@@ -38,6 +44,12 @@ int is_img_tag(HtmlParser *html_parser, unsigned long long int index) {
     return html_parser->result_flag;
 }
 
+/**
+ * Internal function that checks the given index is a script tag
+ * @param html_parser
+ * @param index
+ * @return
+ */
 int is_script_tag(HtmlParser *html_parser, unsigned long long int index) {
     if (index + 8 >= html_parser->content_size) {
         return 0;
@@ -51,6 +63,12 @@ int is_script_tag(HtmlParser *html_parser, unsigned long long int index) {
     return html_parser->result_flag;
 }
 
+/**
+ * Internal function that checks the given index is a CSS tag
+ * @param html_parser
+ * @param index
+ * @return
+ */
 int is_css_tag(HtmlParser *html_parser, unsigned long long int index) {
     if (index + 6 >= html_parser->content_size) {
         return 0;

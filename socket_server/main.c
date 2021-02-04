@@ -5,10 +5,24 @@
 int PORT = 8080;
 char *db_path = "../db/app.sqlite";
 
+/**
+ * Checks application args.
+ * @param argc
+ * @param argv
+ */
 void check_args(int argc, char **argv);
 
+/**
+ * Handles incoming request and manages it.
+ * @param obj
+ * @return
+ */
 void *handle_client(void *obj);
 
+/**
+ * Initializes server's socket.
+ * @param server_socket
+ */
 void init_server(ServerSocket *server_socket);
 
 Pipeline *pipeline;

@@ -1,3 +1,6 @@
+/**
+ * Migration and database connection header file.
+ */
 #ifndef SOCKET_SERVER_MIGRATION_H
 #define SOCKET_SERVER_MIGRATION_H
 
@@ -6,6 +9,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+/**
+ * Checks database tables and migrations.
+ * @param filename
+ */
 void init_database(char *filename);
 
 sqlite3 *db_connection;

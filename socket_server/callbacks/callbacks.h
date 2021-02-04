@@ -1,3 +1,6 @@
+/**
+ * Queries Callback header file, All queries callback functions should define here.
+ */
 #ifndef SOCKET_SERVER_CALLBACKS_H
 #define SOCKET_SERVER_CALLBACKS_H
 
